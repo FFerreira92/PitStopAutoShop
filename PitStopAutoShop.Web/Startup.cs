@@ -10,6 +10,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data;
+using PitStopAutoShop.Web.Helpers;
+using PitStopAutoShop.Web.Data.Repositories;
+using PitStopAutoShop.Web.Data.Entities;
+using Microsoft.AspNetCore.Identity;
 
 namespace PitStopAutoShop.Web
 {
@@ -26,15 +30,31 @@ namespace PitStopAutoShop.Web
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddIdentity<User, IdentityRole>(cfg =>
+            {
+                cfg.User.RequireUniqueEmail = true;
+                cfg.Password.RequireDigit = false;
+                cfg.Password.RequireUppercase = false;
+                cfg.Password.RequireLowercase = false;
+                cfg.Password.RequiredUniqueChars = 0;
+                cfg.Password.RequireNonAlphanumeric = false;
+                cfg.Password.RequiredLength = 6;
+            }).AddEntityFrameworkStores<DataContext>();
+
             services.AddDbContext<DataContext>(cfg =>
-                cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-            );
+            {
+                cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            });
+
+            services.AddTransient<SeedDb>();
+
+            services.AddScoped<IUserHelper,UserHelper>();
+            services.AddScoped<IMechanicRepository, MechanicRepository>();
+
+                     
 
 
-            services.AddControllersWithViews();
-
-
-
+            services.AddControllersWithViews();                   
 
         }
 

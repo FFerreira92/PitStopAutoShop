@@ -26,5 +26,7 @@ namespace PitStopAutoShop.Web.Data.Entities
         public string? ImageUrl { get; set; }
 
         public string FullName => $"{FirstName} {LastName}";
+
+        public User User { get; set; }
     }
 }
