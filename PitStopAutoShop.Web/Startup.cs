@@ -39,7 +39,8 @@ namespace PitStopAutoShop.Web
                 cfg.Password.RequiredUniqueChars = 0;
                 cfg.Password.RequireNonAlphanumeric = false;
                 cfg.Password.RequiredLength = 6;
-            }).AddEntityFrameworkStores<DataContext>();
+            }).AddEntityFrameworkStores<DataContext>();            
+
 
             services.AddDbContext<DataContext>(cfg =>
             {
@@ -51,8 +52,12 @@ namespace PitStopAutoShop.Web
             services.AddScoped<IUserHelper,UserHelper>();
             services.AddScoped<IMechanicRepository, MechanicRepository>();
 
-                     
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/NotAuthorized";
+                options.AccessDeniedPath = "/Account/NotAuthorized";
 
+            });
 
             services.AddControllersWithViews();                   
 
@@ -75,6 +80,8 @@ namespace PitStopAutoShop.Web
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

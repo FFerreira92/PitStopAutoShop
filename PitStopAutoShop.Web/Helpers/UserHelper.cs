@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using PitStopAutoShop.Web.Data.Entities;
+using PitStopAutoShop.Web.Models;
 using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Helpers
@@ -8,11 +9,13 @@ namespace PitStopAutoShop.Web.Helpers
     {
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public UserHelper(UserManager<User> userManager,RoleManager<IdentityRole> roleManager)
+        public UserHelper(UserManager<User> userManager,RoleManager<IdentityRole> roleManager,SignInManager<User> signInManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
         }
 
 
@@ -51,6 +54,20 @@ namespace PitStopAutoShop.Web.Helpers
         public async Task<User> GetUserByIdAsync(string userId)
         {
             return await _userManager.FindByIdAsync(userId);
+        }
+
+        public async Task<SignInResult> LoginAsync(LoginViewModel model)
+        {
+            return await _signInManager.PasswordSignInAsync(
+                model.UserName,
+                model.Password,
+                model.RememberMe,
+                false);
+        }
+
+        public async Task LogoutAsync()
+        {
+            await _signInManager.SignOutAsync();
         }
 
         public async Task<IdentityResult> UpdateUserAsync(User user)

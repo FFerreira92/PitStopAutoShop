@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,7 @@ namespace PitStopAutoShop.Web.Controllers
             return View(mechanic);
         }
 
+        [Authorize(Roles ="Admin")]
         // GET: Mechanics/Create
         public IActionResult Create()
         {
@@ -54,6 +56,7 @@ namespace PitStopAutoShop.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Specialty,About,ImageUrl")] Mechanic mechanic)
         {
             if (ModelState.IsValid)
@@ -65,6 +68,7 @@ namespace PitStopAutoShop.Web.Controllers
             return View(mechanic);
         }
 
+        [Authorize(Roles = "Admin, Mechanic")]
         // GET: Mechanics/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -86,6 +90,7 @@ namespace PitStopAutoShop.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin, Mechanic")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Specialty,About,ImageUrl")] Mechanic mechanic)
         {
             if (id != mechanic.Id)
@@ -117,6 +122,7 @@ namespace PitStopAutoShop.Web.Controllers
         }
 
         // GET: Mechanics/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,10 +139,11 @@ namespace PitStopAutoShop.Web.Controllers
 
             return View(mechanic);
         }
-
+       
         // POST: Mechanics/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var mechanic = await _context.Mechanics.FindAsync(id);

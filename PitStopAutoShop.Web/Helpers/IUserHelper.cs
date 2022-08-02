@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using PitStopAutoShop.Web.Data.Entities;
+using PitStopAutoShop.Web.Models;
 using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Helpers
@@ -19,5 +20,10 @@ namespace PitStopAutoShop.Web.Helpers
         Task<bool> CheckUserInRoleAsync(User user, string roleName);
 
         Task<IdentityResult> AddUserToRoleAsync(User user, string roleName);
+
+        Task<SignInResult> LoginAsync(LoginViewModel model);
+
+        Task LogoutAsync();
+
     }
 }

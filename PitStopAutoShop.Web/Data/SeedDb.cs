@@ -32,7 +32,8 @@ namespace PitStopAutoShop.Web.Data
         private async Task CheckCreatedRoles()
         {
             await _userHelper.CheckRoleAsync("Admin");
-            await _userHelper.CheckRoleAsync("Employee");
+            await _userHelper.CheckRoleAsync("Mechanic");
+            await _userHelper.CheckRoleAsync("Receptionist");
             await _userHelper.CheckRoleAsync("Customer");
         }
 
@@ -91,7 +92,7 @@ namespace PitStopAutoShop.Web.Data
                 });
 
                 await _userHelper.AddUserAsync(mechanicUser1, "123456");                
-                await _userHelper.AddUserToRoleAsync(mechanicUser1, "Employee");
+                await _userHelper.AddUserToRoleAsync(mechanicUser1, "Mechanic");
                                
 
                 var mechanicUser2 = new User
@@ -114,7 +115,7 @@ namespace PitStopAutoShop.Web.Data
                 });
 
                 await _userHelper.AddUserAsync(mechanicUser2, "123456");                
-                await _userHelper.AddUserToRoleAsync(mechanicUser2, "Employee");                
+                await _userHelper.AddUserToRoleAsync(mechanicUser2, "Mechanic");                
                 
 
                 await _context.SaveChangesAsync();
