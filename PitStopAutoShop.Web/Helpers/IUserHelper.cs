@@ -14,6 +14,10 @@ namespace PitStopAutoShop.Web.Helpers
 
         Task<User> GetUserByIdAsync(string userId);
 
+        Task CheckRoleAsync(string roleName);
 
+        Task<bool> CheckUserInRoleAsync(User user, string roleName);
+
+        Task<IdentityResult> AddUserToRoleAsync(User user, string roleName);
     }
 }

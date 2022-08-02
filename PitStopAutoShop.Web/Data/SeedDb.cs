@@ -21,10 +21,19 @@ namespace PitStopAutoShop.Web.Data
         {
             await _context.Database.EnsureCreatedAsync();
 
+            await CheckCreatedRoles();
 
             await AddUserAsync();
+
             await AddMechanicsAsync();
 
+        }
+
+        private async Task CheckCreatedRoles()
+        {
+            await _userHelper.CheckRoleAsync("Admin");
+            await _userHelper.CheckRoleAsync("Employee");
+            await _userHelper.CheckRoleAsync("Customer");
         }
 
         private async Task AddUserAsync()
@@ -44,10 +53,14 @@ namespace PitStopAutoShop.Web.Data
                 };
 
                 await _userHelper.AddUserAsync(user, "123456");
-
             }
 
+            var isInRole = await _userHelper.CheckUserInRoleAsync(user, "Admin");
 
+            if (!isInRole)
+            {
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
+            }
 
             await _context.SaveChangesAsync();
         }
@@ -77,6 +90,10 @@ namespace PitStopAutoShop.Web.Data
 
                 });
 
+                await _userHelper.AddUserAsync(mechanicUser1, "123456");                
+                await _userHelper.AddUserToRoleAsync(mechanicUser1, "Employee");
+                               
+
                 var mechanicUser2 = new User
                 {
                     FirstName = "Inacio",
@@ -95,6 +112,10 @@ namespace PitStopAutoShop.Web.Data
                     About = "Born in Setúbal, Inacio Torres studied mechatronics in ATEC and then joined PitStop Auto, with 8 years of working experience..",
                     User = mechanicUser2
                 });
+
+                await _userHelper.AddUserAsync(mechanicUser2, "123456");                
+                await _userHelper.AddUserToRoleAsync(mechanicUser2, "Employee");                
+                
 
                 await _context.SaveChangesAsync();
 
