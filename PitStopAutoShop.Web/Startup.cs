@@ -14,6 +14,8 @@ using PitStopAutoShop.Web.Helpers;
 using PitStopAutoShop.Web.Data.Repositories;
 using PitStopAutoShop.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace PitStopAutoShop.Web
 {
@@ -32,6 +34,8 @@ namespace PitStopAutoShop.Web
 
             services.AddIdentity<User, IdentityRole>(cfg =>
             {
+                cfg.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+                cfg.SignIn.RequireConfirmedEmail = true;
                 cfg.User.RequireUniqueEmail = true;
                 cfg.Password.RequireDigit = false;
                 cfg.Password.RequireUppercase = false;
@@ -39,8 +43,17 @@ namespace PitStopAutoShop.Web
                 cfg.Password.RequiredUniqueChars = 0;
                 cfg.Password.RequireNonAlphanumeric = false;
                 cfg.Password.RequiredLength = 6;
-            }).AddEntityFrameworkStores<DataContext>();            
+            }).AddDefaultTokenProviders().AddEntityFrameworkStores<DataContext>();
 
+            services.AddAuthentication().AddCookie().AddJwtBearer(cfg =>
+            {
+                cfg.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuer = this.Configuration["Tokens:Issuer"],
+                    ValidAudience = this.Configuration["Tokens:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(this.Configuration["Tokens:Key"]))
+                };
+            });
 
             services.AddDbContext<DataContext>(cfg =>
             {
@@ -50,6 +63,7 @@ namespace PitStopAutoShop.Web
             services.AddTransient<SeedDb>();
 
             services.AddScoped<IUserHelper,UserHelper>();
+            services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IMechanicRepository, MechanicRepository>();
 
             services.ConfigureApplicationCookie(options =>

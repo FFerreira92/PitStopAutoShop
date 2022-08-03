@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<PitStopAutoShop.Web.Data.Entities.Mechanic>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "About Technicians";
 }
 
-<h1>Index</h1>
+<h1>Technicians</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
@@ -49,8 +49,8 @@
                 @Html.DisplayFor(modelItem => item.ImageUrl)
             </td>
             <td>
-                @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin") || this.User.Identity.IsAuthenticated && User.IsInRole("Mechanic"))
-                {
+                @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                {                   
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
                 }                     
                 

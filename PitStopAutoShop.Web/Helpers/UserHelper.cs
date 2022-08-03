@@ -29,6 +29,11 @@ namespace PitStopAutoShop.Web.Helpers
             return await _userManager.AddToRoleAsync(user, roleName);
         }
 
+        public async Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword)
+        {
+            return await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
+        }
+
         public async Task CheckRoleAsync(string roleName)
         {
             var roleExists = await _roleManager.RoleExistsAsync(roleName);
@@ -44,6 +49,16 @@ namespace PitStopAutoShop.Web.Helpers
         public async Task<bool> CheckUserInRoleAsync(User user, string roleName)
         {
            return await _userManager.IsInRoleAsync(user,roleName);
+        }
+
+        public async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
+        {
+            return await _userManager.ConfirmEmailAsync(user, token);
+        }
+
+        public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
+        {
+            return await _userManager.GenerateEmailConfirmationTokenAsync(user);
         }
 
         public async Task<User> GetUserByEmailAsync(string email)

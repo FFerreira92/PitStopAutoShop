@@ -25,5 +25,10 @@ namespace PitStopAutoShop.Web.Helpers
 
         Task LogoutAsync();
 
+        Task<string> GenerateEmailConfirmationTokenAsync(User user);
+
+        Task<IdentityResult> ConfirmEmailAsync(User user, string token);
+
+        Task<IdentityResult> ChangePasswordAsync(User user, string oldPassword, string newPassword);
     }
 }
