@@ -2,6 +2,7 @@
 using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Helpers;
 using PitStopAutoShop.Web.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -185,6 +186,165 @@ namespace PitStopAutoShop.Web.Controllers
         {
             return View();
         }
+
+
+        public IActionResult RecoverPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RecoverPassword(RecoverPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var user = await _userHelper.GetUserByEmailAsync(model.Email);
+                if(user == null)
+                {
+                    ModelState.AddModelError(string.Empty, "The Email does not correspond to a registered email.");
+                    return View(model);
+                }
+
+                var userToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
+                var link = Url.Action("ResetPassword", "Account", new { token = userToken,userId = user.Id }, protocol: HttpContext.Request.Scheme);
+
+                Response response = _mailHelper.SendEmail(model.Email, "PitStop Lisbon Recover Password ", $"<h1>PitStop Lisbon password reset</h1>" +
+                    $"To Reset the password click in the link bellow: </br></br>" +
+                    $"<a href = \"{link}\">Reset Password</a>");
+
+                if (response.IsSuccess)
+                {
+                    ViewBag.Message = "The instructions to recover your password have been sent to the email address.";
+                }
+
+                return View();
+            }
+
+            return View(model);
+        } 
+
+        public async Task<IActionResult> ResetPassword(string token,string userId)
+        {
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+            {
+                return NotFound();
+            }
+
+            var user = await _userHelper.GetUserByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = new ResetPasswordViewModel
+            {
+                UserName = user.UserName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(model.UserName);
+            if(user != null)
+            {
+                var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+                if (result.Succeeded)
+                {                    
+                    ViewBag.Message = "Password Reset Successful, you can now Login with the new credentials.";
+                    return View();                    
+                }
+
+
+                ViewBag.Message = "There was an error while resseting your password.";
+                return View(model);
+            }
+
+            ViewBag.Message = "User was not found";
+            return View(model);
+        }
+
+
+        public async Task<IActionResult> ChangeUser()
+        {
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            var model = new ChangeUserViewModel();
+            if(user != null)
+            {
+                model.Address = user.Address;
+                model.PhoneNumber = user.PhoneNumber;                
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangeUser(ChangeUserViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+                if (user != null)
+                {
+                    user.Address = model.Address;
+                    user.PhoneNumber = model.PhoneNumber;
+
+
+
+                    var response = await _userHelper.UpdateUserAsync(user);
+                    if (response.Succeeded)
+                    {
+                        ViewBag.UserMessage = "User Updated!";
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, response.Errors.FirstOrDefault().Description);
+                    }
+                }
+            }
+
+            return View(model);
+        }
+
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+
+                if(user != null)
+                {
+                    var result = await _userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("ChangeUser");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, result.Errors.FirstOrDefault().Description);
+                    }
+
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "User not found.");
+                }
+
+            }
+
+            return View(model);
+        }
+
 
         public IActionResult NotAuthorized()
         {

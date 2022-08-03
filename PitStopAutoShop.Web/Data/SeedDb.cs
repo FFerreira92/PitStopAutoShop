@@ -63,6 +63,9 @@ namespace PitStopAutoShop.Web.Data
                 await _userHelper.AddUserToRoleAsync(user, "Admin");
             }
 
+            var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+            await _userHelper.ConfirmEmailAsync(user, token);
+
             await _context.SaveChangesAsync();
         }
 
@@ -93,7 +96,8 @@ namespace PitStopAutoShop.Web.Data
 
                 await _userHelper.AddUserAsync(mechanicUser1, "123456");                
                 await _userHelper.AddUserToRoleAsync(mechanicUser1, "Mechanic");
-                               
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(mechanicUser1);
+                await _userHelper.ConfirmEmailAsync(mechanicUser1, token);
 
                 var mechanicUser2 = new User
                 {
@@ -115,8 +119,9 @@ namespace PitStopAutoShop.Web.Data
                 });
 
                 await _userHelper.AddUserAsync(mechanicUser2, "123456");                
-                await _userHelper.AddUserToRoleAsync(mechanicUser2, "Mechanic");                
-                
+                await _userHelper.AddUserToRoleAsync(mechanicUser2, "Mechanic");
+                token = await _userHelper.GenerateEmailConfirmationTokenAsync(mechanicUser2);
+                await _userHelper.ConfirmEmailAsync(mechanicUser2, token);
 
                 await _context.SaveChangesAsync();
 
