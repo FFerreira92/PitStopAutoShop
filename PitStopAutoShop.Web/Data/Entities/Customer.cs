@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace PitStopAutoShop.Web.Data.Entities
 {
@@ -14,7 +15,7 @@ namespace PitStopAutoShop.Web.Data.Entities
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
-        [Display(Name ="Tax Identification Number / NIF")]
+        [Display(Name ="Tax Identification Number / NIF")]        
         public string Nif { get; set; }
 
         public string Address { get; set; }

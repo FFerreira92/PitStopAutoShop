@@ -33,6 +33,11 @@ namespace PitStopAutoShop.Web.Data.Repositories
             return _context.Customers.Include(u => u.User).OrderBy(o => o.FirstName);
         }
 
+        public async Task<Customer> GetCustomerByUserIdAsync(string userId)
+        {
+            return await _context.Customers.Where(c => c.User.Id == userId).FirstOrDefaultAsync();
+        }
+
         public async Task<Customer> GetCustomerWithUserByIdAsync(int customerId)
         {
             var customer = await _context.Customers.Include(u => u.User).FirstOrDefaultAsync(u => u.Id == customerId);

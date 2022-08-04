@@ -11,5 +11,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
         Task<Customer> GetCustomerWithUserByIdAsync(int customerId);
 
         Task<bool> CheckIfCustomerInBdByEmailAsync(string customerEmail);
+
+        Task<Customer> GetCustomerByUserIdAsync(string userId);
     }
 }

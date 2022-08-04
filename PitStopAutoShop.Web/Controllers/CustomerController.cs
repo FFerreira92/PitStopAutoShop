@@ -33,7 +33,9 @@ namespace PitStopAutoShop.Web.Controllers
             return View();
         }
 
+        
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateCustomerViewModel model)
         {
 
@@ -115,6 +117,87 @@ namespace PitStopAutoShop.Web.Controllers
 
             return View(model);
         }
+
+
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound(); // alterar para erro personalizado
+            }
+
+            var customer = await _customerRepository.GetCustomerWithUserByIdAsync(id.Value);
+
+            if(customer == null)
+            {
+                return NotFound(); // alterar para erro personalizado
+            }
+
+            var model = new EditCustomerViewModel
+            {
+                Address = customer.Address,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Nif = customer.Nif,
+                PhoneNumber = customer.PhoneNumber,
+                Email = customer.Email,
+                UserId = customer.User.Id               
+            };
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditCustomerViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                //var user = await _userHelper.GetUserByIdAsync(model.UserId);
+
+                //if(user == null)
+                //{
+                //    ModelState.AddModelError(string.Empty, "There was an error updating user info. User not found.");
+                //    return View(model);
+                //}
+
+                //user.FirstName = model.FirstName;
+                //user.LastName = model.LastName;
+                //user.PhoneNumber = model.PhoneNumber;
+                //user.Address = model.Address;
+                //user.Email = model.Email;
+                //user.UserName = model.Email;
+                
+                //await _userHelper.UpdateUserAsync(user);
+                //user updated
+                //------------ / Fará sentido fazer update também aos dados do user? / ----------------------
+                //------------/ se decidir alterar dados de user tambem, não esquecer colocar confirmação do novo email do user automáticamente / ------
+
+                var customer = await _customerRepository.GetCustomerByUserIdAsync(model.UserId);
+
+                if(customer == null)
+                {
+                    ModelState.AddModelError(string.Empty, "There was an error updating customer info. Customer not found.");
+                    return View(model);
+                }
+
+                customer.Address = model.Address;
+                customer.Email = model.Email;
+                customer.FirstName = model.FirstName;
+                customer.LastName = model.LastName;
+                customer.PhoneNumber = model.PhoneNumber;
+                customer.Nif = model.Nif;
+
+                await _customerRepository.UpdateAsync(customer);
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(model);
+        }
+
 
     }
 }
