@@ -8,6 +8,8 @@ namespace PitStopAutoShop.Web.Data
     {
         public DbSet<Mechanic> Mechanics { get; set; }
 
+        public DbSet<Customer> Customers { get; set; }
+
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {

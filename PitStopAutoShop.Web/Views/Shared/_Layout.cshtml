@@ -47,7 +47,14 @@
                         <li>
                             <a asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                         </li>
-                        
+
+                        @if(User.IsInRole("Admin") || User.IsInRole("Mechanic") || User.IsInRole("Receptionist"))
+                        {
+                            <li>
+                                <a asp-area="" asp-controller="DashboardPanel" asp-action="Index">Admin Panel</a>
+                            </li>
+                        }
+
                     }
                     else
                     {
@@ -56,13 +63,9 @@
                         </li>
                         
                     }
-                </ul>
-                
+                </ul>                
 
-                <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                </form>
+                
         </nav>        
     </header>
     <div class="container">

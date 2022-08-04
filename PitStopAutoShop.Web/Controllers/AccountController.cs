@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PitStopAutoShop.Web.Data.Entities;
+using PitStopAutoShop.Web.Data.Repositories;
 using PitStopAutoShop.Web.Helpers;
 using PitStopAutoShop.Web.Models;
 using System;
@@ -12,18 +13,23 @@ namespace PitStopAutoShop.Web.Controllers
     {
         private readonly IUserHelper _userHelper;
         private readonly IMailHelper _mailHelper;
+        private readonly ICustomerRepository _customerRepository;
 
-        public AccountController(IUserHelper userHelper,IMailHelper mailHelper)
+        public AccountController(IUserHelper userHelper,IMailHelper mailHelper,ICustomerRepository customerRepository)
         {
             _userHelper = userHelper;
             _mailHelper = mailHelper;
+            _customerRepository = customerRepository;
         }
 
         public IActionResult Login()
         {
+
             if (User.Identity.IsAuthenticated)
             {
+               
                 return RedirectToAction("Index", "Home");
+
             }
 
             return View();
@@ -35,6 +41,7 @@ namespace PitStopAutoShop.Web.Controllers
 
             if (ModelState.IsValid)
             {
+           
                 var result = await _userHelper.LoginAsync(model);
 
                 if (result.Succeeded)
@@ -44,7 +51,23 @@ namespace PitStopAutoShop.Web.Controllers
                         return Redirect(this.Request.Query["ReturnUrl"].First());
                     }
 
-                    return this.RedirectToAction("Index", "Home");
+                    var user = await _userHelper.GetUserByEmailAsync(model.UserName);
+                    
+                    if(user != null)
+                    {
+                        var isCustomerRole = await _userHelper.CheckUserInRoleAsync(user, "Customer");
+
+                        if (isCustomerRole)
+                        {
+                            return this.RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            return RedirectToAction("Index", "DashboardPanel");
+                        }                                            
+                    }
+
+                    ModelState.AddModelError(string.Empty, "Failed to Login");                   
                 }
             }
 
@@ -91,6 +114,17 @@ namespace PitStopAutoShop.Web.Controllers
                         ModelState.AddModelError(string.Empty, "The user couldn't be created.");
                         return View(model);
                     }
+
+                    var customer = new Customer
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Email = model.UserName,
+                        Address = model.Address,
+                        User = user
+                    };
+
+                    await _customerRepository.CreateAsync(customer);
 
                     result = await _userHelper.AddUserToRoleAsync(user, "Customer");
 

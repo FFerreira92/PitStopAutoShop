@@ -48,7 +48,7 @@ namespace PitStopAutoShop.Web.Helpers
 
         public async Task<bool> CheckUserInRoleAsync(User user, string roleName)
         {
-           return await _userManager.IsInRoleAsync(user,roleName);
+           return await _userManager.IsInRoleAsync(user,roleName);            
         }
 
         public async Task<IdentityResult> ConfirmEmailAsync(User user, string token)

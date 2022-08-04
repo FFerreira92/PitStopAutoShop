@@ -16,7 +16,9 @@ namespace PitStopAutoShop.Web.Models
         [MaxLength(100, ErrorMessage = "The field {0} can only contain {1} characters.")]
         public string Address { get; set; }
 
-        [MaxLength(100, ErrorMessage = "The field {0} can only contain {1} characters.")]
+        [RegularExpression("^[0-9]*$", ErrorMessage = "{0} must be numeric")]
+        [Display(Name = "Phone Number")]
+        [MaxLength(20)]
         public string PhoneNumber { get; set; }
 
         [Display(Name = "Email")]
