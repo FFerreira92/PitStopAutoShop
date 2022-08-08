@@ -1,0 +1,72 @@
+﻿@model PitStopAutoShop.Web.Data.Entities.Customer
+
+@{
+    Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
+    ViewData["Title"] = "Customers";
+    ViewData["Controller"] = "Customers";
+    ViewData["Action"] = "Customer Details";
+}
+
+<div>
+    <hr />
+    <h4 style="text-align:center ">Customer @Html.DisplayFor(model => model.FullName) </h4>
+    <hr />
+    <div class="row" style="justify-content:center">
+        <div class="col-md-8">
+            <dl class="row">
+                <dt class="col-sm-6" style="text-align:end">
+                    @Html.DisplayNameFor(model => model.FullName)
+                </dt>
+                <dd class="col-sm-6">
+                    @Html.DisplayFor(model => model.FullName)
+                </dd>
+                <dt class="col-sm-6" style="text-align:end">
+                    @Html.DisplayNameFor(model => model.Address)
+                </dt>
+                <dd class="col-sm-6">
+                    @Html.DisplayFor(model => model.Address)
+                </dd>
+                <dt class="col-sm-6" style="text-align:end">
+                    @Html.DisplayNameFor(model => model.PhoneNumber)
+                </dt>
+                <dd class="col-sm-6">
+                    @Html.DisplayFor(model => model.PhoneNumber)
+                </dd>
+                <dt class="col-sm-6" style="text-align:end">
+                    @Html.DisplayNameFor(model => model.Nif)
+                </dt>
+                <dd class="col-sm-6">
+                    @Html.DisplayFor(model => model.Nif)
+                </dd>
+                <dt class="col-sm-6" style="text-align:end">
+                    @Html.DisplayNameFor(model => model.Email)
+                </dt>
+                <dd class="col-sm-6">
+                    @Html.DisplayFor(model => model.Email)
+                </dd>  
+                <dt class="col-sm-6" style="text-align:end"> 
+                    @Html.DisplayNameFor(model => model.Vehicles)
+                </dt>
+                <dd class="col-sm-6">
+                    @Html.DisplayFor(model => model.Vehicles.Count)
+                </dd>
+            </dl>
+        </div>
+       @* <div class="col-md-4">
+            <img src="@Url.Content(Model.ImageFullPath)" alt="Image" style="width: 300px; height: 450px; max-width: 100%; height: auto"/>
+        </div>*@
+    </div>
+    <hr/>
+
+    <div>
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fas fa-user-pen"></i> Edit</a> 
+    <a asp-action="Index" class="btn btn-success"><i class="fas fa-arrow-circle-left"></i> Back to List</a>
+    </div>
+
+
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}    
+}
+

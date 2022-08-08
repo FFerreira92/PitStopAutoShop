@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace PitStopAutoShop.Web.Data.Entities
@@ -30,6 +31,8 @@ namespace PitStopAutoShop.Web.Data.Entities
         public string PhoneNumber { get; set; }
                 
         public User User { get; set; }
+
+        public ICollection<Vehicle> Vehicles { get; set; }
 
         [Display(Name ="Full Name")]
         public string FullName => $"{FirstName} {LastName}";

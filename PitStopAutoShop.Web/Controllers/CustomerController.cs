@@ -3,6 +3,7 @@ using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Data.Repositories;
 using PitStopAutoShop.Web.Helpers;
 using PitStopAutoShop.Web.Models;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -198,6 +199,53 @@ namespace PitStopAutoShop.Web.Controllers
             return View(model);
         }
 
+
+        public async Task<IActionResult> Details(int? id)
+        {
+
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var customer = await _customerRepository.GetCustomerWithUserByIdAsync(id.Value);
+
+            if(customer == null)
+            {
+                return NotFound();
+            }
+
+            return View(customer);
+        }
+
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var customer = await _customerRepository.GetCustomerWithUserByIdAsync(id.Value);
+
+
+            if(customer == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                await _customerRepository.DeleteAsync(customer);
+                //deveria remover a conta de utilizador tambem? 
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);                
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
 
     }
 }

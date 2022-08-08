@@ -66,6 +66,7 @@ namespace PitStopAutoShop.Web
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IMechanicRepository, MechanicRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IVehicleRepository, VehicleRepository>();
 
             services.ConfigureApplicationCookie(options =>
             {
@@ -102,6 +103,11 @@ namespace PitStopAutoShop.Web
 
             app.UseEndpoints(endpoints =>
             {
+                //endpoints.MapControllerRoute(
+                //    name: "vehicles",
+                //    pattern: "{controller=Vehicles}/{action=Index}/{string?}");
+
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
