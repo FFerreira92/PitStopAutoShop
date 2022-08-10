@@ -1,0 +1,91 @@
+﻿@model IEnumerable<PitStopAutoShop.Web.Data.Entities.Role>
+
+@{
+    Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
+    ViewData["Title"] = "Employees";
+    ViewData["Controller"] = "Manage Roles";
+    ViewData["Action"] = null;
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
+
+
+<div class="container-fluid">
+    <div>
+        <table class="hover stripe compact row-border" style="display:inline-table" id="MyTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.NumberOfSpecialties)
+                    </th>                    
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+        @foreach (var item in Model) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NumberOfSpecialties)
+                    </td>                    
+                    <td id="@item.Id">
+                        <a asp-action="EditRole" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-edit"></i></a> 
+                        <a asp-action="RoleDetails" asp-route-id="@item.Id"  class="btn btn-warning"><i class="fas fa-list"></i></a> 
+                        <a asp-action="DeleteRole" asp-route-id="@item.Id" class="btn btn-danger pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<a asp-action="CreateRole" class="btn btn-primary btn-sm"><i class="fas fa-folder-plus"></i>  Add Role</a>
+
+<partial name="_DeleteDialog" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+       
+        $(document).ready(function() {
+            $('#MyTable').DataTable({
+                columnDefs: [{
+                    className: 'dt-center', targets: "_all"
+                }]
+            });
+        });
+
+        $(document).ready(function() {
+            
+            let id = 0;
+
+            $("a[id*=btnDelete]").click(function() {
+                debugger;
+                id=$(this).parent()[0].id;
+                $("#deleteDialog").modal("show");
+                return false;
+            });
+
+            $("#btnNoDelete").click(function() {
+                $("#deleteDialog").modal("hide");
+                return false;
+            });
+
+            $("#btnYesDelete").click(function() {
+                window.location.href = "/Employees/DeleteRole/"+id;
+            });
+
+        });
+
+    </script>
+}
+
+

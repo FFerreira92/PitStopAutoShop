@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 namespace PitStopAutoShop.Web.Data.Entities
 {
-    public class Mechanic : IEntity
+    public class Employee : IEntity
     {
         public int Id { get; set; }
 
@@ -18,7 +18,10 @@ namespace PitStopAutoShop.Web.Data.Entities
         public string LastName { get; set; }
 
         [Required(ErrorMessage = "Must insert the {0}.")]
-        public string Specialty { get; set; }
+        public Specialty Specialty { get; set; }
+        
+        [Required(ErrorMessage = "Must insert the {0}.")]
+        public Role Role { get; set; }
 
         public string About { get; set; }
 

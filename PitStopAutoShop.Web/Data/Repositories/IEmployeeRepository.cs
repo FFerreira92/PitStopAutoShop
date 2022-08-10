@@ -7,13 +7,11 @@ using PitStopAutoShop.Web.Data.Entities;
 
 namespace PitStopAutoShop.Web.Data.Repositories
 {
-    public interface IMechanicRepository : IGenericRepository<Mechanic>
+    public interface IEmployeeRepository : IGenericRepository<Employee>
     {
-        IQueryable GetAllWithUsers();
+        IQueryable GetAllWithUsers();    
 
-        IEnumerable<SelectListItem> GetComboMechanics();
-
-        Task<Mechanic> GetMechanicByIdAsync(int mechanicId);
+        Task<Employee> GetEmployeeByIdAsync(int employeeId);
 
     }
 }

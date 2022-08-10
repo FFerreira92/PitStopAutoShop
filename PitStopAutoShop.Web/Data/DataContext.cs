@@ -6,7 +6,11 @@ namespace PitStopAutoShop.Web.Data
 {
     public class DataContext : IdentityDbContext<User>
     {
-        public DbSet<Mechanic> Mechanics { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+
+        public DbSet<Role> EmployeesRoles { get; set; }
+
+        public DbSet<Specialty> Specialties { get; set; }
 
         public DbSet<Customer> Customers { get; set; }
 
@@ -28,6 +32,8 @@ namespace PitStopAutoShop.Web.Data
             builder.Entity<Vehicle>().HasIndex(v => v.PlateNumber).IsUnique();
 
             builder.Entity<Customer>().HasIndex(c => c.Nif).IsUnique();
+
+            builder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
         }
 
     }

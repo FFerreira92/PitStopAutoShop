@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Models;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Helpers
@@ -34,5 +37,11 @@ namespace PitStopAutoShop.Web.Helpers
         Task<string> GeneratePasswordResetTokenAsync(User user);
 
         Task<IdentityResult> ResetPasswordAsync(User user, string token, string password);
+
+        IEnumerable<SelectListItem> GetComboExistingRoles();
+
+        Task<string> GetRoleNameByRoleIdAsync(string roleId);
+
+        Task<string> GetRoleIdWithRoleNameAsync(string roleName);
     }
 }

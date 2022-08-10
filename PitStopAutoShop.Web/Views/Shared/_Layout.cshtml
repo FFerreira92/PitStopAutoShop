@@ -48,7 +48,7 @@
                             <a asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                         </li>
 
-                        @if(User.IsInRole("Admin") || User.IsInRole("Mechanic") || User.IsInRole("Receptionist"))
+                        @if(User.IsInRole("Admin") || User.IsInRole("Technician") || User.IsInRole("Receptionist"))
                         {
                             <li>
                                 <a asp-area="" asp-controller="DashboardPanel" asp-action="Index">Admin Panel</a>

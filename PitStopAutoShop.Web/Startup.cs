@@ -67,10 +67,14 @@ namespace PitStopAutoShop.Web
 
             services.AddScoped<IUserHelper,UserHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
-            services.AddScoped<IMechanicRepository, MechanicRepository>();
+            services.AddScoped<IConverterHelper,ConverterHelper>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IBrandRepository, BrandRepository>();
+            services.AddScoped<IEmployeesRolesRepository, EmployeesRolesRepository>();
+
+
 
             services.ConfigureApplicationCookie(options =>
             {

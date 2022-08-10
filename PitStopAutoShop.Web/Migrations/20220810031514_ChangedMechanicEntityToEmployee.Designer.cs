@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PitStopAutoShop.Web.Data;
 
 namespace PitStopAutoShop.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220810031514_ChangedMechanicEntityToEmployee")]
+    partial class ChangedMechanicEntityToEmployee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -233,20 +235,14 @@ namespace PitStopAutoShop.Web.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<int?>("RoleId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SpecialtyId")
-                        .HasColumnType("int");
+                    b.Property<string>("Specialty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.HasIndex("SpecialtyId");
 
                     b.HasIndex("UserId");
 
@@ -273,52 +269,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.HasIndex("BrandId");
 
                     b.ToTable("Models");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("PermissionsName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("EmployeesRoles");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Specialty", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int?>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Specialties");
                 });
 
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.User", b =>
@@ -505,21 +455,9 @@ namespace PitStopAutoShop.Web.Migrations
 
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Employee", b =>
                 {
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Role", "Role")
-                        .WithMany()
-                        .HasForeignKey("RoleId");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Specialty", "Specialty")
-                        .WithMany()
-                        .HasForeignKey("SpecialtyId");
-
                     b.HasOne("PitStopAutoShop.Web.Data.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
-
-                    b.Navigation("Role");
-
-                    b.Navigation("Specialty");
 
                     b.Navigation("User");
                 });
@@ -529,13 +467,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.HasOne("PitStopAutoShop.Web.Data.Entities.Brand", null)
                         .WithMany("Models")
                         .HasForeignKey("BrandId");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Specialty", b =>
-                {
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Role", null)
-                        .WithMany("Specialties")
-                        .HasForeignKey("RoleId");
                 });
 
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Vehicle", b =>
@@ -569,11 +500,6 @@ namespace PitStopAutoShop.Web.Migrations
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Customer", b =>
                 {
                     b.Navigation("Vehicles");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Role", b =>
-                {
-                    b.Navigation("Specialties");
                 });
 #pragma warning restore 612, 618
         }

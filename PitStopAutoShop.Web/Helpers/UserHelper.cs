@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Models;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Helpers
@@ -36,6 +39,7 @@ namespace PitStopAutoShop.Web.Helpers
 
         public async Task CheckRoleAsync(string roleName)
         {
+           
             var roleExists = await _roleManager.RoleExistsAsync(roleName);
             if (!roleExists)
             {
@@ -64,6 +68,37 @@ namespace PitStopAutoShop.Web.Helpers
         public async Task<string> GeneratePasswordResetTokenAsync(User user)
         {
             return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public IEnumerable<SelectListItem> GetComboExistingRoles()
+        {
+            var list = _roleManager.Roles.Select(r => new SelectListItem
+            {
+                Text = r.Name,
+                Value = r.Id
+            }).OrderBy(l => l.Text).ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "[Insert Permission Level]",
+                Value = "0"
+            });
+
+            return list;
+        }
+
+        public async Task<string> GetRoleIdWithRoleNameAsync(string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+
+            return role.Id;
+        }
+
+        public async Task<string> GetRoleNameByRoleIdAsync(string roleId)
+        {
+            var role = await _roleManager.FindByIdAsync(roleId);
+
+            return await _roleManager.GetRoleNameAsync(role);
         }
 
         public async Task<User> GetUserByEmailAsync(string email)

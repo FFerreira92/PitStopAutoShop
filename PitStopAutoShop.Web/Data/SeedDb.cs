@@ -26,10 +26,33 @@ namespace PitStopAutoShop.Web.Data
 
             await AddUserAsync();
 
-            await AddMechanicsAsync();
+            await AddEmployeesRolesAsync();
+
+            await AddEmployeesAsync();
 
             await AddBrandsAsync();
 
+        }
+
+        private async Task AddEmployeesRolesAsync()
+        {
+            if (!_context.EmployeesRoles.Any())
+            {
+                var specialties = new List<Specialty>();
+
+                specialties.Add(new Specialty { Name = "Mechanic" });
+                specialties.Add(new Specialty { Name = "Electrician" });
+                specialties.Add(new Specialty { Name = "Painter" });
+
+                _context.EmployeesRoles.Add(new Role
+                {
+                    Specialties = specialties,
+                    Name = "Technician",
+                    PermissionsName = "Technician"
+                });
+
+                await _context.SaveChangesAsync();
+            }
         }
 
         private async Task AddBrandsAsync()
@@ -59,7 +82,7 @@ namespace PitStopAutoShop.Web.Data
         private async Task CheckCreatedRoles()
         {
             await _userHelper.CheckRoleAsync("Admin");
-            await _userHelper.CheckRoleAsync("Mechanic");
+            await _userHelper.CheckRoleAsync("Technician");
             await _userHelper.CheckRoleAsync("Receptionist");
             await _userHelper.CheckRoleAsync("Customer");
         }
@@ -96,12 +119,12 @@ namespace PitStopAutoShop.Web.Data
             await _context.SaveChangesAsync();
         }
 
-        private async Task AddMechanicsAsync()
+        private async Task AddEmployeesAsync()
         {
-            if (!_context.Mechanics.Any())
+            if (!_context.Employees.Any())
             {
 
-                var mechanicUser1 = new User
+                var employeeUser1 = new User
                 {
                     FirstName = "Joaquim",
                     LastName = "Guedes",
@@ -111,22 +134,22 @@ namespace PitStopAutoShop.Web.Data
                     Address ="Rua do barco"
                 };
 
-                _context.Mechanics.Add(new Mechanic
+                _context.Employees.Add(new Employee
                 {
                     FirstName = "Joaquim",
                     LastName = "Guedes",
-                    Specialty = "Electrician",
                     About = "Born in Lisbon, Joaquim Guedes started his electrician carrer in Bosch Car Service in Lisbon...",
-                    User = mechanicUser1
-
+                    User = employeeUser1,
+                    Role = _context.EmployeesRoles.Where(r => r.Name == "Technician").FirstOrDefault(),
+                    Specialty = _context.Specialties.Where(s => s.Name == "Electrician").FirstOrDefault()
                 });
 
-                await _userHelper.AddUserAsync(mechanicUser1, "123456");                
-                await _userHelper.AddUserToRoleAsync(mechanicUser1, "Mechanic");
-                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(mechanicUser1);
-                await _userHelper.ConfirmEmailAsync(mechanicUser1, token);
+                await _userHelper.AddUserAsync(employeeUser1, "123456");                
+                await _userHelper.AddUserToRoleAsync(employeeUser1, "Technician");
+                var token = await _userHelper.GenerateEmailConfirmationTokenAsync(employeeUser1);
+                await _userHelper.ConfirmEmailAsync(employeeUser1, token);
 
-                var mechanicUser2 = new User
+                var employeeUser2 = new User
                 {
                     FirstName = "Inacio",
                     LastName = "Torres",
@@ -136,19 +159,20 @@ namespace PitStopAutoShop.Web.Data
                     Address = "Rua da banana"
                 };
 
-                _context.Mechanics.Add(new Mechanic
+                _context.Employees.Add(new Employee
                 {
                     FirstName = "Inacio",
-                    LastName = "Torres",
-                    Specialty = "Mechanic",
+                    LastName = "Torres",                    
                     About = "Born in Setúbal, Inacio Torres studied mechatronics in ATEC and then joined PitStop Auto, with 8 years of working experience..",
-                    User = mechanicUser2
+                    User = employeeUser2,
+                    Role = _context.EmployeesRoles.Where(r => r.Name == "Technician").FirstOrDefault(),
+                    Specialty = _context.Specialties.Where(s => s.Name == "Mechanic").FirstOrDefault()
                 });
 
-                await _userHelper.AddUserAsync(mechanicUser2, "123456");                
-                await _userHelper.AddUserToRoleAsync(mechanicUser2, "Mechanic");
-                token = await _userHelper.GenerateEmailConfirmationTokenAsync(mechanicUser2);
-                await _userHelper.ConfirmEmailAsync(mechanicUser2, token);
+                await _userHelper.AddUserAsync(employeeUser2, "123456");                
+                await _userHelper.AddUserToRoleAsync(employeeUser2, "Technician");
+                token = await _userHelper.GenerateEmailConfirmationTokenAsync(employeeUser2);
+                await _userHelper.ConfirmEmailAsync(employeeUser2, token);
 
                 await _context.SaveChangesAsync();
 
