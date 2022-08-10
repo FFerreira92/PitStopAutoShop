@@ -18,14 +18,17 @@ namespace PitStopAutoShop.Web.Data.Repositories
 
         public IQueryable GetAllWithCustomers()
         {
-            return _context.Vehicles.Include(v => v.Customer).OrderBy(v => v.Brand);
+            return _context.Vehicles.Include(v => v.Customer)
+                                    .Include(m => m.Model)
+                                    .Include(b => b.Brand)
+                                    .OrderBy(v => v.Brand.Name);
         }
 
         public IEnumerable<SelectListItem> GetComboVehicles(int customerId)
         {
             var list = _context.Vehicles.Where(v => v.Customer.Id == customerId).Select(l => new SelectListItem
             {
-                Text = l.BrandAndModel,
+                Text = $"{l.Brand.Name} - {l.Model.Name}",
                 Value = l.Id.ToString()
             }).OrderBy(p=> p.Text).ToList();
 
@@ -40,7 +43,10 @@ namespace PitStopAutoShop.Web.Data.Repositories
 
         public async Task<Vehicle> GetVehicleDetailsByIdAsync(int id)
         {
-            return await _context.Vehicles.Include(v => v.Customer).Where(v => v.Id == id).FirstOrDefaultAsync();
+            return await _context.Vehicles.Include(v => v.Customer)
+                                          .Include(b => b.Brand)
+                                          .Include(m => m.Model)
+                                          .Where(v => v.Id == id).FirstOrDefaultAsync();
         }
     }
 }

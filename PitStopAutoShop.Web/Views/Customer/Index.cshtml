@@ -7,48 +7,85 @@
     ViewData["Action"] = null;
 }
 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FullName)
-            </th>            
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nif)
-            </th>          
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nif)
-            </td>            
-            <td>
-                @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Customer"))
-                {                   
-                    <a asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-user-pen"></i></a> 
-                }                     
-                
-                     <a asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-circle-info"></i></a>
+<div class="container-fluid">
+    <div>            
+            <table class="hover stripe row-border" style="display:inline-table" id="MyTable">
+                <thead>
+                    <tr>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FullName)
+                        </th>            
+                        <th>
+                            @Html.DisplayNameFor(model => model.Email)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Nif)
+                        </th>          
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+            @foreach (var item in Model) {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Nif)
+                        </td>            
+                        <td>
+                            @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Customer"))
+                            {                   
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-user-pen"></i></a> 
+                            }                     
+                            
+                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning"><i class="fas fa-list"></i></a>
+            
+                            @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Customer"))
+                            {
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger pull-right"><i class="fas fa-trash"></i></a>
+                            }
+                        </td>
+                    </tr>
+            }
+                </tbody>
+            </table>
+    </div>
+</div>
 
-                @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Customer"))
-                {
-                    <a asp-action="Delete" asp-route-id="@item.Id"><i class="far fa-trash-can"></i></a>
-                }
-            </td>
-        </tr>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+     <script type="text/javascript">
+        $(document).ready(function () {
+            $('#MyTable').DataTable({
+                columnDefs: [{
+                    className: 'dt-center', targets: "_all"
+                }]
+            });
+        });
+
+
+        $(document).ready(function () {
+            let id = 0;
+            $('a[id*=btnDelete]').click(function () {
+                debugger;
+                id = $(this).parent()[0].id;
+                $("#deleteDialog").modal('show');
+                return false;
+            });
+            $("#btnNoDelete").click(function () {
+                $("#deleteDialog").modal('hide');
+                return false;
+            });
+            $("#btnYesDelete").click(function () {
+                window.location.href = '/Customers/Delete/' + id;
+            });
+        });
+    </script>
 }
-    </tbody>
-</table>

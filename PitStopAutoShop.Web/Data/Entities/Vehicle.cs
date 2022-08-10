@@ -7,13 +7,13 @@ namespace PitStopAutoShop.Web.Data.Entities
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage ="Must insert the {0}.")]
-        [MaxLength(50)]
-        public string Brand { get; set; }
-
-        [Required(ErrorMessage = "Must insert the {0}.")]
-        [MaxLength(50)]
-        public string Model { get; set; }
+        [Required]
+        [Display(Name ="Brand")]
+        public Brand Brand { get; set; }
+        
+        [Required]
+        [Display(Name = "Model")]
+        public Model Model { get; set; }
 
         [Display(Name = "Date of Construction")]
         [DisplayFormat(DataFormatString ="{0:dd/MM/yyyy}", ApplyFormatInEditMode =false)]
@@ -34,7 +34,6 @@ namespace PitStopAutoShop.Web.Data.Entities
         public int CustomerId { get; set; }
 
         public Customer Customer { get; set; }
-
-        public string BrandAndModel => $"{Brand} - {Model}";
+    
     }
 }

@@ -1,6 +1,7 @@
 ﻿using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,6 +28,32 @@ namespace PitStopAutoShop.Web.Data
 
             await AddMechanicsAsync();
 
+            await AddBrandsAsync();
+
+        }
+
+        private async Task AddBrandsAsync()
+        {
+            if (!_context.Brands.Any())
+            {
+                var models = new List<Model>();
+
+                models.Add(new Model { Name = "Astra" });
+                models.Add(new Model { Name = "Combo" });
+                models.Add(new Model { Name = "Corsa" });
+                models.Add(new Model { Name = "GrandLand" });
+                models.Add(new Model { Name = "Insignia" });
+                models.Add(new Model { Name = "Mokka" });
+                models.Add(new Model { Name = "Zafira" });
+
+                _context.Brands.Add(new Brand
+                {
+                    Models = models,
+                    Name = "Opel"
+                });
+
+                await _context.SaveChangesAsync();
+            }
         }
 
         private async Task CheckCreatedRoles()

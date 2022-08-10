@@ -15,5 +15,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
         Task<Customer> GetCustomerByUserIdAsync(string userId);
 
         Task<Customer> GetCustomerByEmailAsync(string email);
+
+        
     }
 }

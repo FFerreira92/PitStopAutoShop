@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PitStopAutoShop.Web.Data;
 
 namespace PitStopAutoShop.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220808184112_updatedVehicleEntity")]
+    partial class updatedVehicleEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,23 +152,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Brand", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Brands");
-                });
-
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Customer", b =>
                 {
                     b.Property<int>("Id")
@@ -190,7 +175,7 @@ namespace PitStopAutoShop.Web.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nif")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(20)
@@ -200,10 +185,6 @@ namespace PitStopAutoShop.Web.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Nif")
-                        .IsUnique()
-                        .HasFilter("[Nif] IS NOT NULL");
 
                     b.HasIndex("UserId");
 
@@ -245,28 +226,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Mechanics");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Model", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BrandId");
-
-                    b.ToTable("Models");
                 });
 
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.User", b =>
@@ -353,8 +312,10 @@ namespace PitStopAutoShop.Web.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
@@ -365,8 +326,10 @@ namespace PitStopAutoShop.Web.Migrations
                     b.Property<int>("Horsepower")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ModelId")
-                        .HasColumnType("int");
+                    b.Property<string>("Model")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PlateNumber")
                         .IsRequired()
@@ -379,11 +342,7 @@ namespace PitStopAutoShop.Web.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BrandId");
-
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("ModelId");
 
                     b.HasIndex("PlateNumber")
                         .IsUnique();
@@ -460,39 +419,15 @@ namespace PitStopAutoShop.Web.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Model", b =>
-                {
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Brand", null)
-                        .WithMany("Models")
-                        .HasForeignKey("BrandId");
-                });
-
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Vehicle", b =>
                 {
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Brand", "Brand")
-                        .WithMany()
-                        .HasForeignKey("BrandId");
-
                     b.HasOne("PitStopAutoShop.Web.Data.Entities.Customer", "Customer")
                         .WithMany("Vehicles")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Model", "Model")
-                        .WithMany()
-                        .HasForeignKey("ModelId");
-
-                    b.Navigation("Brand");
-
                     b.Navigation("Customer");
-
-                    b.Navigation("Model");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Brand", b =>
-                {
-                    b.Navigation("Models");
                 });
 
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Customer", b =>

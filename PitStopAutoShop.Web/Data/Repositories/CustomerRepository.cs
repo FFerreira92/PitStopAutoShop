@@ -47,6 +47,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
             return await _context.Customers.Include(v => v.Vehicles).Where(c => c.User.Id == userId).FirstOrDefaultAsync();
         }
 
+
         public async Task<Customer> GetCustomerWithUserByIdAsync(int customerId)
         {
             var customer = await _context.Customers.Include(u => u.User)

@@ -7,6 +7,8 @@
     ViewData["Action"] = "Customer Details";
 }
 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
+
 <div>
     <hr />
     <h4 style="text-align:center ">Customer @Html.DisplayFor(model => model.FullName) </h4>
@@ -58,15 +60,110 @@
     </div>
     <hr/>
 
+    @if(Model.Vehicles.Count > 0)
+    {
+        <h4 style="text-align:center">@Model.FullName vehicles</h4>
+        <hr/>
+
+        <div class="container-fluid">
+            
+            <div>
+                <table class="hover stripe compact row-border" style="display:inline-table" id="MyTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Vehicles.FirstOrDefault().PlateNumber)
+                            </th>
+                             <th>
+                                @Html.DisplayNameFor(model => model.Vehicles.FirstOrDefault().Brand)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Vehicles.FirstOrDefault().Model)
+                            </th>
+                             <th>
+                                @Html.DisplayNameFor(model => model.Vehicles.FirstOrDefault().DateOfConstruction)
+                            </th>
+                             <th>
+                                @Html.DisplayNameFor(model => model.Vehicles.FirstOrDefault().Horsepower)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var item in Model.Vehicles)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.PlateNumber)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Brand.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Model.Name)
+                                </td>                                
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.DateOfConstruction)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Horsepower)
+                                </td>
+                                <td id="@item.Id">
+                                    <a asp-action="Edit" asp-controller="Vehicles" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-edit"></i> </a>
+                                    <a asp-action="Details" asp-controller="Vehicles" asp-route-id="@item.Id" class="btn btn-warning"><i class="fas fa-list"></i> </a>
+                                    <a asp-action="Delete" asp-controller="Vehicles" asp-route-id="@item.Id" class="btn btn-danger pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h4 style="text-align:center">No vehicles added to @Model.FullName yet.</h4>
+        <hr/>
+    }
+
     <div>
     <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fas fa-user-pen"></i> Edit</a> 
     <a asp-action="Index" class="btn btn-success"><i class="fas fa-arrow-circle-left"></i> Back to List</a>
     </div>
 
-
 </div>
 
+<partial name="_DeleteDialog" />
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}    
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+     <script type="text/javascript">
+        $(document).ready(function () {
+            $('#MyTable').DataTable({
+                columnDefs: [{
+                    className: 'dt-center', targets: "_all"
+                }]
+            });
+        });
+
+
+        $(document).ready(function () {
+            let id = 0;
+            $('a[id*=btnDelete]').click(function () {
+                debugger;
+                id = $(this).parent()[0].id;
+                $("#deleteDialog").modal('show');
+                return false;
+            });
+            $("#btnNoDelete").click(function () {
+                $("#deleteDialog").modal('hide');
+                return false;
+            });
+            $("#btnYesDelete").click(function () {
+                window.location.href = '/Vehicles/Delete/' + id;
+            });
+        });
+    </script>
 }
 

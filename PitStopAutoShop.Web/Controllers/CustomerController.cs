@@ -14,14 +14,22 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly ICustomerRepository _customerRepository;
         private readonly IUserHelper _userHelper;
         private readonly IMailHelper _mailHelper;
+        private readonly IVehicleRepository _vehicleRepository;
+        private readonly IBrandRepository _brandRepository;
 
-        public CustomerController(ICustomerRepository customerRepository
-                                    , IUserHelper userHelper
-                                    ,IMailHelper mailHelper)
+        public CustomerController(
+            ICustomerRepository customerRepository
+            , IUserHelper userHelper
+            ,IMailHelper mailHelper
+            ,IVehicleRepository vehicleRepository
+            ,IBrandRepository brandRepository
+        )
         {
             _customerRepository = customerRepository;
             _userHelper = userHelper;
             _mailHelper = mailHelper;
+            _vehicleRepository = vehicleRepository;
+            _brandRepository = brandRepository;
         }
 
         public IActionResult Index()
@@ -43,40 +51,64 @@ namespace PitStopAutoShop.Web.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userHelper.GetUserByEmailAsync(model.UserName);
+                bool userExists = false;
+                Response isSent = new Response();
 
-                if(user != null)
+                if (user != null)
+                {
+                   userExists = true;
+                }
+
+                var customer = await _customerRepository.GetCustomerByEmailAsync(model.UserName);
+
+                if (customer != null)
                 {
                     ModelState.AddModelError(string.Empty, "Customer email already in use.");
                     return View(model);
                 }
 
-                user = new User
+                if (!userExists)
                 {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    PhoneNumber = model.PhoneNumber,
-                    Email = model.UserName,
-                    UserName = model.UserName,
-                    Address = model.Address
-                };
+                    user = new User
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        PhoneNumber = model.PhoneNumber,
+                        Email = model.UserName,
+                        UserName = model.UserName,
+                        Address = model.Address
+                    };
 
-                var response = await _userHelper.AddUserAsync(user, "DefaultPassword123");
+                    var response = await _userHelper.AddUserAsync(user, "DefaultPassword123");
 
-                if (!response.Succeeded)
-                {
-                    ModelState.AddModelError(string.Empty, "Failed to create User");
-                    return View(model);
-                }
+                    if (!response.Succeeded)
+                    {
+                        ModelState.AddModelError(string.Empty, "Failed to create User");
+                        return View(model);
+                    }
 
-                var result = await _userHelper.AddUserToRoleAsync(user, "Customer");
+                    var result = await _userHelper.AddUserToRoleAsync(user, "Customer");
 
-                if (!result.Succeeded)
-                {
-                    ModelState.AddModelError(string.Empty, "The user couldn't be created, failed to assign as customer");
-                    return View(model);
-                }
+                    if (!result.Succeeded)
+                    {
+                        ModelState.AddModelError(string.Empty, "The user couldn't be created, failed to assign as customer");
+                        return View(model);
+                    }
+                    
+                    string userToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                    string tokenLink = Url.Action("ConfirmEmail", "Account", new
+                    {
+                        userId = user.Id,
+                        token = userToken
+                    }, protocol: HttpContext.Request.Scheme);
 
-                var customer = new Customer
+                    isSent = _mailHelper.SendEmail(model.UserName, "Welcome to PitStop Auto Lisbon", $"<h1>Email Confirmation</h1>" +
+                    $"Welcome to PitStop Auto!</br></br>Since you have ordered a service with the best auto shop in Lisbon we created you an account!</br>" +
+                    $"To allow you to access the website, " +
+                    $"please click in the following link to finish the process:<a href= \"{tokenLink}\"> Confirm Email </a>");                    
+                }             
+               
+                customer = new Customer
                 {
                     FirstName = model.FirstName,
                     LastName = model.LastName,
@@ -87,7 +119,15 @@ namespace PitStopAutoShop.Web.Controllers
                     PhoneNumber = model.PhoneNumber,
                 };
 
-                await _customerRepository.CreateAsync(customer);
+                try
+                {
+                    await _customerRepository.CreateAsync(customer);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, ex.InnerException.Message);
+                    return View(model);
+                }                
 
                 var confirmNewCustomerExists = await _customerRepository.CheckIfCustomerInBdByEmailAsync(model.UserName);
 
@@ -95,23 +135,16 @@ namespace PitStopAutoShop.Web.Controllers
                 {
                     ModelState.AddModelError(string.Empty, "The customer couldn't be created, failed to add to Database");
                     return View(model);
-                }
-
-                string userToken = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
-                string tokenLink = Url.Action("ConfirmEmail", "Account", new
-                {
-                    userId = user.Id,
-                    token = userToken
-                }, protocol: HttpContext.Request.Scheme);
-
-                Response isSent = _mailHelper.SendEmail(model.UserName, "Welcome to PitStop Auto Lisbon", $"<h1>Email Confirmation</h1>" +
-                    $"Welcome to PitStop Auto!</br></br>Since you have ordered a service with the best auto shop in Lisbon we created you an account!</br>" +
-                    $"To allow you to access the website, " +
-                    $"please click in the following link to finish the process:<a href= \"{tokenLink}\"> Confirm Email </a>");
+                }                
 
                 if (isSent.IsSuccess)
                 {
                     ViewBag.Message = $"Customer account has been created and an email has been sent to {user.Email}, please inform the customer about account creation!";
+                    return View(model);
+                }
+                else
+                {
+                    ViewBag.Message = $"Customer has been created!";
                     return View(model);
                 }
             }
@@ -191,7 +224,15 @@ namespace PitStopAutoShop.Web.Controllers
                 customer.PhoneNumber = model.PhoneNumber;
                 customer.Nif = model.Nif;
 
-                await _customerRepository.UpdateAsync(customer);
+                try
+                {
+                    await _customerRepository.UpdateAsync(customer);
+                }
+                catch (Exception ex) 
+                {
+                    ModelState.AddModelError(string.Empty, ex.InnerException.Message);
+                    return View(model);
+                }                
 
                 return RedirectToAction(nameof(Index));
             }
@@ -214,6 +255,18 @@ namespace PitStopAutoShop.Web.Controllers
             {
                 return NotFound();
             }
+
+            if(customer.Vehicles.Count > 0)
+            {
+                foreach(var vehicle in customer.Vehicles)
+                {
+                    var customerVehicle = await _vehicleRepository.GetVehicleDetailsByIdAsync(vehicle.Id);
+
+                    vehicle.Brand = customerVehicle.Brand;
+                    vehicle.Model = customerVehicle.Model;
+                }
+            }
+
 
             return View(customer);
         }

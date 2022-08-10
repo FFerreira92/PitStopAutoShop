@@ -16,6 +16,7 @@ using PitStopAutoShop.Web.Data.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Vereyon.Web;
 
 namespace PitStopAutoShop.Web
 {
@@ -60,6 +61,8 @@ namespace PitStopAutoShop.Web
                 cfg.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
 
+            services.AddFlashMessage();
+
             services.AddTransient<SeedDb>();
 
             services.AddScoped<IUserHelper,UserHelper>();
@@ -67,6 +70,7 @@ namespace PitStopAutoShop.Web
             services.AddScoped<IMechanicRepository, MechanicRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IVehicleRepository, VehicleRepository>();
+            services.AddScoped<IBrandRepository, BrandRepository>();
 
             services.ConfigureApplicationCookie(options =>
             {

@@ -253,6 +253,18 @@
               </p>
             </a>            
           </li>
+
+          @if (User.IsInRole("Admin"))
+          {
+              <li class="nav-item">
+                  <a asp-area="" asp-action="Index" asp-controller="Brands" class="nav-link">
+                    <i class="nav-icon fas fa-pencil"></i>
+                    <p>
+                      Vehicle Brands                
+                    </p>
+                  </a>            
+              </li>
+          }
                     
           <li class="nav-header">UTILITIES
 
@@ -330,13 +342,17 @@
             </ol>
           </div>
         </div>
+        
+        <flash dismissable="false" />
       </div><!-- /.container-fluid -->
-    </section>
+    </section>            
 
 
            @RenderBody()
-
+           
     </div>
+
+    
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->

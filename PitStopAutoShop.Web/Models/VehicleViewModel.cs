@@ -2,18 +2,30 @@
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace PitStopAutoShop.Web.Models
 {
-    public class AddVehicleViewModel
+    public class VehicleViewModel
     {
-        [Required(ErrorMessage = "Must insert the {0}.")]
-        [MaxLength(50)]
-        public string Brand { get; set; }
+
+        public int VehicleId { get; set; }
 
         [Required(ErrorMessage = "Must insert the {0}.")]
-        [MaxLength(50)]
-        public string Model { get; set; }
+        [Display(Name ="Brand")]
+        [Range(1,int.MaxValue,ErrorMessage ="You must select a brand")]
+        public int BrandId { get; set; }
+
+        public IEnumerable<SelectListItem> Brands { get; set; }
+
+        [Required(ErrorMessage = "Must insert the {0}.")]
+        [Display(Name = "Model")]
+        [Range(1, int.MaxValue, ErrorMessage = "You must select a brand")]
+        public int ModelId { get; set; }
+
+        public IEnumerable<SelectListItem> Models { get; set; }
+
 
         [Required(ErrorMessage = "Must insert the {0}.")]
         [Display(Name = "Date of Construction")]
