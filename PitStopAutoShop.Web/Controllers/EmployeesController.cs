@@ -4,6 +4,7 @@ using PitStopAutoShop.Web.Data.Repositories;
 using PitStopAutoShop.Web.Helpers;
 using PitStopAutoShop.Web.Models;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Vereyon.Web;
 
@@ -16,18 +17,21 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IConverterHelper _converterHelper;
         private readonly IEmployeesRolesRepository _employeesRolesRepository;
         private readonly IFlashMessage _flashMessage;
+        private readonly IMailHelper _mailHelper;
 
         public EmployeesController(IEmployeeRepository employeeRepository
                                   ,IUserHelper userHelper
                                   ,IConverterHelper converterHelper
                                   ,IEmployeesRolesRepository employeesRolesRepository
-                                  ,IFlashMessage flashMessage)                                  
+                                  ,IFlashMessage flashMessage
+                                  ,IMailHelper mailHelper)                                  
         {
             _employeeRepository = employeeRepository;
             _userHelper = userHelper;
             _converterHelper = converterHelper;
             _employeesRolesRepository = employeesRolesRepository;
             _flashMessage = flashMessage;
+            _mailHelper = mailHelper;
         }
 
         public IActionResult Index()
@@ -344,5 +348,222 @@ namespace PitStopAutoShop.Web.Controllers
             return RedirectToAction($"RoleDetails", new { id = roleId });
         }
 
+        public IActionResult Create()
+        {
+
+            var model = new EmployeeViewModel
+            {
+                Roles = _employeesRolesRepository.GetComboRoles(),
+                Specialties = _employeesRolesRepository.GetComboSpecialty(0)
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(EmployeeViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var newUser = new User
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    UserName = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    Address = model.Address,
+                };
+
+                var result = await _userHelper.AddUserAsync(newUser, "DefaultPassword123");                
+
+                if(!result.Succeeded)
+                {
+                    _flashMessage.Danger("There was an error creating the Employee user data.");
+                    return View(model);
+                }
+
+                var employee = await _converterHelper.ToEmployee(model, newUser, true);
+
+                if(employee == null)
+                {
+                    _flashMessage.Danger("There was an error creating the employee.");
+                    return View(model);
+                }
+              
+                result = await _userHelper.AddUserToRoleAsync(newUser, employee.Role.PermissionsName);
+
+                if (!result.Succeeded)
+                {
+                    _flashMessage.Danger("There was an error adding the user to the required permission level.");
+                    return View(model);
+                }
+
+                var userToken = await _userHelper.GenerateEmailConfirmationTokenAsync(newUser);
+                string tokenLink = Url.Action("ConfirmEmail", "Account", new
+                {
+                    userId = newUser.Id,
+                    token = userToken
+                }, protocol: HttpContext.Request.Scheme);
+
+                Response isSent = _mailHelper.SendEmail(model.Email, "Welcome to PitStop Auto Lisbon", $"<h1>Email Confirmation</h1>" +
+                   $"Welcome to PitStop Auto!</br></br>First of all congratulations! You are now a new PitStop AutoStop employee! </br>" +
+                   $"To allow you to access the website and the management system, " +
+                   $"please click in the following link:<a href= \"{tokenLink}\"> Confirm Email </a>");                            
+
+                if (isSent.IsSuccess)
+                {
+                    _flashMessage.Confirmation("Employee was created with success! Please allow employee to know that he needs to confirm the email address!");
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    _flashMessage.Warning("There was an error sending the confirmation email. But the employee has been created. Ask System manager to validate the email address or Delete the employee and try adding him later.");
+                    return View(model);
+                }
+            }
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var employee = await _employeeRepository.GetEmployeeByIdAsync(id.Value);
+
+            if(employee == null)
+            {
+                return NotFound();
+            }
+
+            var model = _converterHelper.ToEmployeeViewModel(employee,false);
+
+            if(model == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(EmployeeViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByIdAsync(model.UserId);
+
+                if(user == null)
+                {
+                    _flashMessage.Warning("There was an error updating the employee");
+                    return View(model);
+                }                                
+
+                user.Address = model.Address;
+                user.PhoneNumber = model.PhoneNumber;
+                user.FirstName = model.FirstName;
+                user.LastName = model.LastName;
+                if(user.Email != model.Email)
+                {
+                    user.UserName = model.Email;
+                    user.Email = model.Email;
+                    var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                    await _userHelper.ConfirmEmailAsync(user, token);
+                }
+
+                var result = await _userHelper.UpdateUserAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    _flashMessage.Warning("There was an error updating the employee user information.");
+                    return View(model);
+                }
+
+
+                var employee = await _converterHelper.ToEmployee(model,user,false);
+
+                if(employee == null)
+                {
+                    _flashMessage.Warning("There was an error updating the employee.");
+                    return View(model);
+                }
+
+                try
+                {
+                    await _employeeRepository.UpdateAsync(employee);
+                    _flashMessage.Confirmation("Employee was sucessufuly updated.");
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    _flashMessage.Danger("There was an error updating the employee. "+ex.InnerException.Message);
+                    return View(model);
+                }              
+
+            }
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var employee = await _employeeRepository.GetEmployeeByIdAsync(id.Value);
+
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            var model = _converterHelper.ToEmployeeViewModel(employee, false);
+
+            return View(model);
+        }
+
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var employee = await _employeeRepository.GetEmployeeByIdAsync(id.Value);
+
+            if(employee == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                await _employeeRepository.DeleteAsync(employee);
+                _flashMessage.Confirmation("Employee was sucessufuly deleted.");               
+            }
+            catch (Exception ex)
+            {
+                _flashMessage.Danger("There was a problem deleting the employee. "+ ex.InnerException.Message);                
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+        [HttpPost]
+        [Route("Employees/GetSpecialtiesAsync")]
+        public async Task<JsonResult> GetSpecialtiesAsync(int roleId)
+        {
+            var role = await _employeesRolesRepository.GetRoleWithSpecialtiesAsync(roleId);
+            return Json(role.Specialties.OrderBy(s => s.Name));
+        }
     }
 }

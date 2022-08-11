@@ -17,6 +17,10 @@ namespace PitStopAutoShop.Web.Data.Entities
         [MaxLength(25, ErrorMessage = "the field {0} can only contain {1} characters.")]
         public string LastName { get; set; }
 
+        [Required]
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
+
         [Required(ErrorMessage = "Must insert the {0}.")]
         public Specialty Specialty { get; set; }
         

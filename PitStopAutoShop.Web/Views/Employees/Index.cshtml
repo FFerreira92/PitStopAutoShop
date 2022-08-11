@@ -38,7 +38,7 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Specialty.Name)
                         </td>            
-                        <td>
+                        <td id="@item.Id">
                             @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Customer"))
                             {                   
                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-user-pen"></i></a> 
@@ -48,7 +48,7 @@
             
                             @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Customer"))
                             {
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger pull-right"><i class="fas fa-trash"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
                             }
                         </td>
                     </tr>
@@ -57,6 +57,8 @@
             </table>
     </div>
 </div>
+
+<partial name="_DeleteDialog" />
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

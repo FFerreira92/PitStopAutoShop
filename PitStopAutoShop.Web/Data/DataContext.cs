@@ -34,6 +34,8 @@ namespace PitStopAutoShop.Web.Data
             builder.Entity<Customer>().HasIndex(c => c.Nif).IsUnique();
 
             builder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
+
+            builder.Entity<Employee>().HasIndex(e => e.Email).IsUnique();
         }
 
     }

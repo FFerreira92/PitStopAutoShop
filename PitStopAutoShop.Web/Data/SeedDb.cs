@@ -141,7 +141,8 @@ namespace PitStopAutoShop.Web.Data
                     About = "Born in Lisbon, Joaquim Guedes started his electrician carrer in Bosch Car Service in Lisbon...",
                     User = employeeUser1,
                     Role = _context.EmployeesRoles.Where(r => r.Name == "Technician").FirstOrDefault(),
-                    Specialty = _context.Specialties.Where(s => s.Name == "Electrician").FirstOrDefault()
+                    Specialty = _context.Specialties.Where(s => s.Name == "Electrician").FirstOrDefault(),
+                    Email = employeeUser1.Email
                 });
 
                 await _userHelper.AddUserAsync(employeeUser1, "123456");                
@@ -166,7 +167,8 @@ namespace PitStopAutoShop.Web.Data
                     About = "Born in Setúbal, Inacio Torres studied mechatronics in ATEC and then joined PitStop Auto, with 8 years of working experience..",
                     User = employeeUser2,
                     Role = _context.EmployeesRoles.Where(r => r.Name == "Technician").FirstOrDefault(),
-                    Specialty = _context.Specialties.Where(s => s.Name == "Mechanic").FirstOrDefault()
+                    Specialty = _context.Specialties.Where(s => s.Name == "Mechanic").FirstOrDefault(),
+                    Email = employeeUser2.Email
                 });
 
                 await _userHelper.AddUserAsync(employeeUser2, "123456");                

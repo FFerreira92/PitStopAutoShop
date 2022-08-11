@@ -1,0 +1,55 @@
+﻿@model PitStopAutoShop.Web.Models.EmployeeViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
+    ViewData["Title"] = "Employees";
+    ViewData["Controller"] = "Employees";
+    ViewData["Action"] = "Details";
+}
+
+
+<div>
+    <h4>@Model.FirstName @Model.LastName Details</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            Full Name
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FirstName) @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PhoneNumber)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PhoneNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.About)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.About)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SpecialtyId)
+        </dt>
+        <dd class = "col-sm-10">           
+            @Html.DisplayFor(model => model.Specialties.Where(s=>s.Value == model.SpecialtyId.ToString()).FirstOrDefault().Text)
+        </dd>
+    </dl>
+</div>
+<div>    
+    <a asp-action="Index">Back to List</a>
+</div>
