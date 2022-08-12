@@ -73,6 +73,8 @@ namespace PitStopAutoShop.Web
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IBrandRepository, BrandRepository>();
             services.AddScoped<IEmployeesRolesRepository, EmployeesRolesRepository>();
+            services.AddScoped<IServiceRepository, ServiceRespository>();
+            services.AddScoped<IEstimateRepository, EstimateRepository>();
 
 
 

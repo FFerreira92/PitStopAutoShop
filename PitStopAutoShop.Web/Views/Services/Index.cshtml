@@ -1,0 +1,99 @@
+﻿@model IEnumerable<PitStopAutoShop.Web.Data.Entities.Service>
+
+@{
+    Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
+    ViewData["Title"] = "Services";
+    ViewData["Controller"] = "Services";
+    ViewData["Action"] = null;    
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
+
+
+<div class="container-fluid">
+    <div>
+        <table class="hover stripe compact row-border" style="display:inline-table" id="MyTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>                    
+                    <th>
+                        @Html.DisplayNameFor(model => model.Price)
+                    </th> 
+                    <th>
+                        @Html.DisplayNameFor(model => model.Discount)
+                    </th> 
+                     <th>
+                        @Html.DisplayNameFor(model => model.PriceWithDiscount)
+                    </th> 
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+        @foreach (var item in Model) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td> 
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Discount)
+                    </td>   
+                     <td>
+                        @Html.DisplayFor(modelItem => item.PriceWithDiscount)
+                    </td>  
+                    <td id="@item.Id">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-edit"></i></a> 
+                        <a asp-action="Details" asp-route-id="@item.Id"  class="btn btn-warning"><i class="fas fa-list"></i></a> 
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<partial name="_DeleteDialog" />
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+       
+        $(document).ready(function() {
+            $('#MyTable').DataTable({
+                columnDefs: [{
+                    className: 'dt-center', targets: "_all"
+                }]
+            });
+        });
+
+        $(document).ready(function() {
+            
+            let id = 0;
+
+            $("a[id*=btnDelete]").click(function() {
+                debugger;
+                id=$(this).parent()[0].id;
+                $("#deleteDialog").modal("show");
+                return false;
+            });
+
+            $("#btnNoDelete").click(function() {
+                $("#deleteDialog").modal("hide");
+                return false;
+            });
+
+            $("#btnYesDelete").click(function() {
+                window.location.href = "/Services/Delete/"+id;
+            });
+        });
+
+    </script>
+}
+

@@ -23,15 +23,36 @@ namespace PitStopAutoShop.Web.Data
             await _context.Database.EnsureCreatedAsync();
 
             await CheckCreatedRoles();
-
             await AddUserAsync();
-
             await AddEmployeesRolesAsync();
-
             await AddEmployeesAsync();
-
             await AddBrandsAsync();
+            await AddServicesAsync();
 
+        }
+
+        private async Task AddServicesAsync()
+        {
+            if (!_context.Services.Any())
+            {
+                _context.Services.Add(new Service
+                {
+                    Name = "Change tyres",
+                    Description = "Using the latest technology and tools to work your tyres. We change the valve...",
+                    Price = 7.40m,
+                    Discount = 0m
+                });
+
+                _context.Services.Add(new Service
+                {
+                    Name = "Oil Change",
+                    Description = "We use the oil you choose and the way you want!",
+                    Price = 29.90m,
+                    Discount = 0m
+                });
+
+                await _context.SaveChangesAsync();
+            }
         }
 
         private async Task AddEmployeesRolesAsync()

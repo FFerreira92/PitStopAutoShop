@@ -8,8 +8,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
 {
     public interface IVehicleRepository : IGenericRepository<Vehicle>
     {
-        IQueryable GetAllWithCustomers();
-     
+        IQueryable GetAllWithCustomers();     
 
         IEnumerable<SelectListItem> GetComboVehicles(int customerId);
 

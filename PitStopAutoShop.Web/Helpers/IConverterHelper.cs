@@ -13,5 +13,9 @@ namespace PitStopAutoShop.Web.Helpers
         Task<Employee> ToEmployee(EmployeeViewModel model,User user,bool isNew);
 
         EmployeeViewModel ToEmployeeViewModel(Employee employee,bool isNew);
+
+        ServiceViewModel ToServiceViewModel(Service service);
+
+        Service ToService(ServiceViewModel model, bool isNew);
     }
 }

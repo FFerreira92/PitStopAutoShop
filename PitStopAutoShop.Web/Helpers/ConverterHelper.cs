@@ -112,6 +112,29 @@ namespace PitStopAutoShop.Web.Helpers
             };
         }
 
-       
+        public Service ToService(ServiceViewModel model, bool isNew)
+        {
+            return new Service
+            {
+                Id = isNew ? 0 : model.Id,
+                Name = model.Name,
+                Description = model.Description,
+                Discount = model.Discount,
+                Price = model.Price
+            };
+
+        }
+
+        public ServiceViewModel ToServiceViewModel(Service service)
+        {
+            return new ServiceViewModel
+            {
+                Id = service.Id,
+                Name = service.Name,
+                Description = service.Description,
+                Discount = service.Discount,
+                Price = service.Price,
+            };
+        }
     }
 }

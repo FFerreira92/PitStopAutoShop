@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PitStopAutoShop.Web.Data;
 
 namespace PitStopAutoShop.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220811144819_AddedServicesEntity")]
+    partial class AddedServicesEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -260,92 +262,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Estimate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EstimateDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("Estimates");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.EstimateDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("EstimateId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<double>("Quantity")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EstimateId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("EstimateDetails");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.EstimateDetailTemp", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<double>("Quantity")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ServiceId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("EstimateDetailTemps");
-                });
-
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Model", b =>
                 {
                     b.Property<int>("Id")
@@ -402,9 +318,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
-
-                    b.Property<decimal>("Discount")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -644,55 +557,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Estimate", b =>
-                {
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleId");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Vehicle");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.EstimateDetail", b =>
-                {
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Estimate", null)
-                        .WithMany("Services")
-                        .HasForeignKey("EstimateId");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId");
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.EstimateDetailTemp", b =>
-                {
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Service", "Service")
-                        .WithMany()
-                        .HasForeignKey("ServiceId");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Service");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Model", b =>
                 {
                     b.HasOne("PitStopAutoShop.Web.Data.Entities.Brand", null)
@@ -738,11 +602,6 @@ namespace PitStopAutoShop.Web.Migrations
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Customer", b =>
                 {
                     b.Navigation("Vehicles");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Estimate", b =>
-                {
-                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Role", b =>
