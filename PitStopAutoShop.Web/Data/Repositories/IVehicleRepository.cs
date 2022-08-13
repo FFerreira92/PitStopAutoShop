@@ -13,5 +13,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
         IEnumerable<SelectListItem> GetComboVehicles(int customerId);
 
         Task<Vehicle> GetVehicleDetailsByIdAsync(int id);
+
+        IQueryable GetCustomerVehiclesAsync(int customerId);
     }
 }

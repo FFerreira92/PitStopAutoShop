@@ -1,17 +1,65 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
+using PitStopAutoShop.Web.Helpers;
+using PitStopAutoShop.Web.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Data.Repositories
 {
     public class ServiceRespository : GenericRepository<Service>, IServiceRepository
     {
         private readonly DataContext _context;
+        private readonly IUserHelper _userHelper;
 
-        public ServiceRespository(DataContext context) : base(context)
+        public ServiceRespository(DataContext context, IUserHelper userHelper) : base(context)
         {
             _context = context;
+            _userHelper = userHelper;
+        }
+
+        public async Task AddServiceToEstimateAsync(AddServiceToEstimateViewModel model, string userName)
+        {
+           
+            var user = await _userHelper.GetUserByEmailAsync(userName);
+            
+            if(user == null)
+            {
+                return;
+            }
+
+            var service = await _context.Services.FindAsync(model.ServiceId);
+
+            if(service == null)
+            {
+                return;
+            }
+
+            var estimateDetailTemp = await _context.EstimateDetailTemps.Where(edt => edt.VehicleId == model.VehicleId && edt.Service == service && edt.CustomerId == model.CustomerId).FirstOrDefaultAsync();
+
+            if(estimateDetailTemp == null)
+            {
+                estimateDetailTemp = new EstimateDetailTemp
+                {
+                    Price = service.Price,
+                    Service = service,
+                    Quantity = model.Quantity,
+                    User = user,
+                    CustomerId = model.CustomerId,
+                    VehicleId = model.VehicleId,
+                };
+
+                _context.EstimateDetailTemps.Add(estimateDetailTemp);
+            }
+            else
+            {
+                estimateDetailTemp.Quantity += model.Quantity;
+                _context.EstimateDetailTemps.Update(estimateDetailTemp);
+            }
+
+            await _context.SaveChangesAsync();
         }
 
         public IEnumerable<SelectListItem> GetComboServices()

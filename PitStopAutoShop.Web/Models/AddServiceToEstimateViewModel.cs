@@ -14,6 +14,10 @@ namespace PitStopAutoShop.Web.Models
         [Range(0.0001, double.MaxValue, ErrorMessage = "The Quantity must be a positive number.")]
         public double Quantity { get; set; }
 
+        public int CustomerId { get; set; }
+
+        public int VehicleId { get; set; }
+
         public IEnumerable<SelectListItem> Services { get; set; }
     }
 }

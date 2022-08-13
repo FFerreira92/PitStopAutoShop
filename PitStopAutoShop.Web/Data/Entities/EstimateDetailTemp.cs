@@ -12,6 +12,10 @@ namespace PitStopAutoShop.Web.Data.Entities
         [Required]
         public Service Service { get; set; }
 
+        public int CustomerId { get; set; }
+
+        public int VehicleId { get; set; }
+
         [DisplayFormat(DataFormatString = "{0:C2}")]
         public decimal Price { get; set; }
 

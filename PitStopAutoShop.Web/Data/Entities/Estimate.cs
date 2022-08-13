@@ -16,19 +16,19 @@ namespace PitStopAutoShop.Web.Data.Entities
         public DateTime EstimateDate { get; set; }
 
         [Required]
-        public Customer Customer { get; set; }
+        public Customer Customer { get; set; }       
+        
 
         [Required]
         public User CreatedBy { get; set; }
 
         [Required]
-        public Vehicle Vehicle { get; set; }
+        public Vehicle Vehicle { get; set; }       
+        
 
         public IEnumerable<EstimateDetail> Services { get; set; }
-       
-        [DisplayFormat(DataFormatString = "{0:N0}")]
-        public int Lines => Services == null ? 0 : Services.Count();
 
+        [Display(Name ="Nº Services")]
         [DisplayFormat(DataFormatString = "{0:N2}")]
         public double Quantity => Services == null ? 0 : Services.Sum(s => s.Quantity);
 

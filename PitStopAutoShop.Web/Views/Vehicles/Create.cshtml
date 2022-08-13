@@ -73,13 +73,14 @@
         $(document).ready(function() {
             $("#BrandId").change(function() {
                 $("#ModelId").empty();
+                debugger;
                 $.ajax({
                     url: '@Url.Action("GetModelsAsync","Vehicles")',
                     type: 'POST',
                     dataType: 'json',
                     data: {brandId:$("#BrandId").val()},
                     success: function (models) {
-                        debugger;
+                        
                         $("#ModelId").append('<option value="0">[Select a model]</option>');
                         $.each(models, function (i, model) {
                             $("#ModelId").append('<option value="'

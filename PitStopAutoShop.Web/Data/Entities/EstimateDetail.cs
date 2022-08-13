@@ -14,6 +14,10 @@ namespace PitStopAutoShop.Web.Data.Entities
         [DisplayFormat(DataFormatString = "{0:N2}")]
         public double Quantity { get; set; }
 
+        public int CustomerId { get; set; }
+
+        public int VehicleId { get; set; }
+
         public decimal Value => Price * (decimal)Quantity;
 
     }

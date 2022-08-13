@@ -272,7 +272,8 @@ namespace PitStopAutoShop.Web.Controllers
         public async Task<JsonResult> GetModelsAsync(int brandId)
         {
             var brand = await _brandRepository.GetBrandWithModelsAsync(brandId);
-            return Json(brand.Models.OrderBy(m => m.Name));
+            var json = Json(brand.Models.OrderBy(m => m.Name));
+            return json;
         }
 
     }

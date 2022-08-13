@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -35,6 +37,24 @@ namespace PitStopAutoShop.Web.Data.Repositories
                                      .OrderBy(o => o.FirstName);
         }
 
+        public IEnumerable<SelectListItem> GetComboCustomers()
+        {
+
+            var list = _context.Customers.Select(b => new SelectListItem
+            {
+                Text = $"{b.FirstName} {b.LastName}",
+                Value = b.Id.ToString()
+            }).ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "[Select a Customer]",
+                Value = "0"
+            });
+
+            return list;
+        }
+
         public async Task<Customer> GetCustomerByEmailAsync(string email)
         {
             return await _context.Customers.Include(u => u.User)
@@ -52,10 +72,21 @@ namespace PitStopAutoShop.Web.Data.Repositories
         {
             var customer = await _context.Customers.Include(u => u.User)
                                                    .Include(v => v.Vehicles)
+                                                   .ThenInclude(v => v.Brand)
+                                                   .ThenInclude(b => b.Models)
                                                    .FirstOrDefaultAsync(u => u.Id == customerId);
 
             return customer;
 ;
+        }
+
+        public async Task<List<Vehicle>> GetCustomerVehicleAsync(int customerId)
+        {
+            var customerVehicles = await _context.Vehicles.Where(p => p.CustomerId == customerId).ToListAsync();
+
+            return customerVehicles;
+            
+
         }
     }
 }

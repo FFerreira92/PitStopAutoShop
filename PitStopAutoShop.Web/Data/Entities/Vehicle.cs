@@ -9,11 +9,11 @@ namespace PitStopAutoShop.Web.Data.Entities
 
         [Required]
         [Display(Name ="Brand")]
-        public Brand Brand { get; set; }
+        public Brand Brand { get; set; }       
         
         [Required]
         [Display(Name = "Model")]
-        public Model Model { get; set; }
+        public Model Model { get; set; }        
 
         [Display(Name = "Date of Construction")]
         [DisplayFormat(DataFormatString ="{0:dd/MM/yyyy}", ApplyFormatInEditMode =false)]

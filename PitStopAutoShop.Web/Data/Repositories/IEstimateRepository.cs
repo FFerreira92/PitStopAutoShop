@@ -10,7 +10,13 @@ namespace PitStopAutoShop.Web.Data.Repositories
               
 
         IQueryable GetAllEstimates();
-
-        
+        Task<IQueryable<EstimateDetailTemp>> GetDetailTempsAsync(int vehicleId, int customerId);
+        Task CreateEstimateDetailTemp(EstimateDetailTemp estimateDetailTemp);
+        Task<EstimateDetailTemp> GetEstimateDetailTempAsync(string userName);
+        Task ModifyEstimateDetailTempQuantityAsync(int id, double quantity);
+        Task DeleteDetailTempAsync(int id);
+        Task<bool> ConfirmEstimateAsync(string username, int customerId,int vehicleId);
+        Task<EstimateDetailTemp> GetEstimateDetailTempWithVehicleIdAsync(string name, Vehicle vehicle);
+        Task<EstimateDetailTemp> GetEstimateDetailTempByIdAsync(int id);
     }
 }
