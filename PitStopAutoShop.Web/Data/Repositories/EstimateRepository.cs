@@ -106,6 +106,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
                                      .Include(e => e.Vehicle)
                                      .Include(e => e.CreatedBy)
                                      .Include(e => e.Services)
+                                     .ThenInclude(es => es.Service)
                                      .OrderBy(d => d.EstimateDate);
         }
 
@@ -113,6 +114,25 @@ namespace PitStopAutoShop.Web.Data.Repositories
         {      
             var detailtemps =  _context.EstimateDetailTemps.Include(s => s.Service).Where(o => o.CustomerId == customerId && o.VehicleId == vehicleId).OrderBy(o => o.Service.Name);
             return detailtemps;
+        }
+
+        public async Task<Estimate> GetEstimateWithDetailsByIdAsync(int value)
+        {
+            if(value == 0)
+            {
+                return null;
+            }
+
+            var estimate = await _context.Estimates.Include(e=>e.Services)
+                                    .ThenInclude(e => e.Service)                                
+                                    .Where(ed => ed.Id == value).FirstAsync();
+
+            if(estimate == null)
+            {
+                return null;
+            }
+
+            return estimate;
         }
 
         public async Task<EstimateDetailTemp> GetEstimateDetailTempAsync(string userName)
@@ -176,6 +196,31 @@ namespace PitStopAutoShop.Web.Data.Repositories
             }
 
 
+        }
+
+        public async Task<int> DeleteEstimateDetailsAsync(int id)
+        {
+            if(id == 0)
+            {
+                 return 0;
+            }
+
+            var estimateDetails = await _context.EstimateDetails.Where(ed => ed.EstimateId == id).ToListAsync();
+
+            if(estimateDetails == null)
+            {
+                return 0;
+            }
+
+            try
+            {
+                _context.RemoveRange(estimateDetails);
+                return estimateDetails.Count;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }          
         }
     }
 }

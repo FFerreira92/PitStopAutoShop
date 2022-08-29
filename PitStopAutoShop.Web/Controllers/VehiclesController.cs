@@ -102,6 +102,8 @@ namespace PitStopAutoShop.Web.Controllers
                     if (vehicleModel.VehicleIdentificationNumber.Length < 17)
                     {
                         ModelState.AddModelError(string.Empty, "The Vehicle Identification Number (VIN) must have 17 characters.");
+                        vehicleModel.Brands = _brandRepository.GetComboBrands();
+                        vehicleModel.Models = _brandRepository.GetComboModels(0);
                         return View(vehicleModel);
                     }
                 }

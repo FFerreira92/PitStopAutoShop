@@ -18,5 +18,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
         Task<bool> ConfirmEstimateAsync(string username, int customerId,int vehicleId);
         Task<EstimateDetailTemp> GetEstimateDetailTempWithVehicleIdAsync(string name, Vehicle vehicle);
         Task<EstimateDetailTemp> GetEstimateDetailTempByIdAsync(int id);
+        Task<Estimate> GetEstimateWithDetailsByIdAsync(int value);
+        Task<int> DeleteEstimateDetailsAsync(int id);
     }
 }

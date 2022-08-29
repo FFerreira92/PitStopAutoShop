@@ -260,69 +260,61 @@ namespace PitStopAutoShop.Web.Controllers
             return RedirectToAction("Create",new {id = workingEstimateDetail.VehicleId});
         }
 
+        public async Task<IActionResult> Details(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
 
-        /* --------   Tentativa de adicionar cliente e viatura na mesma view (falhada conforme queria, não gostei do outcome...mas funciona se tiver de ser.)*/
+            var estimate = await _estimateRepository.GetEstimateWithDetailsByIdAsync(id.Value);
 
-        //public IActionResult AddCustomer()
-        //{
-        //    var model = new AddCustomerAndVehicleToEstimateViewModel
-        //    {
-        //         Customers = _customerRepository.GetComboCustomers(),
-        //         Vehicles = _vehicleRepository.GetComboVehicles(0)
-        //    };
+            if (estimate == null)
+            {
+                return NotFound();
+            }
 
-        //    return View(model);
-        //}
+            return View(estimate);
+        }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> AddCustomer(AddCustomerAndVehicleToEstimateViewModel model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var customer = await _customerRepository.GetCustomerWithUserByIdAsync(model.CustomerId);
 
-        //        if(customer == null)
-        //        {
-        //            return NotFound();
-        //        }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //        var vehicle = await _vehicleRepository.GetByIdAsync(model.VehicleId);
+            var estimate = await _estimateRepository.GetByIdAsync(id.Value);
 
-        //        if(vehicle == null)
-        //        {
-        //            return NotFound();
-        //        }
+            if (estimate == null)
+            {
+                return NotFound();
+            }
 
-        //        var employeeUser = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+            try
+            {
+                var success = await _estimateRepository.DeleteEstimateDetailsAsync(estimate.Id);
+                if(success > 0)
+                {
+                    await _estimateRepository.DeleteAsync(estimate);
+                    _flashMessage.Confirmation("Estimate deleted with success!");
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    _flashMessage.Danger("There was an error deleting the estimate, probably the estimate is open elsewhere. ");
+                    return RedirectToAction(nameof(Index));
+                }               
+            }
+            catch (Exception ex)
+            {
+                _flashMessage.Danger("There was an error deleting the estimate, probably the estimate is open elsewhere. " + ex.InnerException );
 
-        //        if (employeeUser == null)
-        //        {
-        //            return NotFound();
-        //        }
-
-        //        var estimate = new Estimate
-        //        {
-        //            Vehicle = vehicle,
-        //            Customer = customer,
-        //            CreatedBy = employeeUser,
-        //            EstimateDate = DateTime.UtcNow                    
-        //        };
-
-        //        return RedirectToAction(nameof(Create), estimate);
-        //    }
-
-        //    return View(model);
-        //}
-
-        //[HttpPost]
-        //[Route("Estimates/GetVehiclesAsync")]
-        //public async Task<JsonResult> GetVehiclesAsync(int customerId)
-        //{
-        //    var vehicles = await _customerRepository.GetCustomerVehicleAsync(customerId);
-        //    var json = Json(vehicles);
-        //    return json;
-        //}
+                return RedirectToAction(nameof(Index));
+            }
+        }
+                
 
 
     }

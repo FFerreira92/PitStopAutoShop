@@ -8,6 +8,7 @@ namespace PitStopAutoShop.Web.Data.Entities
 {
     public class Estimate : IEntity
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]
@@ -23,9 +24,9 @@ namespace PitStopAutoShop.Web.Data.Entities
         public User CreatedBy { get; set; }
 
         [Required]
-        public Vehicle Vehicle { get; set; }       
-        
+        public Vehicle Vehicle { get; set; }
 
+       
         public IEnumerable<EstimateDetail> Services { get; set; }
 
         [Display(Name ="Nº Services")]
@@ -33,7 +34,10 @@ namespace PitStopAutoShop.Web.Data.Entities
         public double Quantity => Services == null ? 0 : Services.Sum(s => s.Quantity);
 
         [DisplayFormat(DataFormatString = "{0:C2}")]
-        public decimal Value => Services == null ? 0 : Services.Sum(s => s.Value);
+        public decimal Value => Services.Sum(s => s.Value);
+        
+        [DisplayFormat(DataFormatString = "{0:C2}")]
+        public double ValueWithDiscount => Services.Sum(s=> s.ValueWithDiscount);
 
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
+using System.Linq;
+using System.Reflection.Emit;
 
 namespace PitStopAutoShop.Web.Data
 {
@@ -26,15 +28,18 @@ namespace PitStopAutoShop.Web.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
+       
+            
 
-            builder.Entity<Vehicle>().HasIndex(v => v.PlateNumber).IsUnique();
+           base.OnModelCreating(builder);
 
-            builder.Entity<Customer>().HasIndex(c => c.Nif).IsUnique();
+           builder.Entity<Vehicle>().HasIndex(v => v.PlateNumber).IsUnique();
 
-            builder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
+           builder.Entity<Customer>().HasIndex(c => c.Nif).IsUnique();
 
-            builder.Entity<Employee>().HasIndex(e => e.Email).IsUnique();
+           builder.Entity<Role>().HasIndex(r => r.Name).IsUnique();
+
+           builder.Entity<Employee>().HasIndex(e => e.Email).IsUnique();
         }
 
     }

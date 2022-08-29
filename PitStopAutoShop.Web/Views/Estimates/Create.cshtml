@@ -15,14 +15,8 @@
     <div>
         <hr />
           <p style="text-align:center">Create a new service estimate</p> 
-        <hr />
-        <div>
-            <a asp-action="AddService" asp-route-id="@Model.First().VehicleId" class="btn btn-info btn-sm"><i class="fas fa-file-medical"></i>  Add Service</a>   
-             <a asp-action="ConfirmEstimate" class="btn btn-info btn-sm" id="btnConfirm"><i class="fas fa-file-medical"></i>  Finish Estimate</a>  
-        </div>
-        
-
-        
+        <hr />          
+               
        
             <table class="hover stripe compact row-border" style="display:inline-table" id="MyTable">
             <thead>
@@ -80,6 +74,11 @@
             </tfoot>*@
             </table>     
 
+
+            <div style="margin-top:20px">
+                <a asp-action="AddService" asp-route-id="@Model.First().VehicleId" class="btn btn-info btn-sm"><i class="fas fa-file-medical"></i>  Add Service</a>   
+                <a asp-action="ConfirmEstimate" class="btn btn-success btn-sm" id="btnConfirm"><i class="fas fa-check-square"></i>  Finish Estimate</a>  
+            </div>
     </div>
 </div>
 
