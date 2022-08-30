@@ -1,0 +1,56 @@
+﻿
+@{
+    ViewData["Title"] = "Appointments";
+    ViewData["Controller"] = "Appointments";    
+    Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
+}
+
+ <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          
+          themeSystem: 'bootstrap',
+          timeZone: 'UTC',
+          aspectRatio: 1.8,         
+          initialView: 'timeGridWeek',
+          hiddenDays: [0],
+          nowIndicator: true,
+            businessHours:[ {
+                daysOfWeek: [1,2,3,4,5],
+                startTime: '09:00',
+                endTime: '18:00'
+            },
+            {
+                daysOfWeek: [6],
+                startTime: '09:00',
+                endTime: '13:00'
+            }
+            ],
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'timeGridWeek,timeGridDay'
+            },
+            slotLabelInterval: "00:30",
+            slotLabelFormat: {
+                hour: 'numeric',
+                minute: '2-digit',
+                omitZeroMinute: false,
+                meridiem: false,
+                hour12: false
+            },
+            slotMinTime: "07:00:00",
+            slotMaxTime: "20:00:00",
+            allDaySlot: false,
+
+        });
+        calendar.render();
+      });
+ </script>
+
+<div id='calendar'></div>
+
+
+
+

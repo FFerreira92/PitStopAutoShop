@@ -19,6 +19,7 @@ namespace PitStopAutoShop.Web.Data
         public DbSet<Estimate> Estimates { get; set; }
         public DbSet<EstimateDetail> EstimateDetails { get; set; }
         public DbSet<EstimateDetailTemp> EstimateDetailTemps { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
@@ -27,10 +28,7 @@ namespace PitStopAutoShop.Web.Data
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
-        {
-       
-            
-
+        {     
            base.OnModelCreating(builder);
 
            builder.Entity<Vehicle>().HasIndex(v => v.PlateNumber).IsUnique();
