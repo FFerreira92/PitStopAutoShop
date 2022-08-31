@@ -16,5 +16,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
         Task<Response> CheckIfEmployeeExistsAsync(User user);
 
         Task<Employee> GetByEmailAsync(string email);
+
+        IEnumerable<SelectListItem> GetComboTechnicians();
     }
 }

@@ -6,7 +6,8 @@
 }
 
  <script>
-      document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function() {       
+        debugger;
         var calendarEl = document.getElementById('calendar');
         var calendar = new FullCalendar.Calendar(calendarEl, {
           
@@ -27,11 +28,22 @@
                 endTime: '13:00'
             }
             ],
+            customButtons: {
+                addAppointment: {
+                    text: 'Add Appointment',
+                    click: function() {
+                    window.location.href = '/Appointment/AddAppointment/';
+                    }
+                }
+            },            
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
                 right: 'timeGridWeek,timeGridDay'
             },
+            //footerToolbar: {
+            //    right: 'addAppointment'
+            //},
             slotLabelInterval: "00:30",
             slotLabelFormat: {
                 hour: 'numeric',
@@ -43,14 +55,22 @@
             slotMinTime: "07:00:00",
             slotMaxTime: "20:00:00",
             allDaySlot: false,
-
+            events: @Html.Raw(ViewData["Events"]),           
+           
         });
-        calendar.render();
+        calendar.render();        
       });
+      
  </script>
 
-<div id='calendar'></div>
+ 
+<div class="container-fluid">   
+    <div id='calendar'>
 
+    </div>
+</div>
 
-
-
+ @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+ }

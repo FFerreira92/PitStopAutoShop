@@ -17,7 +17,7 @@ namespace PitStopAutoShop.Web.Data.Entities
         public DateTime EstimateDate { get; set; }
 
         [Required]
-        public Customer Customer { get; set; }       
+        public Customer Customer { get; set; }      
         
 
         [Required]
@@ -25,7 +25,6 @@ namespace PitStopAutoShop.Web.Data.Entities
 
         [Required]
         public Vehicle Vehicle { get; set; }
-
        
         public IEnumerable<EstimateDetail> Services { get; set; }
 
@@ -39,5 +38,6 @@ namespace PitStopAutoShop.Web.Data.Entities
         [DisplayFormat(DataFormatString = "{0:C2}")]
         public double ValueWithDiscount => Services.Sum(s=> s.ValueWithDiscount);
 
+        public bool HasAppointment { get; set; }
     }
 }

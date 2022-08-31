@@ -47,7 +47,8 @@ namespace PitStopAutoShop.Web.Helpers
                 Role = role,
                 Specialty = specialty,
                 User = user,
-                Email = model.Email
+                Email = model.Email,
+                Color = model.Color,
                 //Falta acrescentar foto/imagem
             };
 
@@ -85,7 +86,8 @@ namespace PitStopAutoShop.Web.Helpers
                 SpecialtyId = employee.Specialty.Id,
                 Roles = _employeesRolesRepository.GetComboRoles(),
                 Specialties = _employeesRolesRepository.GetComboSpecialty(isNew? 0 : employee.Role.Id),
-                UserId = employee.User.Id
+                UserId = employee.User.Id,
+                Color = employee.Color
             };
 
             return model;

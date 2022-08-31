@@ -58,6 +58,7 @@
                             {
                                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
                             }
+                                <a asp-controller="Appointment" asp-action="AddAppointment" asp-route-id="@item.Id" class="btn btn-dark"><i class="fas fa-calendar-check"></i></a>  
                         </td>
                     </tr>
             }

@@ -35,5 +35,7 @@ namespace PitStopAutoShop.Web.Data.Entities
         public string FullName => $"{FirstName} {LastName}";
 
         public User User { get; set; }
+
+        public string Color { get; set; }
     }
 }

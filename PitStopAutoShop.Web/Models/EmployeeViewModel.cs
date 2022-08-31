@@ -50,5 +50,7 @@ namespace PitStopAutoShop.Web.Models
         public int SpecialtyId { get; set; }
 
         public IEnumerable<SelectListItem> Specialties { get; set; }
+
+        public string Color { get; set; }
     }
 }

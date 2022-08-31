@@ -18,7 +18,8 @@ namespace PitStopAutoShop.Web.Data.Repositories
 
         Task<Customer> GetCustomerByEmailAsync(string email);
 
-        IEnumerable<SelectListItem> GetComboCustomers();
+        IEnumerable<SelectListItem> GetComboCustomers();        
+
         Task<List<Vehicle>> GetCustomerVehicleAsync(int customerId);
     }
 }

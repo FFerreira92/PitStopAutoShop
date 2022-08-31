@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PitStopAutoShop.Web.Data;
 
 namespace PitStopAutoShop.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220831095657_addedNewEntityAppointment")]
+    partial class addedNewEntityAppointment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,9 +174,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("EstimateId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("MechanicId")
                         .HasColumnType("int");
 
@@ -195,8 +194,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("EstimateId");
 
                     b.HasIndex("MechanicId");
 
@@ -277,9 +274,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.Property<string>("About")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -335,9 +329,6 @@ namespace PitStopAutoShop.Web.Migrations
 
                     b.Property<DateTime>("EstimateDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("HasAppointment")
-                        .HasColumnType("bit");
 
                     b.Property<int?>("VehicleId")
                         .HasColumnType("int");
@@ -699,10 +690,6 @@ namespace PitStopAutoShop.Web.Migrations
                         .WithMany()
                         .HasForeignKey("CustomerId");
 
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Estimate", "Estimate")
-                        .WithMany()
-                        .HasForeignKey("EstimateId");
-
                     b.HasOne("PitStopAutoShop.Web.Data.Entities.Employee", "Mechanic")
                         .WithMany()
                         .HasForeignKey("MechanicId");
@@ -718,8 +705,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Customer");
-
-                    b.Navigation("Estimate");
 
                     b.Navigation("Mechanic");
 

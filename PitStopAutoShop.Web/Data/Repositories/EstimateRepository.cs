@@ -69,7 +69,8 @@ namespace PitStopAutoShop.Web.Data.Repositories
                 CreatedBy = user,
                 Services = details,
                 Customer = customer,
-                Vehicle = vehicle
+                Vehicle = vehicle,
+                HasAppointment = false                
             };
 
            
@@ -123,8 +124,10 @@ namespace PitStopAutoShop.Web.Data.Repositories
                 return null;
             }
 
-            var estimate = await _context.Estimates.Include(e=>e.Services)
-                                    .ThenInclude(e => e.Service)                                
+            var estimate = await _context.Estimates.Include(e => e.Vehicle).ThenInclude(e => e.Brand).ThenInclude(e => e.Models)
+                                    //.Include(e => e.Vehicle).ThenInclude(e=> e.Model)
+                                    .Include(e => e.Customer)
+                                    .Include(e=>e.Services).ThenInclude(e => e.Service)
                                     .Where(ed => ed.Id == value).FirstAsync();
 
             if(estimate == null)

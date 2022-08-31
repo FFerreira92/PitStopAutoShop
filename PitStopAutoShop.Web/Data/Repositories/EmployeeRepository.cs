@@ -48,6 +48,25 @@ namespace PitStopAutoShop.Web.Data.Repositories
             return employee;
         }
 
+        public IEnumerable<SelectListItem> GetComboTechnicians()
+        {
+            var list = _context.Employees.Include(e => e.Role)
+                                         .Where(e => e.Role.PermissionsName == "Technician")                
+                                         .Select(e => new SelectListItem
+                                         {
+                                             Text = e.FirstName+" "+ e.LastName,
+                                             Value = e.Id.ToString(),
+                                         }).OrderBy(l => l.Text).ToList();
+
+            list.Insert(0, new SelectListItem
+            {
+                Text = "[Select a Technician]",
+                Value = "0"
+            });
+
+            return list;
+        }
+
         public async Task<Employee> GetEmployeeByIdAsync(int employeeId)
         {
             var employee = await _context.Employees.Include(e => e.User)

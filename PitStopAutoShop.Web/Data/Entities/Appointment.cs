@@ -1,11 +1,12 @@
 ﻿using PitStopAutoShop.Web.Data.CustomValidation;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
 namespace PitStopAutoShop.Web.Data.Entities
 {
-    public class Appointment : IEntity
+    public class Appointment : IEntity, IValidatableObject
     {
         public int Id { get; set; }
 
@@ -17,20 +18,37 @@ namespace PitStopAutoShop.Web.Data.Entities
 
         public Vehicle Vehicle { get; set; }
 
+        public Estimate Estimate { get; set; }
+
         public User CreatedBy { get; set; }
 
         public User UpdatedBy { get; set; }
 
-        [Display(Name = "Scheduled Date")]
+        [Display(Name = "Appointment Start Date and Time")]
         [Required(ErrorMessage = "Must insert the {0}")]
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]        
         [NotOnSundaysValidator(ErrorMessage = "The Shop is closed on Sundays")]
-        public DateTime AppointmentDate { get; set; }
+        [DateAfterCurrentTimeValidator(ErrorMessage = "Date/Time must be after the current day/time.")]
+        public DateTime AppointmentStartDate { get; set; }
+
+        [Display(Name = "Appointment End Date and Time")]
+        [Required(ErrorMessage = "Must insert the {0}")]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]
+        [NotOnSundaysValidator(ErrorMessage = "The Shop is closed on Sundays")]
+        public DateTime AppointmentEndDate { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
         public DateTime UpdatedDate { get; set; }
 
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if(AppointmentEndDate < AppointmentStartDate || AppointmentEndDate == AppointmentStartDate)
+            {
+                yield return new ValidationResult("The appointment end Date and Time must be greater then the initial appointment date and time.");
+            }
+        }
     }
 }
