@@ -3,6 +3,7 @@ using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Helpers;
 using PitStopAutoShop.Web.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -218,12 +219,112 @@ namespace PitStopAutoShop.Web.Data.Repositories
             try
             {
                 _context.RemoveRange(estimateDetails);
+                await _context.SaveChangesAsync();
                 return estimateDetails.Count;
             }
             catch (Exception)
             {
                 return 0;
             }          
+        }
+
+        public async Task CreateEstimatesDetailsTemps(IEnumerable<EstimateDetailTemp> estimateDetailTemps)
+        {
+          await _context.EstimateDetailTemps.AddRangeAsync(estimateDetailTemps);
+          await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> DeleteEstimateDetailTempsAsync(int vehicleId, int customerId)
+        {
+            var temps = await _context.EstimateDetailTemps.Where(edt => edt.VehicleId == vehicleId && edt.CustomerId == customerId).ToListAsync();
+
+            if(temps == null)
+            {
+                return 0;
+            }
+
+            try
+            {
+                _context.EstimateDetailTemps.RemoveRange(temps);
+                await _context.SaveChangesAsync();
+                return temps.Count;
+            }
+            catch 
+            {
+                return 0;                
+            }            
+        }
+
+        public async Task<bool> UpdateEstimateAsync(string username, int customerId, int vehicleId)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(username);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var estimateTemps = await _context.EstimateDetailTemps.Include(e => e.Service).Where(e => e.CustomerId == customerId && e.VehicleId == vehicleId).ToListAsync();
+
+            if (estimateTemps == null || estimateTemps.Count == 0)
+            {
+                return false;
+            }
+
+            var customer = await _customerRepository.GetCustomerWithUserByIdAsync(customerId);
+
+            if (customer == null)
+            {
+                return false;
+            }
+
+            var vehicle = await _vehicleRepository.GetVehicleDetailsByIdAsync(vehicleId);
+
+            if (vehicle == null)
+            {
+                return false;
+            }
+
+            var estimate = await _context.Estimates
+                .Include(e => e.Services)
+                .Include(e => e.CreatedBy)
+                .Include(e => e.Customer)
+                .Include(e => e.Vehicle)
+                .Where(e => e.Id == estimateTemps.FirstOrDefault().EstimateId).FirstAsync();
+
+            if(estimate == null)
+            {
+                return false;
+            }
+
+            int nOfDeletedEstimateDetails = 0;
+
+            try
+            {
+                _context.EstimateDetails.RemoveRange(estimate.Services);
+                nOfDeletedEstimateDetails = estimate.Services.Count();
+            }
+            catch 
+            {
+                return false;
+            }            
+
+            var details = estimateTemps.Select(e => new EstimateDetail
+            {
+                Price = e.Price,
+                Service = e.Service,
+                Quantity = e.Quantity,
+                CustomerId = e.CustomerId,
+                VehicleId = e.VehicleId
+            }).ToList();
+
+            estimate.Services = details;
+            
+            await UpdateAsync(estimate);
+
+            _context.EstimateDetailTemps.RemoveRange(estimateTemps);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

@@ -1,65 +1,159 @@
-﻿
+﻿@using PitStopAutoShop.Web.Helpers
+
 @{
     ViewData["Title"] = "Appointments";
     ViewData["Controller"] = "Appointments";    
     Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
+    var editButton = new ButtonModel() { content = "Edit", cssClass = "e-flat" };
+    var asAttendedButton = new ButtonModel() { content = "Print Work Order", cssClass = "e-flat" };
 }
 
  <script>
+    let eventClickedId;
+    let asAttendedStatus;
+
       document.addEventListener('DOMContentLoaded', function() {       
-        debugger;
+        debugger;          
         var calendarEl = document.getElementById('calendar');
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-          
-          themeSystem: 'bootstrap',
-          timeZone: 'UTC',
-          aspectRatio: 1.8,         
-          initialView: 'timeGridWeek',
-          hiddenDays: [0],
-          nowIndicator: true,
-            businessHours:[ {
-                daysOfWeek: [1,2,3,4,5],
-                startTime: '09:00',
-                endTime: '18:00'
-            },
-            {
-                daysOfWeek: [6],
-                startTime: '09:00',
-                endTime: '13:00'
-            }
-            ],
-            customButtons: {
-                addAppointment: {
-                    text: 'Add Appointment',
-                    click: function() {
-                    window.location.href = '/Appointment/AddAppointment/';
-                    }
-                }
-            },            
-            headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'timeGridWeek,timeGridDay'
-            },
-            //footerToolbar: {
-            //    right: 'addAppointment'
-            //},
-            slotLabelInterval: "00:30",
-            slotLabelFormat: {
-                hour: 'numeric',
-                minute: '2-digit',
-                omitZeroMinute: false,
-                meridiem: false,
-                hour12: false
-            },
-            slotMinTime: "07:00:00",
-            slotMaxTime: "20:00:00",
-            allDaySlot: false,
-            events: @Html.Raw(ViewData["Events"]),           
-           
+          var calendar = new FullCalendar.Calendar(calendarEl, {
+
+              themeSystem: 'bootstrap',
+              timeZone: 'UTC',
+              aspectRatio: 1.8,
+              initialView: 'timeGridWeek',
+              hiddenDays: [0],
+              nowIndicator: true,
+              businessHours: [{
+                  daysOfWeek: [1, 2, 3, 4, 5],
+                  startTime: '09:00',
+                  endTime: '18:00'
+              },
+              {
+                  daysOfWeek: [6],
+                  startTime: '09:00',
+                  endTime: '13:00'
+              }
+              ],
+              customButtons: {
+                  addAppointment: {
+                      text: 'Add Appointment',
+                      click: function() {
+                          window.location.href = '/Appointment/AddAppointment/';
+                      }
+                  }
+              },
+              headerToolbar: {
+                  left: 'prev,next today',
+                  center: 'title',
+                  right: 'dayGridMonth,timeGridWeek,timeGridDay'
+              },
+              slotLabelInterval: "00:30",
+              slotLabelFormat: {
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  omitZeroMinute: false,
+                  meridiem: false,
+                  hour12: false
+              },
+              slotMinTime: "07:00:00",
+              slotMaxTime: "20:00:00",
+              allDaySlot: false,
+              editable: true,
+              events: @Html.Raw(ViewData["Events"]),
+              eventClick: function(info) {
+                  var dialog = document.getElementById("dialog").ej2_instances[0];
+                  var eventObj = info.event;
+                  let eventStartTime = eventObj.start;
+                  let content = eventObj.title + eventObj.extendedProps.description;
+                  eventClickedId = eventObj.id;
+                  asAttendedStatus = eventObj.extendedProps.asAttended;
+                  console.log(content);
+                  dialog.content = eventObj.extendedProps.description;
+                  dialog.header = eventStartTime.toUTCString();
+                  dialog.show();
+              },
+              eventResize: function(info) {
+                  var eventObj = info.event;
+                  console.log(eventObj);
+                  var url = '/Appointment/EventResize/' + eventObj.id + "?" + eventObj.start.toUTCString() + "?" + eventObj.end.toUTCString();
+                  console.log(url);
+                  $.ajax({
+                      url: '@Url.Action("EventResize","Appointment")',
+                      type: 'POST',
+                      dataType: 'json',
+                      data: { eventId: eventObj.id, startTime: eventObj.start.toUTCString(), endTime: eventObj.end.toUTCString() },
+                      success: function(models) {
+                          console.log("Success");
+                      },
+                      error: function(ex) {
+
+                          var dialog = document.getElementById("dialog").ej2_instances[0];
+                          dialog.content = ex.message;
+                          dialog.header = "There was an error updating the event!";
+                          dialog.show();
+                          console.log("failed " + ex.message);
+                      }
+                  });
+              },
+              eventDrop: function(info) {
+                  var eventObj = info.event;
+                  console.log(eventObj);
+                  var url = '/Appointment/EventResize/' + eventObj.id + "?" + eventObj.start.toUTCString() + "?" + eventObj.end.toUTCString();
+                  console.log(url);
+                  $.ajax({
+                      url: '@Url.Action("EventResize","Appointment")',
+                      type: 'POST',
+                      dataType: 'json',
+                      data: { eventId: eventObj.id, startTime: eventObj.start.toUTCString(), endTime: eventObj.end.toUTCString() },
+                      success: function(models) {
+                          console.log("Success");
+                      },
+                      error: function(ex) {
+
+                          var dialog = document.getElementById("dialog").ej2_instances[0];
+                          dialog.content = ex.message;
+                          dialog.header = "There was an error updating the event!";
+                          dialog.show();
+                          console.log("failed " + ex.message);
+                      }
+                  });
+              },
+              dragScroll: true,
+              dayMaxEvents: true,
+              dateClick: function(info) {
+                  let currentView = info.view.type;
+                  let date = info.date;
+                  if (currentView == "dayGridMonth") {                      
+                      calendar.changeView("timeGridWeek", date);
+                  }
+                  if (currentView == "timeGridWeek") {                      
+                      calendar.changeView("timeGridDay", date);
+                  }
+                  if (currentView == "timeGridDay") {
+                      calendar.changeView("dayGridMonth", date);
+                  }
+              },
+              eventConstraint:"businessHours",
+            
         });
-        calendar.render();        
+        calendar.render();     
       });
+
+      function ondlgButtonClick() {
+             window.location.href = '/Appointment/Edit/'+eventClickedId;
+      };
+
+      function ondlgAttendedClick() {
+          if (asAttendedStatus == false) {
+              window.location.href = '/WorkOrders/Create/' + eventClickedId;
+          }
+          else {
+              var innerDialog = document.getElementById("innerDialog").ej2_instances[0];            
+              innerDialog.show();
+          };
+      };
+
+
       
  </script>
 
@@ -70,7 +164,33 @@
     </div>
 </div>
 
- @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+<div id='container' style="height:auto">
+    <ejs-dialog id='dialog' visible="false" isModal="true" width="400px" showCloseIcon="true" allowDragging="true" overlayClick="onOverlayClick" target="#container">
+        <e-dialog-animationsettings effect="Fade" duration="400" delay="0"></e-dialog-animationsettings>
+        <e-dialog-buttons>
+                <e-dialog-dialogbutton buttonModel="@editButton" click="ondlgButtonClick"></e-dialog-dialogbutton>
+                <e-dialog-dialogbutton buttonModel="@asAttendedButton" click="ondlgAttendedClick"></e-dialog-dialogbutton>
+        </e-dialog-buttons>
+       
+    </ejs-dialog>
+        <ejs-dialog id='innerDialog' allowDragging="true" visible="false" showCloseIcon="true" header="Work Order in Place" closeOnEscape="false" content="This appointment already has a work order in place." target="#dialog" height="150px" width="200px" >
+        <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
+        <e-dialog-position X="80" Y="80"> </e-dialog-position>
+    </ejs-dialog>
+</div>
+
+<script>     
     
+    function onOverlayClick() {
+         var dialog = document.getElementById("dialog").ej2_instances[0];
+         var innerDialog = document.getElementById("innerDialog").ej2_instances[0];
+         dialog.hide();
+         innerDialog.hide();
+    };  
+
+
+</script>  
+
+ @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}   
  }

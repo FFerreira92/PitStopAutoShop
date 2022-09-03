@@ -19,10 +19,11 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IUserHelper _userHelper;
         private readonly IFlashMessage _flashMessage;
+        private readonly IConverterHelper _converterHelper;
 
         public EstimatesController(IEstimateRepository estimateRepository, IServiceRepository serviceRepository,
                                    ICustomerRepository customerRepository, IVehicleRepository vehicleRepository,
-                                   IUserHelper userHelper, IFlashMessage flashMessage)
+                                   IUserHelper userHelper, IFlashMessage flashMessage, IConverterHelper converterHelper)
         {
             _estimateRepository = estimateRepository;
             _serviceRepository = serviceRepository;
@@ -30,6 +31,7 @@ namespace PitStopAutoShop.Web.Controllers
             _vehicleRepository = vehicleRepository;
             _userHelper = userHelper;
             _flashMessage = flashMessage;
+            _converterHelper = converterHelper;
         }
 
         public IActionResult Index()
@@ -59,6 +61,16 @@ namespace PitStopAutoShop.Web.Controllers
 
             var listmodel = await _estimateRepository.GetDetailTempsAsync(userDetailTemps.VehicleId, userDetailTemps.CustomerId);
 
+            double totalCost = 0;
+
+            foreach (var item in listmodel)
+            {
+                totalCost += item.ValueWithDiscount;
+            }
+
+            
+            ViewData["TotalCost"] = totalCost.ToString("C2");
+
             return View(listmodel);
 
             //var currentUserDetailTemps = await _estimateRepository.GetEstimateDetailTempAsync(this.User.Identity.Name);
@@ -68,7 +80,7 @@ namespace PitStopAutoShop.Web.Controllers
         }
       
 
-        public async Task<IActionResult> AddService(int? id)
+        public async Task<IActionResult> AddService(int? id, bool isEdit)
         {
             if(id == null)
             {
@@ -76,7 +88,6 @@ namespace PitStopAutoShop.Web.Controllers
             }
 
             var vehicle = await _vehicleRepository.GetVehicleDetailsByIdAsync(id.Value);
-
 
             var estimateDetailTemp = await _estimateRepository.GetEstimateDetailTempWithVehicleIdAsync(this.User.Identity.Name, vehicle);            
 
@@ -91,6 +102,8 @@ namespace PitStopAutoShop.Web.Controllers
                 Services = _serviceRepository.GetComboServices(),
                 VehicleId = estimateDetailTemp.VehicleId,
                 CustomerId = estimateDetailTemp.CustomerId,
+                IsEdit = isEdit,
+                EstimateId = estimateDetailTemp.EstimateId,
             };
 
             return View(model);
@@ -103,7 +116,15 @@ namespace PitStopAutoShop.Web.Controllers
             if (ModelState.IsValid)
             {
                 await _serviceRepository.AddServiceToEstimateAsync(model, this.User.Identity.Name);
-                return RedirectToAction("Create",new {id = model.VehicleId});
+                if (!model.IsEdit)
+                {
+                    return RedirectToAction("Create", new { id = model.VehicleId });
+                }
+                else
+                {
+                    return RedirectToAction("Edit", new { id = model.VehicleId, isNew = false });
+                }
+                
             }
 
             return View(model);
@@ -184,7 +205,7 @@ namespace PitStopAutoShop.Web.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Increase(int? id)
+        public async Task<IActionResult> Increase(int? id, bool isEdit)
         {
             if(id == null)
             {
@@ -200,10 +221,20 @@ namespace PitStopAutoShop.Web.Controllers
             }
 
             await _estimateRepository.ModifyEstimateDetailTempQuantityAsync(id.Value, 1);
-            return RedirectToAction("Create", new {id = estimateDetailTemp.VehicleId});
+            
+
+            if(!isEdit)
+            {
+                return RedirectToAction("Create", new { id = estimateDetailTemp.VehicleId });
+            }
+            else
+            {
+                return RedirectToAction("Edit", new { id = estimateDetailTemp.VehicleId , isNew = false});
+            }
+            
         }
 
-        public async Task<IActionResult> Decrease(int? id)
+        public async Task<IActionResult> Decrease(int? id, bool isEdit)
         {
             if (id == null)
             {
@@ -219,10 +250,18 @@ namespace PitStopAutoShop.Web.Controllers
             }
 
             await _estimateRepository.ModifyEstimateDetailTempQuantityAsync(id.Value, -1);
-            return RedirectToAction("Create", new { id = estimateDetailTemp.VehicleId });
+
+            if (!isEdit)
+            {
+                return RedirectToAction("Create", new { id = estimateDetailTemp.VehicleId });
+            }
+            else
+            {
+                return RedirectToAction("Edit", new { id = estimateDetailTemp.VehicleId, isNew = false });
+            }
         }
 
-        public async Task<IActionResult> DeleteItem(int? id)
+        public async Task<IActionResult> DeleteItem(int? id, bool isEdit)
         {
             if(id == null)
             {
@@ -238,26 +277,147 @@ namespace PitStopAutoShop.Web.Controllers
             }
 
             await _estimateRepository.DeleteDetailTempAsync(id.Value);
-            return RedirectToAction("Create", new
+
+            if (!isEdit)
             {
-                id = vehicleid
-            });
+                return RedirectToAction("Create", new { id = vehicleid });
+            }
+            else
+            {
+                return RedirectToAction("Edit", new { id = vehicleid, isNew = false });
+            }
         }
 
 
-        public async Task<IActionResult> ConfirmEstimate()
+        public async Task<IActionResult> ConfirmEstimate(int? id,bool isEdit)
         {
-
-            var workingEstimateDetail = await _estimateRepository.GetEstimateDetailTempAsync(this.User.Identity.Name);
-
-            var response = await _estimateRepository.ConfirmEstimateAsync(this.User.Identity.Name,workingEstimateDetail.CustomerId,workingEstimateDetail.VehicleId);
-
-            if (response)
+            if(id == null)
             {
-                return RedirectToAction("Index");
+                return NotFound();
             }
 
-            return RedirectToAction("Create",new {id = workingEstimateDetail.VehicleId});
+            var vehicle = await _vehicleRepository.GetByIdAsync(id.Value);
+
+            if(vehicle == null)
+            {
+                return NotFound();
+            }
+
+            var estimateDetailTemps = await _estimateRepository.GetDetailTempsAsync(vehicle.Id, vehicle.CustomerId);
+            
+            if(estimateDetailTemps != null)
+            {
+                var response = false;
+
+                if (!isEdit)
+                {
+                   response = await _estimateRepository.ConfirmEstimateAsync(this.User.Identity.Name, vehicle.CustomerId, vehicle.Id);                    
+                }
+                else
+                {
+                    response = await _estimateRepository.UpdateEstimateAsync(this.User.Identity.Name, vehicle.CustomerId, vehicle.Id);
+                }
+
+
+                if (response)
+                {
+                    return RedirectToAction("Index");
+                }
+
+                if (!isEdit)
+                {
+                    return RedirectToAction("Create", new { id = vehicle.Id });
+                }
+                else
+                {
+                    return RedirectToAction("Edit", new { id = vehicle.Id, isNew = false });
+                }
+            }
+            else
+            {
+                return RedirectToAction(nameof(Index));
+            }         
+        }
+
+
+        public async Task<IActionResult> Edit(int? id, bool isNew)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+    
+            if (isNew)
+            {
+                var estimate = await _estimateRepository.GetEstimateWithDetailsByIdAsync(id.Value);
+
+                if (estimate == null)
+                {
+                    return NotFound();
+                }
+
+                //deletes estimateDetailTemps if any already exists for the car and vehicle. Case User leaves the page while already editing
+                //a estimate, if he goes back to edit again the temps are deleted and nothing unwanted is saved.
+                var deletedTemps = await _estimateRepository.DeleteEstimateDetailTempsAsync(estimate.Vehicle.Id, estimate.Customer.Id);
+
+                var estimateDetailsTemps = await _converterHelper.ToEstimateDetailTemps(estimate.Services, User.Identity.Name);
+
+                foreach(var item in estimateDetailsTemps)
+                {
+                    item.EstimateId = estimate.Id;
+                }
+
+                try
+                {
+                    await _estimateRepository.CreateEstimatesDetailsTemps(estimateDetailsTemps);
+                }
+                catch (Exception ex)
+                {
+                    _flashMessage.Danger("There was an error editing the estimate! " + ex.InnerException);
+                    return RedirectToAction(nameof(Index));
+                }
+
+                double totalCost = 0;
+
+                foreach (var item in estimateDetailsTemps)
+                {
+                    totalCost += item.ValueWithDiscount;
+                }
+
+                ViewData["TotalCost"] = totalCost.ToString("C2");
+
+                return View(estimateDetailsTemps);
+            }
+            else
+            {
+
+                //if action is called when editing the estimate(increase/decrease/delete Item actions), isNew boolean is passed as false and 
+                //the value from id passed is the vehicle Id.
+
+                var vehicle = await _vehicleRepository.GetVehicleDetailsByIdAsync(id.Value);
+
+                if (vehicle == null)
+                {
+                    return NotFound();
+                }
+
+                var userDetailTemps = await _estimateRepository.GetEstimateDetailTempWithVehicleIdAsync(this.User.Identity.Name, vehicle);
+
+                var listmodel = await _estimateRepository.GetDetailTempsAsync(userDetailTemps.VehicleId, userDetailTemps.CustomerId);
+
+                double totalCost = 0;
+
+                foreach (var item in listmodel)
+                {
+                    totalCost += item.ValueWithDiscount;
+                }
+
+
+                ViewData["TotalCost"] = totalCost.ToString("C2");
+
+                return View(listmodel);
+            }        
+
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -314,7 +474,24 @@ namespace PitStopAutoShop.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }
         }
-                
+
+        [HttpPost]
+        [Route("Estimates/RemoveTemps")]
+        public async Task<bool> RemoveTemps(int vehicleId, int customerId)
+        {
+
+            if(vehicleId == 0 || customerId == 0)
+            {
+                return false;
+            }            
+
+            var result = await _estimateRepository.DeleteEstimateDetailTempsAsync(vehicleId, customerId);
+
+            if (result > 0)
+                return true;
+            else
+                return false;
+        }
 
 
     }

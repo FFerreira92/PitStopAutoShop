@@ -22,6 +22,19 @@ namespace PitStopAutoShop.Web.Data.Entities
         [DisplayFormat(DataFormatString = "{0:N2}")]
         public double Quantity { get; set; }
 
-        public decimal Value => Price * (decimal)Quantity;
+        public int EstimateId { get; set; }
+        
+        [DisplayFormat(DataFormatString = "{0:C2}")]
+        public decimal Value => Price * (decimal)Quantity;        
+      
+        [DisplayFormat(DataFormatString = "{0:C2}")]
+        public decimal PriceWithDiscount => Service == null ? Price : Service.PriceWithDiscount;
+
+        [DisplayFormat(DataFormatString = "{0:C2}")]
+        public double ValueWithDiscount => (double)PriceWithDiscount * Quantity;
+
+        //[Display(Name = "Discount(%)")]
+        //[DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]
+        //public decimal Discount => Service.Discount;
     }
 }

@@ -1,13 +1,13 @@
 ﻿using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Models;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Data.Repositories
 {
     public interface IEstimateRepository : IGenericRepository<Estimate>
-    {
-              
+    {             
 
         IQueryable GetAllEstimates();
         Task<IQueryable<EstimateDetailTemp>> GetDetailTempsAsync(int vehicleId, int customerId);
@@ -20,5 +20,8 @@ namespace PitStopAutoShop.Web.Data.Repositories
         Task<EstimateDetailTemp> GetEstimateDetailTempByIdAsync(int id);
         Task<Estimate> GetEstimateWithDetailsByIdAsync(int value);
         Task<int> DeleteEstimateDetailsAsync(int id);
+        Task CreateEstimatesDetailsTemps(IEnumerable<EstimateDetailTemp> estimateDetailTemps);
+        Task<int> DeleteEstimateDetailTempsAsync(int vehicleId, int customerId);
+        Task<bool> UpdateEstimateAsync(string username, int customerId, int vehicleId);
     }
 }

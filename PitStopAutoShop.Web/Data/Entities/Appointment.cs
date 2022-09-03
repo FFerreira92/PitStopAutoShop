@@ -30,6 +30,7 @@ namespace PitStopAutoShop.Web.Data.Entities
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]        
         [NotOnSundaysValidator(ErrorMessage = "The Shop is closed on Sundays")]
         [DateAfterCurrentTimeValidator(ErrorMessage = "Date/Time must be after the current day/time.")]
+        [PitStopAutoShopScheduleValidator(ErrorMessage ="Appointment must be inside bussiness hours.")]
         public DateTime AppointmentStartDate { get; set; }
 
         [Display(Name = "Appointment End Date and Time")]
@@ -37,7 +38,12 @@ namespace PitStopAutoShop.Web.Data.Entities
         [DataType(DataType.DateTime)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]
         [NotOnSundaysValidator(ErrorMessage = "The Shop is closed on Sundays")]
+        [PitStopAutoShopScheduleValidator(ErrorMessage = "Appointment must be inside bussiness hours.")]
         public DateTime AppointmentEndDate { get; set; }
+
+        public string AppointmentServicesDetails { get; set; }
+
+        public bool AsAttended { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
@@ -50,5 +56,7 @@ namespace PitStopAutoShop.Web.Data.Entities
                 yield return new ValidationResult("The appointment end Date and Time must be greater then the initial appointment date and time.");
             }
         }
+
+        
     }
 }

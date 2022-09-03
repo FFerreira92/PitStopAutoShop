@@ -19,5 +19,9 @@ namespace PitStopAutoShop.Web.Models
         public int VehicleId { get; set; }
 
         public IEnumerable<SelectListItem> Services { get; set; }
+
+        public bool IsEdit { get; set; }
+        
+        public int EstimateId { get; set; } 
     }
 }

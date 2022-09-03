@@ -4,7 +4,7 @@
     Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
     ViewData["Title"] = "Estimates";
     ViewData["Controller"] = "Estimates";
-    ViewData["Action"] = "Create Estimate";    
+    ViewData["Action"] = "Edit Estimate";    
 }
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
@@ -14,7 +14,7 @@
 <div class="container-fluid">
     <div>
         <hr />
-          <p style="text-align:center">Create a new service estimate</p> 
+          <p style="text-align:center">Edit estimate Nº @Model.FirstOrDefault().EstimateId</p> 
         <hr />          
                
        
@@ -60,9 +60,9 @@
                                 @Html.DisplayFor(modelItem => item.ValueWithDiscount)
                             </td>  
                             <td id="@item.Id">                
-                                <a asp-action="Increase" asp-route-id="@item.Id" asp-route-isEdit="false" class="btn btn-warning"><i class="fa fa-plus"></i></a>
-                                <a asp-action="Decrease" asp-route-id="@item.Id" asp-route-isEdit="false" class="btn btn-info"><i class="fa fa-minus"></i></a> 
-                                <a asp-action="DeleteItem" asp-route-id="@item.Id" asp-route-isEdit="false" class="btn btn-danger" id="btnDeleteItem">Delete</a> 
+                                <a asp-action="Increase" asp-route-id="@item.Id" asp-route-isEdit="true" class="btn btn-warning"><i class="fa fa-plus"></i></a>
+                                <a asp-action="Decrease" asp-route-id="@item.Id" asp-route-isEdit="true" class="btn btn-info"><i class="fa fa-minus"></i></a> 
+                                <a asp-action="DeleteItem" asp-route-id="@item.Id" asp-route-isEdit="true" class="btn btn-danger" id="btnDeleteItem">Delete</a> 
                             </td>
                             </tr>
                         }                  
@@ -88,8 +88,8 @@
     
 
             <div style="margin-top:20px">
-                <a asp-action="AddService" asp-route-id="@Model.First().VehicleId" class="btn btn-info btn-sm"><i class="fas fa-file-medical"></i>  Add Service</a>   
-                <a asp-action="ConfirmEstimate" asp-route-isEdit="false" class="btn btn-success btn-sm" id="btnConfirm"><i class="fas fa-check-square"></i>  Finish Estimate</a>  
+                <a asp-action="AddService" asp-route-id="@Model.First().VehicleId" asp-route-isEdit="true" class="btn btn-info btn-sm"><i class="fas fa-file-medical"></i>  Add Service</a>   
+                <a asp-action="ConfirmEstimate" asp-route-isEdit="true" class="btn btn-success btn-sm" id="btnConfirm"><i class="fas fa-check-square"></i>  Save Estimate</a>  
             </div>
     </div>
 </div>
@@ -173,6 +173,7 @@
         $(document).ready(function() {
             
             var id = 0;
+            
 
             $("#btnConfirm").click(function() {
                 $("#confirmDialog").modal("show");
@@ -186,7 +187,7 @@
 
              $("#btnYesConfirm").click(function() {
                   id = @Model.FirstOrDefault().VehicleId;
-                  window.location.href = "/Estimates/ConfirmEstimate/"+id+"?isEdit=false";               
+                  window.location.href = "/Estimates/ConfirmEstimate/"+id+"?isEdit=true";               
             });
 
 
@@ -202,10 +203,36 @@
             });
 
             $("#btnYesDelete").click(function() {                
-                window.location.href = "/Estimates/DeleteItem/"+id+"?isEdit=false";
+                window.location.href = "/Estimates/DeleteItem/"+id+"?isEdit=true";
             });
 
-        });
+        });       
+
 
     </script>
+
+   @* <script>        
+        $(window).on('afterunload',function() {
+            debugger;
+            let vhcleId = @Model.FirstOrDefault().VehicleId;
+            let custId = @Model.FirstOrDefault().CustomerId;          
+            console.log(controller);
+            console.log(action);
+                        
+            $.ajax({
+                      url: '@Url.Action("RemoveTemps","Estimates")',
+                      type: 'POST',
+                      dataType: 'json',
+                      data: { vehicleId: vhcleId, customerId: custId },
+                      success: function(models) {
+                          console.log("Success");
+                      },
+                      error: function(ex) {
+                          
+                          console.log("There was an error deleting the temps. " + ex.message);
+                      }
+            });
+            //window.location.href = "/Estimates/RemoveTemps/" + vehicleId + "?" + customerId;
+        });
+    </script>*@
 }

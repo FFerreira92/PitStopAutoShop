@@ -2,6 +2,7 @@
 using PitStopAutoShop.Web.Data.Repositories;
 using PitStopAutoShop.Web.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Helpers
@@ -11,14 +12,45 @@ namespace PitStopAutoShop.Web.Helpers
         private readonly IUserHelper _userHelper;
         private readonly IEmployeesRolesRepository _employeesRolesRepository;
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IEstimateRepository _estimateRepository;
 
         public ConverterHelper(IUserHelper userHelper,
                                 IEmployeesRolesRepository employeesRolesRepository,
-                                IEmployeeRepository employeeRepository)
+                                IEmployeeRepository employeeRepository, IEstimateRepository estimateRepository)
         {
             _userHelper = userHelper;
             _employeesRolesRepository = employeesRolesRepository;
             _employeeRepository = employeeRepository;
+            _estimateRepository = estimateRepository;
+        }
+       
+
+        public AppointmentViewModel ToAppointmentViewModel(Appointment appointment, bool isNew)
+        {          
+
+            var model = new AppointmentViewModel
+            {
+                AppointmentEndDate = appointment.AppointmentEndDate,
+                AppointmentStartDate = appointment.AppointmentStartDate,
+                AppointmentServicesDetails = appointment.AppointmentServicesDetails,
+                CreatedBy = appointment.CreatedBy,
+                CreatedDate = appointment.CreatedDate,
+                Customer = appointment.Customer,
+                CustomerId = appointment.Customer.Id,
+                EmployeeId = appointment.Mechanic.Id,
+                Estimate = appointment.Estimate,
+                EstimateId = appointment.Estimate.Id,
+                Mechanic = appointment.Mechanic,
+                Observations = appointment.Observations,
+                UpdatedBy = appointment.UpdatedBy,
+                UpdatedDate = appointment.UpdatedDate,
+                Vehicle = appointment.Vehicle,
+                VehicleId = appointment.Vehicle.Id,
+                Id = isNew? 0 : appointment.Id,
+                Technicians = _employeeRepository.GetComboTechnicians()
+            };
+
+            return model;
         }
 
         public async Task<Employee> ToEmployee(EmployeeViewModel model,User user, bool isNew)
@@ -91,6 +123,29 @@ namespace PitStopAutoShop.Web.Helpers
             };
 
             return model;
+        }
+
+        public async Task<List<EstimateDetailTemp>> ToEstimateDetailTemps(IEnumerable<EstimateDetail> estimateDetails,string username)
+        {
+            List<EstimateDetailTemp> list = new List<EstimateDetailTemp>();
+
+            foreach(EstimateDetail temp in estimateDetails)
+            {
+                var estimateDetailTemp = new EstimateDetailTemp
+                {
+                    CustomerId = temp.CustomerId,
+                    Price = temp.Price,
+                    Quantity = temp.Quantity,
+                    Service = temp.Service,
+                    User = await _userHelper.GetUserByEmailAsync(username),
+                    VehicleId = temp.VehicleId,
+                };
+
+                list.Add(estimateDetailTemp);
+            }
+
+            return list;
+
         }
 
         public Role toRole(RoleViewModel model, bool isNew)

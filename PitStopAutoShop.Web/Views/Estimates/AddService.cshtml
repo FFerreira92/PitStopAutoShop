@@ -4,8 +4,8 @@
     Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
     ViewData["Title"] = "Estimate";
     ViewData["Controller"] = "Estimates";
-    ViewData["Action"] = "Create Estimate";
-    ViewData["SubBreadCrumb"] = "Select Vehicle";
+    ViewData["Action"] = "Add Service";
+
 }
 
 <hr />
@@ -17,6 +17,8 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div> 
             <input type="hidden" asp-for="CustomerId" />
             <input type="hidden" asp-for="VehicleId" />
+            <input type="hidden" asp-for="IsEdit" />
+            <input type="hidden" asp-for="EstimateId" />
 
             <div class="form-group">
                 <label asp-for="ServiceId" class="control-label"></label>
@@ -32,7 +34,15 @@
 
             <div class="form-group">
                 <input type="submit" value="Add Service" class="btn btn-info" />
-                <a asp-action="Create" class="btn btn-success">Back to List</a>
+                @if(Model.IsEdit == false)
+                {
+                    <a asp-action="Create" asp-route-id="@Model.VehicleId" class="btn btn-success">Back to List</a>
+                }
+                else
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.VehicleId" asp-route-isNew="false" class="btn btn-success">Back to List</a>
+                }
+
             </div>
         </form>
     </div>

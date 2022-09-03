@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PitStopAutoShop.Web.Data;
 
 namespace PitStopAutoShop.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220903011401_updatedEstimateDetailTempEntity")]
+    partial class updatedEstimateDetailTempEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,9 +167,6 @@ namespace PitStopAutoShop.Web.Migrations
 
                     b.Property<DateTime>("AppointmentStartDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("AsAttended")
-                        .HasColumnType("bit");
 
                     b.Property<string>("CreatedById")
                         .HasColumnType("nvarchar(450)");
@@ -647,50 +646,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.ToTable("Vehicles");
                 });
 
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.WorkOrder", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("AppointmentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsFinished")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Observations")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("OrderDateEnd")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("OrderDateStart")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ServiceDoneById")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UpdatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppointmentId");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("ServiceDoneById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("WorkOrders");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -897,33 +852,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("Model");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.WorkOrder", b =>
-                {
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Appointment", "Appointment")
-                        .WithMany()
-                        .HasForeignKey("AppointmentId");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Employee", "ServiceDoneBy")
-                        .WithMany()
-                        .HasForeignKey("ServiceDoneById");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById");
-
-                    b.Navigation("Appointment");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("ServiceDoneBy");
-
-                    b.Navigation("UpdatedBy");
                 });
 
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Brand", b =>

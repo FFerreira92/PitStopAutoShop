@@ -1,0 +1,64 @@
+﻿@model PitStopAutoShop.Web.Models.AppointmentViewModel
+
+@{
+    Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
+    ViewData["Title"] = "Appointment";
+    ViewData["Controller"] = "Appointment";
+    ViewData["Action"] = "Edit Appointment";    
+}
+
+<h4 style="text-align:center">Edit @Model.Customer.FullName appointment </h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <input type="hidden" asp-for="EstimateId"/> 
+            <input type="hidden" asp-for="CustomerId"/> 
+            <input type="hidden" asp-for="VehicleId"/> 
+            <input type="hidden" asp-for="CreatedDate" value="@DateTime.Now" />
+            <input type="hidden" asp-for="UpdatedDate" value="@DateTime.Now" />
+            <input type="hidden" asp-for="CreatedBy" value="@User.Identity.Name" />
+            <input type="hidden" asp-for="UpdatedBy" value="@User.Identity.Name" />
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="AppointmentStartDate" />
+            <input type="hidden" asp-for="AppointmentEndDate" />
+            <input type="hidden" asp-for="AppointmentServicesDetails" />
+
+            <div class="form-group">
+                <label asp-for="EmployeeId" class="control-label"></label>
+                <select asp-for="EmployeeId" asp-items="Model.Technicians" class="form-control"></select>
+                <span asp-validation-for="EmployeeId" class="text-danger"></span>
+            </div>
+
+           <div class="form-group">
+                <label asp-for="Customer" class="control-label"></label>
+                <input asp-for="Customer" value="@Model.Customer.FullName" class="form-control" readonly />
+                <span asp-validation-for="Customer" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="Vehicle" class="control-label"></label>
+                <input asp-for="Vehicle" value="@Model.Vehicle.PlateNumber" class="form-control" readonly />
+                <span asp-validation-for="Vehicle" class="text-danger"></span>
+            </div>          
+       
+            <div class="form-group">
+                <label asp-for="Observations" class="control-label"></label>
+                <input asp-for="Observations" class="form-control" />
+                <span asp-validation-for="Observations" class="text-danger"></span>
+            </div>
+             
+            <div class="form-group" style="margin-top:50px;">
+            <input type="submit" value="Save Appointment" class="btn btn-primary" style="margin-right: 10px" />
+            <a asp-action="Index" asp-controller="Appointment" class="btn btn-danger">Back to Appointments</a>
+            </div>
+        </form>  
+    </div>
+</div>
+
+@section Scripts
+{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}    
+}

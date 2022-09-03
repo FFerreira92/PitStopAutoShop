@@ -9,5 +9,6 @@ namespace PitStopAutoShop.Web.Data.Repositories
     {
         IQueryable GetAllAppointmentsAtLaterDates();
         string GetAllEvents();
+        Task<Appointment> GetAppointmentByIdAsync(int eventId);
     }
 }

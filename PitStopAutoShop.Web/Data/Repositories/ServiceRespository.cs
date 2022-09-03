@@ -49,6 +49,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
                     User = user,
                     CustomerId = model.CustomerId,
                     VehicleId = model.VehicleId,
+                    EstimateId = model.EstimateId,
                 };
 
                 _context.EstimateDetailTemps.Add(estimateDetailTemp);

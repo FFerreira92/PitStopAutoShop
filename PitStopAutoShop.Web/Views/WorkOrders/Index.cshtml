@@ -1,9 +1,9 @@
-﻿@model IEnumerable<PitStopAutoShop.Web.Data.Entities.Estimate>
+﻿@model IEnumerable<PitStopAutoShop.Web.Data.Entities.WorkOrder>
 
 @{
     Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
-    ViewData["Title"] = "Estimates";
-    ViewData["Controller"] = "Estimates";
+    ViewData["Title"] = "Work Orders";
+    ViewData["Controller"] = "Work Orders";
     ViewData["Action"] = null;
 }
 
@@ -16,23 +16,23 @@
                 <thead>
                     <tr>
                         <th>
-                            Estimate Nº.
+                            Order Nº.
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.EstimateDate)
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().OrderDateStart)
                         </th>  
                         <th>
-                            @Html.DisplayNameFor(model => model.Vehicle.PlateNumber)
-                        </th>            
-                        <th>
-                            @Html.DisplayNameFor(model => model.Customer.FullName)
+                            Customer Name
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Quantity)
+                            Vehicle
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Value)
-                        </th>  
+                            Technician Name
+                        </th>
+                        <th>
+                           @Html.DisplayNameFor(model => model.FirstOrDefault().OrderDateEnd)
+                        </th>
                         <th></th>
                     </tr>
                 </thead>
@@ -44,24 +44,30 @@
                             @Html.DisplayFor(modelItem => item.Id)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.EstimateDate)
+                            @Html.DisplayFor(modelItem => item.OrderDateStart)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Vehicle.PlateNumber)
+                            @Html.DisplayFor(modelItem => item.Appointment.Customer.FullName)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.Customer.FullName)
-                        </td>                        
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Quantity)
+                            @Html.DisplayFor(modelItem => item.Appointment.Vehicle.PlateNumber) (@Html.DisplayFor(modelItem => item.Appointment.Vehicle.Brand.Name) @Html.DisplayFor(modelItem => item.Appointment.Vehicle.Model.Name))                            
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.ValueWithDiscount)
-                        </td> 
+                            @Html.DisplayFor(modelItem => item.Appointment.Mechanic.FullName)
+                        </td>
+                        <td>
+                            @if(item.OrderDateEnd.Date == Convert.ToDateTime("0001-01-01"))
+                            {
+                                @Html.Raw("-")
+                            }
+                            else
+                            {
+                                @Html.DisplayFor(modelItem => item.OrderDateEnd)
+                            }                            
+                        </td>
                         <td id="@item.Id">                           
-                            <a asp-action="Edit" asp-route-id="@item.Id" asp-route-isNew="true" class="btn btn-info"><i class="fas fa-edit"></i></a>  @*Editar orçamento? sim ou não?*@
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning"><i class="fas fa-list"></i></a>   
-                            <a asp-controller="Appointment" asp-action="AddAppointment" asp-route-id="@item.Id" class="btn btn-dark"><i class="fas fa-calendar-check"></i></a>  
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-edit"></i></a>  
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning"><i class="fas fa-list"></i></a> 
                             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                             {
                                 <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
@@ -71,17 +77,12 @@
             }
                 </tbody>
             </table>
-    </div>
-    <a asp-action="Index" asp-controller="Customer" class="btn btn-primary btn-sm"><i class="fas fa-file-alt"></i>  Add Estimate</a>
+    </div>   
 
     <partial name="_DeleteDialog" />
     
 </div>
 
-
-
-     
-  
 
 <footer class="footer" style="position:Absolute; bottom:65px;">
     <table>
@@ -91,10 +92,7 @@
             </td>
             <td>
                 <i class="fas fa-list" style="background: #E0A800;padding:10px;border-radius: 50%; margin-left:10px; "></i> @Html.Raw(" = Details ") 
-            </td>
-            <td>
-                <i class="fas fa-calendar-check" style="background: #23272B;padding:10px;border-radius: 50%; margin-left:10px ;color:white "></i> @Html.Raw(" = Add Appointment ")
-            </td>            
+            </td>                      
             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
             {
                 <td>
@@ -113,8 +111,9 @@
         $(document).ready(function () {
             $('#MyTable').DataTable({
                 columnDefs: [
-                    {className: 'dt-center', targets: "_all"},
-                    { orderable: false, targets: 6 },
+                    { className: 'dt-center', targets: "_all" },
+                    {orderable: false, targets: 6}
+                                        
                 ],
                 order: [[ 0, 'desc' ]],
             });
@@ -138,5 +137,3 @@
         });
     </script>
 }
-
-

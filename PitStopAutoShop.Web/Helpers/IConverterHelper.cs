@@ -1,5 +1,6 @@
 ﻿using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Helpers
@@ -17,5 +18,11 @@ namespace PitStopAutoShop.Web.Helpers
         ServiceViewModel ToServiceViewModel(Service service);
 
         Service ToService(ServiceViewModel model, bool isNew);
+
+        AppointmentViewModel ToAppointmentViewModel(Appointment appointment,bool isNew);
+
+        Task<List<EstimateDetailTemp>> ToEstimateDetailTemps(IEnumerable<EstimateDetail> estimateDetails,string username);
+
+        
     }
 }

@@ -484,7 +484,6 @@ namespace PitStopAutoShop.Web.Controllers
                     return View(model);
                 }
 
-
                 var employee = await _converterHelper.ToEmployee(model,user,false);
 
                 if(employee == null)

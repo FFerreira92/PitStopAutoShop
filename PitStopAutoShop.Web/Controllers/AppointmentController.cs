@@ -21,10 +21,12 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly ICustomerRepository _customerRepository;
         private readonly IEstimateRepository _estimateRepository;
         private readonly IUserHelper _userHelper;
+        private readonly IConverterHelper _converterHelper;
 
         public AppointmentController(IFlashMessage flashMessage,IAppointmentRepository appointmentRepository
                                     ,IEmployeeRepository employeeRepository, ICustomerRepository customerRepository
-                                    ,IEstimateRepository estimateRepository, IUserHelper userHelper)
+                                    ,IEstimateRepository estimateRepository, IUserHelper userHelper
+                                    ,IConverterHelper converterHelper)
         {
             _flashMessage = flashMessage;
             _appointmentRepository = appointmentRepository;
@@ -32,10 +34,14 @@ namespace PitStopAutoShop.Web.Controllers
             _customerRepository = customerRepository;
             _estimateRepository = estimateRepository;
             _userHelper = userHelper;
+            _converterHelper = converterHelper;
         }
         
         public IActionResult Index()
-        {            
+        {
+            //adiciona um refresh rate à ação index do controlador
+            
+            Response.Headers.Add("Refresh", "10");
             ViewData["Events"] = _appointmentRepository.GetAllEvents();
 
             return View();
@@ -82,13 +88,32 @@ namespace PitStopAutoShop.Web.Controllers
         public async Task<IActionResult> AddAppointment(AppointmentViewModel model)
         {
             var estimate = await _estimateRepository.GetEstimateWithDetailsByIdAsync(model.EstimateId);
+            
+            string servicesString = "";
+            foreach(var item in estimate.Services)
+            {
+                if(item.Service != null)
+                {
+                    servicesString += item.Service.Name + "<br>";
+                }                
+            }
 
             if (ModelState.IsValid)
             {
+                string obs = "";
+
+                if (string.IsNullOrEmpty(model.Observations))
+                {
+                    obs = "No observations added.";
+                }
+                else
+                {
+                    obs = model.Observations;
+                }
 
                 var appointment = new Appointment
-                {
-                    Observations = model.Observations,
+                {                    
+                    Observations = obs,
                     Mechanic = await _employeeRepository.GetEmployeeByIdAsync(model.EmployeeId),
                     Customer = estimate.Customer,
                     Vehicle = estimate.Vehicle,
@@ -99,8 +124,8 @@ namespace PitStopAutoShop.Web.Controllers
                     AppointmentEndDate = model.AppointmentEndDate,
                     CreatedDate = model.CreatedDate,
                     UpdatedDate = model.UpdatedDate,
-                };              
-
+                    AppointmentServicesDetails = servicesString,
+                };            
 
                 try
                 {
@@ -120,12 +145,135 @@ namespace PitStopAutoShop.Web.Controllers
                 }                
             }
 
-            
+            ViewData["Events"] = _appointmentRepository.GetAllEvents();
             model.Customer = estimate.Customer;
             model.Vehicle = estimate.Vehicle;
             model.Technicians = _employeeRepository.GetComboTechnicians();
             return View(model);
-        }                
-        
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id.Value);
+
+            if(appointment == null)
+            {
+                return NotFound();
+            }
+
+            //if(appointment.AppointmentStartDate < DateTime.UtcNow)
+            //{
+            //    _flashMessage.Warning("It is not possible to edit an appointment from the past.");
+            //    return RedirectToAction(nameof(Index));
+            //}
+
+            var model = _converterHelper.ToAppointmentViewModel(appointment, false);
+
+            if(model == null)
+            {
+                return NotFound();
+            }
+            
+            return View(model);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(AppointmentViewModel model)
+        {
+            //Pt- Devido à restrição imposta para que as marcações sejam todas procedidas para depois da data e hora atual, não permitia editar marcações do passado apesar de
+            //dados se encontrarem preenchidos no modelo.
+            //En - Due to the restriction imposed so that the appointments are all proceeded after the current date and time,
+            //it did not allow editing of appointments from the past despite the data being filled in the model.
+
+            if (ModelState.ErrorCount < 2 && !string.IsNullOrEmpty(model.AppointmentStartDate.ToString()))
+            {
+                var estimate = await _estimateRepository.GetEstimateWithDetailsByIdAsync(model.EstimateId);
+
+                string obs = "";
+
+                if (string.IsNullOrEmpty(model.Observations))
+                {
+                    obs = "No observations added.";
+                }
+                else
+                {
+                    obs = model.Observations;
+                }
+
+                var appointment = await _appointmentRepository.GetAppointmentByIdAsync(model.Id);
+
+                if(appointment == null)
+                {
+                    _flashMessage.Danger("There was an error updating the appointment");
+                    return RedirectToAction(nameof(Index));
+                }
+
+                appointment.Observations = obs;
+                appointment.UpdatedDate = DateTime.Now;
+                appointment.Mechanic = await _employeeRepository.GetEmployeeByIdAsync(model.EmployeeId);
+                appointment.UpdatedBy = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+
+                try
+                {
+                    await _appointmentRepository.UpdateAsync(appointment);
+                    _flashMessage.Confirmation("The appointment was updated with success!");
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    _flashMessage.Danger("There was an error updating the appointment "+ ex.Message);
+                    model = _converterHelper.ToAppointmentViewModel(appointment, false);
+                    return View(model);
+                }
+            }         
+
+            _flashMessage.Danger("Failed to update the appointment.");
+            return RedirectToAction(nameof(Index));
+                      
+        }
+
+        [HttpPost]
+        [Route("Appointment/EventResize")]
+        public async Task<bool> EventResize(int eventId, string startTime,string endTime)
+        {
+            if(eventId == 0 || string.IsNullOrEmpty(startTime) || string.IsNullOrEmpty(endTime))
+            {
+                return false;
+            }
+
+            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(eventId);
+
+            if(appointment == null)
+            {
+                return false;
+            }
+
+            var startDateTime = Convert.ToDateTime(startTime).ToUniversalTime();
+            var endDateTime = Convert.ToDateTime(endTime).ToUniversalTime();
+
+            appointment.AppointmentEndDate = endDateTime;
+            appointment.AppointmentStartDate = startDateTime;
+            appointment.UpdatedDate = DateTime.Now;
+            appointment.UpdatedBy = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+
+            try
+            {
+                await _appointmentRepository.UpdateAsync(appointment);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }           
+        }
+
+
     }
 }
