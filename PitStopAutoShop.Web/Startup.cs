@@ -77,6 +77,7 @@ namespace PitStopAutoShop.Web
             services.AddScoped<IEstimateRepository, EstimateRepository>();
             services.AddScoped<IAppointmentRepository, AppointmentRepository>();
             services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
+            services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 
             services.ConfigureApplicationCookie(options =>

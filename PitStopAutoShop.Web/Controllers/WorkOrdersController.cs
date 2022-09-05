@@ -57,7 +57,8 @@ namespace PitStopAutoShop.Web.Controllers
                 CreatedBy = await _userHelper.GetUserByEmailAsync(User.Identity.Name),
                 UpdatedBy = await _userHelper.GetUserByEmailAsync(User.Identity.Name),
                 IsFinished = false,
-                OrderDateStart = DateTime.UtcNow,               
+                OrderDateStart = DateTime.UtcNow,
+                Status = "Opened",
             };
 
             try
@@ -136,7 +137,8 @@ namespace PitStopAutoShop.Web.Controllers
             workOrder.Observations = observations;
             workOrder.IsFinished = true;
             workOrder.awaitsReceipt = true;
-            workOrder.OrderDateEnd = DateTime.UtcNow;
+            workOrder.Status = "Done";
+           
 
             try
             {
@@ -150,6 +152,46 @@ namespace PitStopAutoShop.Web.Controllers
                 return RedirectToAction(nameof(Index));
             }           
         }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var workOrder = await _workOrderRepository.GetWorkOrderByIdAsync(id.Value);
+
+            if (workOrder == null)
+            {
+                return NotFound();
+            }
+
+            if(workOrder.Status != "Opened")
+            {
+                _flashMessage.Warning("It is not possible to delete/Cancel a work order that has already been processed.");
+                return RedirectToAction(nameof(Index));
+            }
+
+            workOrder.Appointment.AsAttended = false;
+
+            try
+            {
+                await _appointmentRepository.UpdateAsync(workOrder.Appointment);
+                await _workOrderRepository.DeleteAsync(workOrder);
+                _flashMessage.Warning($"Work order nº{workOrder.Id} as been canceled.");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _flashMessage.Warning($"There was an error canceling the order. {ex.InnerException}");
+                return RedirectToAction(nameof(Index));
+            }          
+
+        }
+
+
+
 
         [HttpPost]
         [Route("WorkOrders/CheckValidEmployeeId")]

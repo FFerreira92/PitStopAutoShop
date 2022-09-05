@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PitStopAutoShop.Web.Data;
 
 namespace PitStopAutoShop.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220905192850_updatedWorkOrderToHaveStatusProperty")]
+    partial class updatedWorkOrderToHaveStatusProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -431,52 +433,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("EstimateDetailTemps");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Invoice", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("CreatedById")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("EstimateId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("InvoicDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Observations")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Value")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("WorkOrderId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("EstimateId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.HasIndex("WorkOrderId");
-
-                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Model", b =>
@@ -915,39 +871,6 @@ namespace PitStopAutoShop.Web.Migrations
                     b.Navigation("Service");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Invoice", b =>
-                {
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.User", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Estimate", "Estimate")
-                        .WithMany()
-                        .HasForeignKey("EstimateId");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Vehicle", "Vehicle")
-                        .WithMany()
-                        .HasForeignKey("VehicleId");
-
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.WorkOrder", "WorkOrder")
-                        .WithMany()
-                        .HasForeignKey("WorkOrderId");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Estimate");
-
-                    b.Navigation("Vehicle");
-
-                    b.Navigation("WorkOrder");
                 });
 
             modelBuilder.Entity("PitStopAutoShop.Web.Data.Entities.Model", b =>

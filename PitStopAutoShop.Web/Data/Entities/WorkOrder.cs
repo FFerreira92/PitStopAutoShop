@@ -27,6 +27,8 @@ namespace PitStopAutoShop.Web.Data.Entities
 
         public bool awaitsReceipt { get; set; }
 
-        public string Observations { get; set; }          
+        public string Observations { get; set; }
+        
+        public string Status { get; set; }
     }
 }

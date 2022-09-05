@@ -21,6 +21,7 @@ namespace PitStopAutoShop.Web.Data
         public DbSet<EstimateDetailTemp> EstimateDetailTemps { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<WorkOrder> WorkOrders { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
 
 
         public DataContext(DbContextOptions<DataContext> options) : base(options)
