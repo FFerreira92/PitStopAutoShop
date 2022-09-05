@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Data.Repositories
 {
@@ -31,6 +32,29 @@ namespace PitStopAutoShop.Web.Data.Repositories
                 .Include(wo => wo.Appointment)
                     .ThenInclude(a => a.Vehicle)
                         .ThenInclude(v => v.Model);
+        }
+
+        public async Task<WorkOrder> GetWorkOrderByIdAsync(int id)
+        {
+            return await _context.WorkOrders                
+                .Include(wo => wo.ServiceDoneBy)
+                .Include(wo => wo.UpdatedBy)
+                .Include(wo => wo.CreatedBy)
+                .Include(wo => wo.Appointment)
+                    .ThenInclude(a => a.Customer)
+                .Include(wo => wo.Appointment)
+                    .ThenInclude(a => a.Mechanic)
+                .Include(wo => wo.Appointment)
+                    .ThenInclude(a => a.Estimate)
+                        .ThenInclude(e => e.Services)
+                            .ThenInclude(es => es.Service)
+                .Include(wo => wo.Appointment)
+                    .ThenInclude(a => a.Vehicle)
+                        .ThenInclude(v => v.Brand)
+                .Include(wo => wo.Appointment)
+                    .ThenInclude(a => a.Vehicle)
+                        .ThenInclude(v => v.Model)
+                .Where(wo => wo.Id == id).FirstAsync();
         }
     }
 }

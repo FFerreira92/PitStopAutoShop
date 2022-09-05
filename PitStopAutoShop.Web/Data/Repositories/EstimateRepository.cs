@@ -25,34 +25,34 @@ namespace PitStopAutoShop.Web.Data.Repositories
             _vehicleRepository = vehicleRepository;
         }
 
-        public async Task<bool> ConfirmEstimateAsync(string username,int customerId,int vehicleId)
+        public async Task<Response> ConfirmEstimateAsync(string username,int customerId,int vehicleId,string faultdescription)
         {
             var user = await _userHelper.GetUserByEmailAsync(username);
 
             if(user == null)
             {
-                return false;
+                return new Response { IsSuccess = false }; 
             }
 
             var estimateTemps = await _context.EstimateDetailTemps.Include(e => e.Service).Where(e => e.CustomerId == customerId && e.VehicleId == vehicleId).ToListAsync();
 
             if(estimateTemps == null || estimateTemps.Count == 0)
             {
-                return false;
+                return new Response { IsSuccess = false }; 
             }
 
             var customer = await _customerRepository.GetCustomerWithUserByIdAsync(customerId);
 
             if(customer == null)
             {
-                return false;
+                return new Response { IsSuccess = false }; 
             }
 
             var vehicle = await _vehicleRepository.GetVehicleDetailsByIdAsync(vehicleId);
 
             if(vehicle == null)
             {
-                return false;
+                return new Response { IsSuccess = false }; 
             }
 
             var details = estimateTemps.Select(e => new EstimateDetail
@@ -71,7 +71,8 @@ namespace PitStopAutoShop.Web.Data.Repositories
                 Services = details,
                 Customer = customer,
                 Vehicle = vehicle,
-                HasAppointment = false                
+                HasAppointment = false,
+                FaultDescription = faultdescription
             };
 
            
@@ -80,7 +81,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
             
             _context.EstimateDetailTemps.RemoveRange(estimateTemps);
             await _context.SaveChangesAsync();
-            return true;
+            return new Response { IsSuccess = true };
         }
 
         public async Task CreateEstimateDetailTemp(EstimateDetailTemp estimateDetailTemp)
@@ -255,34 +256,34 @@ namespace PitStopAutoShop.Web.Data.Repositories
             }            
         }
 
-        public async Task<bool> UpdateEstimateAsync(string username, int customerId, int vehicleId)
+        public async Task<Response> UpdateEstimateAsync(string username, int customerId, int vehicleId, string faultdescription)
         {
             var user = await _userHelper.GetUserByEmailAsync(username);
 
             if (user == null)
             {
-                return false;
+                return new Response { IsSuccess = false};
             }
 
             var estimateTemps = await _context.EstimateDetailTemps.Include(e => e.Service).Where(e => e.CustomerId == customerId && e.VehicleId == vehicleId).ToListAsync();
 
             if (estimateTemps == null || estimateTemps.Count == 0)
             {
-                return false;
+                return new Response { IsSuccess = false };
             }
 
             var customer = await _customerRepository.GetCustomerWithUserByIdAsync(customerId);
 
             if (customer == null)
             {
-                return false;
+                return new Response { IsSuccess = false };
             }
 
             var vehicle = await _vehicleRepository.GetVehicleDetailsByIdAsync(vehicleId);
 
             if (vehicle == null)
             {
-                return false;
+                return new Response { IsSuccess = false };
             }
 
             var estimate = await _context.Estimates
@@ -294,7 +295,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
 
             if(estimate == null)
             {
-                return false;
+                return new Response { IsSuccess = false };
             }
 
             int nOfDeletedEstimateDetails = 0;
@@ -306,7 +307,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
             }
             catch 
             {
-                return false;
+                return new Response { IsSuccess = false };
             }            
 
             var details = estimateTemps.Select(e => new EstimateDetail
@@ -319,12 +320,31 @@ namespace PitStopAutoShop.Web.Data.Repositories
             }).ToList();
 
             estimate.Services = details;
+            estimate.FaultDescription = faultdescription;
             
             await UpdateAsync(estimate);
 
+            bool asWorkOrder = false;
+           
+            try
+            {
+                var appointment = await _context.Appointments.Where(e => e.Estimate.Id == estimate.Id).FirstAsync();
+                var workOrder = await _context.WorkOrders.Where(wo => wo.Appointment.Id == appointment.Id).FirstAsync();
+                if (workOrder != null)
+                {
+                    asWorkOrder = true;
+                }
+            }
+            catch 
+            {
+                asWorkOrder= false;
+            }         
+                       
+
+
             _context.EstimateDetailTemps.RemoveRange(estimateTemps);
             await _context.SaveChangesAsync();
-            return true;
+            return new Response { IsSuccess = true, Results = asWorkOrder };
         }
     }
 }

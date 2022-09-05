@@ -21,9 +21,11 @@ namespace PitStopAutoShop.Web.Data.Entities
 
         public User UpdatedBy { get; set; }      
 
-        public Employee ServiceDoneBy { get; set; }
+        public User ServiceDoneBy { get; set; }
 
         public bool IsFinished { get; set; }
+
+        public bool awaitsReceipt { get; set; }
 
         public string Observations { get; set; }          
     }

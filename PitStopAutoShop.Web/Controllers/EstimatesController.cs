@@ -67,16 +67,11 @@ namespace PitStopAutoShop.Web.Controllers
             {
                 totalCost += item.ValueWithDiscount;
             }
-
             
             ViewData["TotalCost"] = totalCost.ToString("C2");
 
             return View(listmodel);
-
-            //var currentUserDetailTemps = await _estimateRepository.GetEstimateDetailTempAsync(this.User.Identity.Name);
-
-            //var model = await _estimateRepository.GetDetailTempsAsync(currentUserDetailTemps.VehicleId, currentUserDetailTemps.CustomerId);
-            //return View(model);
+           
         }
       
 
@@ -289,7 +284,7 @@ namespace PitStopAutoShop.Web.Controllers
         }
 
 
-        public async Task<IActionResult> ConfirmEstimate(int? id,bool isEdit)
+        public async Task<IActionResult> ConfirmEstimate(int? id,bool isEdit,string faultDescription)
         {
             if(id == null)
             {
@@ -307,22 +302,28 @@ namespace PitStopAutoShop.Web.Controllers
             
             if(estimateDetailTemps != null)
             {
-                var response = false;
+                Response response;
 
                 if (!isEdit)
                 {
-                   response = await _estimateRepository.ConfirmEstimateAsync(this.User.Identity.Name, vehicle.CustomerId, vehicle.Id);                    
+                   response = await _estimateRepository.ConfirmEstimateAsync(this.User.Identity.Name, vehicle.CustomerId, vehicle.Id,faultDescription);
+                   if (response.IsSuccess == true)
+                   {
+                       return RedirectToAction("Index");
+                   }
                 }
                 else
                 {
-                    response = await _estimateRepository.UpdateEstimateAsync(this.User.Identity.Name, vehicle.CustomerId, vehicle.Id);
-                }
-
-
-                if (response)
-                {
-                    return RedirectToAction("Index");
-                }
+                    response = await _estimateRepository.UpdateEstimateAsync(this.User.Identity.Name, vehicle.CustomerId, vehicle.Id,faultDescription);
+                    if(response.IsSuccess == true && response.Results == false)
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    if(response.IsSuccess == true && response.Results == true)
+                    {
+                        return RedirectToAction("Index", "WorkOrders");
+                    }
+                }              
 
                 if (!isEdit)
                 {
@@ -384,6 +385,9 @@ namespace PitStopAutoShop.Web.Controllers
                     totalCost += item.ValueWithDiscount;
                 }
 
+               
+                ViewData["faultDescription"] = estimate.FaultDescription;
+                
                 ViewData["TotalCost"] = totalCost.ToString("C2");
 
                 return View(estimateDetailsTemps);
@@ -405,6 +409,8 @@ namespace PitStopAutoShop.Web.Controllers
 
                 var listmodel = await _estimateRepository.GetDetailTempsAsync(userDetailTemps.VehicleId, userDetailTemps.CustomerId);
 
+                var estimate = await _estimateRepository.GetEstimateWithDetailsByIdAsync(listmodel.FirstOrDefault().EstimateId);
+
                 double totalCost = 0;
 
                 foreach (var item in listmodel)
@@ -412,7 +418,8 @@ namespace PitStopAutoShop.Web.Controllers
                     totalCost += item.ValueWithDiscount;
                 }
 
-
+               
+                ViewData["faultDescription"] = estimate.FaultDescription;               
                 ViewData["TotalCost"] = totalCost.ToString("C2");
 
                 return View(listmodel);

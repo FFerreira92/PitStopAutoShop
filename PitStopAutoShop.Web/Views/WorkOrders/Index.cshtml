@@ -1,10 +1,12 @@
-﻿@model IEnumerable<PitStopAutoShop.Web.Data.Entities.WorkOrder>
+﻿@using PitStopAutoShop.Web.Helpers
+@model IEnumerable<PitStopAutoShop.Web.Data.Entities.WorkOrder>
 
 @{
     Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
     ViewData["Title"] = "Work Orders";
     ViewData["Controller"] = "Work Orders";
     ViewData["Action"] = null;
+    var okButton = new ButtonModel() { content = "Done!", cssClass = "e-flat" };    
 }
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
@@ -38,8 +40,9 @@
                 </thead>
                 <tbody>
             @foreach (var item in Model) 
-            {
-                    <tr>
+            {                  
+                
+                    <tr id="rowEdit" onload="checkAwaitsReceiptStatus(@item.Id)">
                         <td>
                             @Html.DisplayFor(modelItem => item.Id)
                         </td>
@@ -66,11 +69,22 @@
                             }                            
                         </td>
                         <td id="@item.Id">                           
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-edit"></i></a>  
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning"><i class="fas fa-list"></i></a> 
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a>  
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a>
+                            @if(this.User.Identity.IsAuthenticated && User.IsInRole("Technician") || this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                            {
+                                if(item.IsFinished != true)
+                                {
+                                   <a class="btn btn-success btn-sm" onclick="onDeclareDoneBtnClick(@item.Id)"><i class="fas fa-check"></i></a> 
+                                }                                                               
+                            }
+                            @if(this.User.Identity.IsAuthenticated && User.IsInRole("Receptionist") || this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                            {
+                                <a asp-action="PrintReceipt" asp-route-id="@item.Id" class="btn btn-primary btn-sm"><i class="fas fa-thumbs-up"></i></a>
+                            }
                             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                             {
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger pull-right btn-sm" id="btnDelete"><i class="fas fa-trash"></i></a>
                             }                                
                         </td>
                     </tr>
@@ -82,13 +96,13 @@
     <partial name="_DeleteDialog" />
     
 </div>
-
+@*asp-action="DeclareDone" asp-route-id="@item.Id"*@
 
 <footer class="footer" style="position:Absolute; bottom:65px;">
     <table>
         <tr>
             <td style="margin-right:10px;">
-               <i class="fas fa-edit" style="background: #31D2F2;padding:10px;border-radius: 50%; color:white;"></i> @Html.Raw(" = Edit ") 
+               <i class="fas fa-edit" style="background: #31D2F2;padding:10px;border-radius: 50%; color:white;"></i> @Html.Raw(" = Edit Work Order Services ") 
             </td>
             <td>
                 <i class="fas fa-list" style="background: #E0A800;padding:10px;border-radius: 50%; margin-left:10px; "></i> @Html.Raw(" = Details ") 
@@ -103,21 +117,159 @@
     </table>  
 </footer>
 
+<script type="text/javascript">
+ 
+    var workOrderId;
+
+    function onDeclareDoneBtnClick(id) {
+        workOrderId = id;      
+        var dialog = document.getElementById("dialog").ej2_instances[0];     
+            dialog.header = "Declare Work order nº"+id+" done?";
+            dialog.show();
+    };
+
+    function ondlgButtonClick() {
+     
+        var employeeId = document.getElementById("employeeId").value;
+        var parsedId = parseInt(employeeId);       
+        if (isNaN(parsedId) == true) {
+            document.getElementById("spanMessage").style.color = "red";
+            document.getElementById("spanMessage").innerHTML = "Please insert a valid employee Id.";            
+        }
+        else {
+                $.ajax({
+                    url: '@Url.Action("CheckValidEmployeeId","WorkOrders")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {employeeId:parsedId},
+                    success: function (employee) {
+                        
+                        if (employee != null) {
+                            document.getElementById("spanMessage").style.color = "Green";
+                            document.getElementById("spanMessage").innerHTML = employee.fullName;
+                            
+                            var seconds = 5;                           
+
+                            var observations = document.getElementById("observationsInput").value;                           
+                            document.getElementById("observationsInput").readOnly = true;                            
+
+
+                            var timeout = setTimeout(function(){
+                            window.location.href = window.location.href = '/WorkOrders/DeclareDone/'+workOrderId+"?observations="+observations+"&employeeId="+employeeId;
+                            },5000);
+
+                            setInterval(() => {
+                                
+                                seconds = seconds - 1;
+                                
+                                document.getElementById("timeLeft").innerHTML= 'Success! This window will close in: <span style="color: red;">'+seconds+'</span> seconds';
+
+                            }, 1000);                         
+                            
+                        }
+                        else {
+                            document.getElementById("spanMessage").style.color = "red";
+                            document.getElementById("spanMessage").innerHTML = "Please insert a valid employee number.";
+                        }                       
+                    },
+                    error: function(ex) {
+                        document.getElementById("spanMessage").style.color = "red";
+                        document.getElementById("spanMessage").innerHTML = "Failed to retrive employee data."+ex;                                             
+                    }                   
+                });
+                return false;
+        }
+    };  
+   
+    function onOverlayClick() {
+         var dialog = document.getElementById("dialog").ej2_instances[0];         
+         dialog.hide();       
+    }; 
+
+    function checkAwaitsReceiptStatus(Id) {
+       
+        $.ajax({
+            url: '@Url.Action("GetWorkOrder","WorkOrders")',
+            type: 'POST',
+            dataType: 'json',
+            data: { workOrderId: Id},
+            success: function(order) {
+                console.log(order);
+                debugger;
+                if (order.awaitsReceipt == true) {
+                    document.getElementById("rowEdit").style.backgroundColor = "red";
+                };
+            },
+            error: function(ex) {
+                console.log("error");
+            },
+        });
+
+       
+
+    }
+
+
+</script>
+
+
+<div id='container' style="height:auto">
+    <ejs-dialog id='dialog' visible="false" isModal="true" width="580px" height="440px" showCloseIcon="true" allowDragging="false" overlayClick="onOverlayClick" target="#container">
+        <e-content-template>
+            <div class="dialog-content">
+                <div style="display:inline-grid"> 
+                   <label class="control-label" style="text-align:left">Employee Id</label>
+                   <input class="e-input" type='number' id="employeeId" style="width:100px"/>
+                   <span id="spanMessage" style="font-weight:bold"></span>
+                </div> 
+                
+                <div style="margin-top:20px">
+                    <label class="control-label" style="text-align:left">Observations</label>
+                    <textarea class="e-input" id="observationsInput" rows="5"> </textarea>
+                    <div id="timeLeft" style="font-weight:bold; text-align:center; color:navy;margin-top:10px"></div>
+                </div>              
+            </div>            
+        </e-content-template>
+
+        <e-dialog-animationsettings effect="Fade" duration="400" delay="0"></e-dialog-animationsettings>
+        <e-dialog-buttons>
+                <e-dialog-dialogbutton buttonModel="@okButton" click="ondlgButtonClick"></e-dialog-dialogbutton>                
+        </e-dialog-buttons>        
+    </ejs-dialog>
+</div>
+
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
      <script type="text/javascript">
         $(document).ready(function () {
-            $('#MyTable').DataTable({
-                columnDefs: [
+            var table = $('#MyTable').DataTable({
+                columnDefs: [                    
                     { className: 'dt-center', targets: "_all" },
-                    {orderable: false, targets: 6}
-                                        
+                    {orderable: false, targets: 6},                     
                 ],
+                paging: false,
+                info: false,
                 order: [[ 0, 'desc' ]],
+                createdRow: function (row, data, index) {
+                    if (data[5] != '-') {
+                        $(row).css("background-color", "#f0aaaa");
+                    }                   
+                }
             });
+
+            //table.rows().every(function() {
+            //    var id = this.data();
+            //    console.log(id);
+            //})           
+            
+
         });
+       
+
+        
 
         $(document).ready(function () {
             let id = 0;

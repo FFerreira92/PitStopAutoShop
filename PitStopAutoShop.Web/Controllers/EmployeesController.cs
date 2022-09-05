@@ -564,5 +564,6 @@ namespace PitStopAutoShop.Web.Controllers
             var role = await _employeesRolesRepository.GetRoleWithSpecialtiesAsync(roleId);
             return Json(role.Specialties.OrderBy(s => s.Name));
         }
+        
     }
 }

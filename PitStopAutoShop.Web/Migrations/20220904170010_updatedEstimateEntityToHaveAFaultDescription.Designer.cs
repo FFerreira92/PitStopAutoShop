@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PitStopAutoShop.Web.Data;
 
 namespace PitStopAutoShop.Web.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220904170010_updatedEstimateEntityToHaveAFaultDescription")]
+    partial class updatedEstimateEntityToHaveAFaultDescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -675,14 +677,11 @@ namespace PitStopAutoShop.Web.Migrations
                     b.Property<DateTime>("OrderDateStart")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ServiceDoneById")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int?>("ServiceDoneById")
+                        .HasColumnType("int");
 
                     b.Property<string>("UpdatedById")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("awaitsReceipt")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -915,7 +914,7 @@ namespace PitStopAutoShop.Web.Migrations
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("PitStopAutoShop.Web.Data.Entities.User", "ServiceDoneBy")
+                    b.HasOne("PitStopAutoShop.Web.Data.Entities.Employee", "ServiceDoneBy")
                         .WithMany()
                         .HasForeignKey("ServiceDoneById");
 

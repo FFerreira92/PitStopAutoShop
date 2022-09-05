@@ -84,8 +84,14 @@
                     </tr>
                 </tbody>
                 </table>
-            </div>        
-    
+            </div>  
+            
+            <div class="form-group" style="margin-top:20px">
+                <label class="control-label">Fault Description</label>
+                <textarea class="form-control" id="faultDescriptionText" rows="5">
+                 @Html.Raw(ViewData["faultDescription"])                
+                </textarea>              
+            </div>     
 
             <div style="margin-top:20px">
                 <a asp-action="AddService" asp-route-id="@Model.First().VehicleId" asp-route-isEdit="true" class="btn btn-info btn-sm"><i class="fas fa-file-medical"></i>  Add Service</a>   
@@ -160,10 +166,9 @@
         });
 
         $('#MyTable2').DataTable({
-                columnDefs: [{
-                    className: 'dt-right', targets: "_all"
-                    
-                }],
+                columnDefs: [
+                    {className: 'dt-right', targets: "_all"},                    
+                ],
                 paging: false,
                 searching: false,
                 info: false,
@@ -187,7 +192,8 @@
 
              $("#btnYesConfirm").click(function() {
                   id = @Model.FirstOrDefault().VehicleId;
-                  window.location.href = "/Estimates/ConfirmEstimate/"+id+"?isEdit=true";               
+                  var faultDesc = document.getElementById("faultDescriptionText").value;               
+                  window.location.href = "/Estimates/ConfirmEstimate/"+id+"?isEdit=true&faultDescription="+faultDesc;            
             });
 
 
@@ -211,28 +217,5 @@
 
     </script>
 
-   @* <script>        
-        $(window).on('afterunload',function() {
-            debugger;
-            let vhcleId = @Model.FirstOrDefault().VehicleId;
-            let custId = @Model.FirstOrDefault().CustomerId;          
-            console.log(controller);
-            console.log(action);
-                        
-            $.ajax({
-                      url: '@Url.Action("RemoveTemps","Estimates")',
-                      type: 'POST',
-                      dataType: 'json',
-                      data: { vehicleId: vhcleId, customerId: custId },
-                      success: function(models) {
-                          console.log("Success");
-                      },
-                      error: function(ex) {
-                          
-                          console.log("There was an error deleting the temps. " + ex.message);
-                      }
-            });
-            //window.location.href = "/Estimates/RemoveTemps/" + vehicleId + "?" + customerId;
-        });
-    </script>*@
+  
 }

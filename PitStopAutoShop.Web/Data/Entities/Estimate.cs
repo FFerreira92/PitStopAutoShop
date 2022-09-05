@@ -17,8 +17,7 @@ namespace PitStopAutoShop.Web.Data.Entities
         public DateTime EstimateDate { get; set; }
 
         [Required]
-        public Customer Customer { get; set; }      
-        
+        public Customer Customer { get; set; }    
 
         [Required]
         public User CreatedBy { get; set; }
@@ -27,6 +26,9 @@ namespace PitStopAutoShop.Web.Data.Entities
         public Vehicle Vehicle { get; set; }
        
         public IEnumerable<EstimateDetail> Services { get; set; }
+
+        [Display(Name ="Fault Description")]
+        public string FaultDescription { get; set; }
 
         [Display(Name ="Nº Services")]
         [DisplayFormat(DataFormatString = "{0:N2}")]
