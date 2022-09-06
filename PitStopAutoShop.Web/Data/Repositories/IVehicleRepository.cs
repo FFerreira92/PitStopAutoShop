@@ -15,5 +15,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
         Task<Vehicle> GetVehicleDetailsByIdAsync(int id);
 
         IQueryable GetCustomerVehiclesAsync(int customerId);
+
+        Task<Vehicle> GetNewlyAddedVehicleAsync(int id);
     }
 }

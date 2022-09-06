@@ -1,10 +1,13 @@
-﻿@model IEnumerable<PitStopAutoShop.Web.Data.Entities.Estimate>
+﻿@using PitStopAutoShop.Web.Helpers
+@model IEnumerable<PitStopAutoShop.Web.Data.Entities.Estimate>
 
 @{
     Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
     ViewData["Title"] = "Estimates";
     ViewData["Controller"] = "Estimates";
     ViewData["Action"] = null;
+    var NewClientButtonYes = new ButtonModel() { content = "Yes", cssClass = "e-flat" };
+    var NewClientButtonNo = new ButtonModel() { content = "No", cssClass = "e-flat" };
 }
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
@@ -72,15 +75,24 @@
                 </tbody>
             </table>
     </div>
-    <a asp-action="Index" asp-controller="Customer" class="btn btn-primary btn-sm"><i class="fas fa-file-alt"></i>  Add Estimate</a>
+    <a class="btn btn-primary btn-sm" onclick="onAddEstimateButtonClick()"><i class="fas fa-file-alt"></i>  Add Estimate</a>
 
     <partial name="_DeleteDialog" />
     
 </div>
 
+@*asp-action="Index" asp-controller="Customer"*@
 
-
-     
+<div id='container' style="height:auto">
+    <ejs-dialog id='dialog' visible="false" isModal="true" width="300px" showCloseIcon="true" allowDragging="true" overlayClick="onOverlayClick" target="#container">
+       
+        <e-dialog-animationsettings effect="Fade" duration="400" delay="0"></e-dialog-animationsettings>
+        <e-dialog-buttons>
+                <e-dialog-dialogbutton buttonModel="@NewClientButtonYes" click="ondlgYesButtonClick"></e-dialog-dialogbutton>
+                <e-dialog-dialogbutton buttonModel="@NewClientButtonNo" click="ondlgNoButtonClick"></e-dialog-dialogbutton>
+        </e-dialog-buttons>        
+    </ejs-dialog>
+</div>     
   
 
 <footer class="footer" style="position:Absolute; bottom:65px;">
@@ -109,7 +121,7 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-     <script type="text/javascript">
+    <script type="text/javascript">
         $(document).ready(function () {
             $('#MyTable').DataTable({
                 columnDefs: [
@@ -136,7 +148,7 @@
                 window.location.href = '/Estimates/Delete/' + id;
             });
         });
-    </script>
+    </script>    
 }
 
 

@@ -6,6 +6,7 @@ using PitStopAutoShop.Web.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
@@ -16,6 +17,7 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IMailHelper _mailHelper;
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IBrandRepository _brandRepository;
+        private readonly IFlashMessage _flashMessage;
 
         public CustomerController(
             ICustomerRepository customerRepository
@@ -23,6 +25,7 @@ namespace PitStopAutoShop.Web.Controllers
             ,IMailHelper mailHelper
             ,IVehicleRepository vehicleRepository
             ,IBrandRepository brandRepository
+            ,IFlashMessage flashMessage
         )
         {
             _customerRepository = customerRepository;
@@ -30,6 +33,7 @@ namespace PitStopAutoShop.Web.Controllers
             _mailHelper = mailHelper;
             _vehicleRepository = vehicleRepository;
             _brandRepository = brandRepository;
+            _flashMessage = flashMessage;
         }
 
         public IActionResult Index()
@@ -139,13 +143,14 @@ namespace PitStopAutoShop.Web.Controllers
 
                 if (isSent.IsSuccess)
                 {
-                    ViewBag.Message = $"Customer account has been created and an email has been sent to {user.Email}, please inform the customer about account creation!";
-                    return View(model);
+                    _flashMessage.Confirmation($"Customer account has been created and an email has been sent to {user.Email}, please inform the customer about account creation!");
+                    return RedirectToAction("Create", "Vehicles", new { email = user.Email, isEstimate = true});
+
                 }
                 else
                 {
-                    ViewBag.Message = $"Customer has been created!";
-                    return View(model);
+                    _flashMessage.Warning($"Customer has been created! But failed to send the confirmation email to the client!");
+                    return RedirectToAction("Create", "Vehicles",new { email = user.Email, isEstimate = true });
                 }
             }
 

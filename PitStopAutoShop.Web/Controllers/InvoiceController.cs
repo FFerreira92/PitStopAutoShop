@@ -1,0 +1,44 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using PitStopAutoShop.Web.Data.Repositories;
+using System.Threading.Tasks;
+
+namespace PitStopAutoShop.Web.Controllers
+{
+    public class InvoiceController : Controller
+    {
+        private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IWorkOrderRepository _workOrderRepository;
+
+        public InvoiceController(IInvoiceRepository invoiceRepository,
+            IWorkOrderRepository workOrderRepository)
+        {
+            _invoiceRepository = invoiceRepository;
+            _workOrderRepository = workOrderRepository;
+        }
+
+
+        public IActionResult Index()
+        {
+            var invoices = _invoiceRepository.GetAllInvoices();
+
+            return View(invoices);
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var invoice = await _invoiceRepository.GetInvoiceDetailsByIdAsync(id.Value);
+
+            if(invoice == null)
+            {
+                return NotFound();
+            }           
+
+            return View(invoice);
+        }
+    }
+}

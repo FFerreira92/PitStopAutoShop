@@ -74,8 +74,12 @@
                                 @Html.DisplayFor(modelItem => item.OrderDateEnd)
                             }                            
                         </td>
-                        <td id="@item.Id">                           
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a>  
+                        <td id="@item.Id">
+                            
+                            @if(item.Status == "Opened")
+                            {
+                               <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a>  
+                            }                             
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a>
                             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Technician") || this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                             {
@@ -86,7 +90,10 @@
                             }
                             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Receptionist") || this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                             {
-                                <a asp-action="PrintReceipt" asp-route-id="@item.Id" class="btn btn-primary btn-sm"><i class="fas fa-thumbs-up"></i></a>
+                                if(item.IsFinished == true && item.Status == "Done")
+                                {
+                                  <a asp-action="PrintInvoice" asp-route-id="@item.Id" class="btn btn-primary btn-sm"><i class="fas fa-thumbs-up"></i></a>  
+                                }                                
                             }
                             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                             {
@@ -102,9 +109,8 @@
     <partial name="_DeleteDialog" />
     
 </div>
-@*asp-action="DeclareDone" asp-route-id="@item.Id"*@
 
-<footer class="footer" style="position:Absolute; bottom:65px;">
+<footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
     <table>
         <tr>
             <td style="margin-right:10px;">
@@ -112,7 +118,19 @@
             </td>
             <td>
                 <i class="fas fa-list" style="background: #E0A800;padding:10px;border-radius: 50%; margin-left:10px; "></i> @Html.Raw(" = Details ") 
-            </td>                      
+            </td>
+            @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Receptionist"))
+            {
+               <td>
+                <i class="fas fa-check" style="background: #157347;padding:10px;border-radius: 50%; margin-left:10px; color:white;"></i> @Html.Raw(" = Declare Work Order Done ") 
+               </td> 
+            }
+            @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Technician"))
+            {
+               <td>
+                <i class="fas fa-thumbs-up" style="background: #0B5ED7;padding:10px;border-radius: 50%; margin-left:10px; color:white; "></i> @Html.Raw(" = Print Invoice ") 
+               </td> 
+            }
             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
             {
                 <td>
@@ -151,17 +169,14 @@
                     success: function (employee) {
                         
                         if (employee != null) {
-                            document.getElementById("spanMessage").style.color = "Green";
-                            document.getElementById("spanMessage").innerHTML = employee.fullName;
-                            
+                                                     
                             var seconds = 5;                           
 
                             var observations = document.getElementById("observationsInput").value;                           
-                            document.getElementById("observationsInput").readOnly = true;                            
-
+                            document.getElementById("observationsInput").readOnly = true;                           
 
                             var timeout = setTimeout(function(){
-                            window.location.href = window.location.href = '/WorkOrders/DeclareDone/'+workOrderId+"?observations="+observations+"&employeeId="+employeeId;
+                            window.location.href = '/WorkOrders/DeclareDone/'+workOrderId+"?observations="+observations+"&employeeId="+employeeId;
                             },5000);
 
                             setInterval(() => {
@@ -171,7 +186,37 @@
                                 document.getElementById("timeLeft").innerHTML= 'Success! This window will close in: <span style="color: red;">'+seconds+'</span> seconds';
 
                             }, 1000);                         
-                            
+                        }
+                        
+                    },
+                    error: function(ex) {
+                        document.getElementById("spanMessage").style.color = "red";
+                        document.getElementById("spanMessage").innerHTML = "Failed to retrive employee data."+ex;                                             
+                    }                   
+                });
+                return false;
+        }
+    };  
+
+    function ondlgInputChange() {
+     
+        var employeeId = document.getElementById("employeeId").value;
+        var parsedId = parseInt(employeeId);       
+        if (isNaN(parsedId) == true) {
+            document.getElementById("spanMessage").style.color = "red";
+            document.getElementById("spanMessage").innerHTML = "Please insert a valid employee Id.";            
+        }
+        else {
+                $.ajax({
+                    url: '@Url.Action("CheckValidEmployeeId","WorkOrders")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {employeeId:parsedId},
+                    success: function (employee) {
+                        
+                        if (employee != null) {
+                            document.getElementById("spanMessage").style.color = "Green";  
+                            document.getElementById("spanMessage").innerHTML = employee.fullName;                                                                              
                         }
                         else {
                             document.getElementById("spanMessage").style.color = "red";
@@ -222,7 +267,7 @@
             <div class="dialog-content">
                 <div style="display:inline-grid"> 
                    <label class="control-label" style="text-align:left">Employee Id</label>
-                   <input class="e-input" type='number' id="employeeId" style="width:100px"/>
+                   <input class="e-input" type='number' id="employeeId" onchange="ondlgInputChange()" style="width:100px"/>
                    <span id="spanMessage" style="font-weight:bold"></span>
                 </div> 
                 

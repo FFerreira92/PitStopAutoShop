@@ -10,6 +10,7 @@ using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Data.Repositories;
 using PitStopAutoShop.Web.Helpers;
 using PitStopAutoShop.Web.Models;
+using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
@@ -19,16 +20,22 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly ICustomerRepository _customerRepository;
         private readonly IUserHelper _userHelper;
         private readonly IBrandRepository _brandRepository;
+        private readonly IEstimateRepository _estimateRepository;
+        private readonly IFlashMessage _flashMessage;
 
         public VehiclesController(IVehicleRepository vehicleRepository,
             ICustomerRepository customerRepository,
             IUserHelper userHelper,
-            IBrandRepository brandRepository)
+            IBrandRepository brandRepository,
+            IEstimateRepository estimateRepository,
+            IFlashMessage flashMessage)
         {
             _vehicleRepository = vehicleRepository;
             _customerRepository = customerRepository;
             _userHelper = userHelper;
             _brandRepository = brandRepository;
+            _estimateRepository = estimateRepository;
+            _flashMessage = flashMessage;
         }
 
         // GET: Vehicles
@@ -58,7 +65,7 @@ namespace PitStopAutoShop.Web.Controllers
         }
 
         // GET: Vehicles/Create
-        public async Task<IActionResult> Create(string email)
+        public async Task<IActionResult> Create(string email, bool isEstimate)
         {
             var customer = await _customerRepository.GetCustomerByEmailAsync(email);
 
@@ -73,6 +80,7 @@ namespace PitStopAutoShop.Web.Controllers
                 CustomerId = customer.Id,
                 Brands = _brandRepository.GetComboBrands(),
                 Models = _brandRepository.GetComboModels(0),
+                IsEstimate = isEstimate
             };
 
             return View(vehicleModel);
@@ -131,12 +139,39 @@ namespace PitStopAutoShop.Web.Controllers
                 try
                 {
                     await _vehicleRepository.CreateAsync(vehicle);
-                    return RedirectToAction("Edit", "Customer", new { id = vehicle.CustomerId });
+
+                    if (!vehicleModel.IsEstimate)
+                    {
+                        return RedirectToAction("Edit", "Customer", new { id = vehicle.CustomerId });
+                    }
+                    else
+                    {
+                        var addedVehicle = await _vehicleRepository.GetNewlyAddedVehicleAsync(customer.Id);
+
+                        var estimateDetailTemp = new EstimateDetailTemp
+                        {
+                            CustomerId = customer.Id,
+                            VehicleId = addedVehicle.Id,
+                            User = await _userHelper.GetUserByEmailAsync(User.Identity.Name)
+                        };
+
+                        try
+                        {
+                            await _estimateRepository.CreateEstimateDetailTemp(estimateDetailTemp);
+                            return RedirectToAction("Create","Estimates", new { id = estimateDetailTemp.VehicleId });
+                        }
+                        catch (Exception ex)
+                        {
+                            _flashMessage.Danger("There was an error creating the estimate. " + ex.InnerException.Message);
+                            return RedirectToAction("Index","Customer");
+                        }                        
+                    }
+                    
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, ex.InnerException.Message);
-                }           
+                }          
       
             }
 

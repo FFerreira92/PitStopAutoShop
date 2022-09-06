@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace PitStopAutoShop.Web.Data.Entities
 {
@@ -14,12 +15,12 @@ namespace PitStopAutoShop.Web.Data.Entities
 
         public WorkOrder WorkOrder { get; set; }
 
-        public string Observations { get; set; }
-
+        [DisplayFormat(DataFormatString = "{0:C2}")]
         public decimal Value { get; set; }       
 
         public User CreatedBy { get; set; }
 
+        [Display(Name ="Date")]
         public DateTime InvoicDate { get; set; }
     }
 }

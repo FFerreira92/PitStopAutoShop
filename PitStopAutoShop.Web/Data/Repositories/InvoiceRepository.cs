@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Data.Repositories
 {
@@ -16,12 +17,34 @@ namespace PitStopAutoShop.Web.Data.Repositories
         public IQueryable GetAllInvoices()
         {
             return _context.Invoices
-                .Include(i => i.WorkOrder)                
                 .Include(i => i.WorkOrder)
+                    .ThenInclude(wo => wo.ServiceDoneBy)                  
                 .Include(i => i.Customer)
                 .Include(i => i.CreatedBy)
                 .Include(i => i.Estimate)
-                .Include(i => i.Vehicle);               
+                .Include(i => i.Vehicle)
+                    .ThenInclude(v => v.Brand)
+                .Include(i => i.Vehicle)
+                    .ThenInclude(v => v.Model);
+        }
+
+        public async Task<Invoice> GetInvoiceDetailsByIdAsync(int id)
+        {
+            return await _context.Invoices                                  
+                .Include(i => i.WorkOrder)
+                    .ThenInclude(wo => wo.ServiceDoneBy)
+                .Include(i => i.WorkOrder)
+                    .ThenInclude(wo => wo.Appointment)                            
+                .Include(i => i.Customer)
+                .Include(i => i.CreatedBy)
+                .Include(i => i.Estimate)
+                    .ThenInclude(e => e.Services)
+                            .ThenInclude(es => es.Service)
+                .Include(i => i.Vehicle)
+                    .ThenInclude(v => v.Brand)
+                .Include(i => i.Vehicle)
+                    .ThenInclude(v => v.Model)
+                .Where(i => i.Id == id).FirstAsync();
         }
     }
 }

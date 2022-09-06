@@ -70,8 +70,7 @@ namespace PitStopAutoShop.Web.Controllers
             
             ViewData["TotalCost"] = totalCost.ToString("C2");
 
-            return View(listmodel);
-           
+            return View(listmodel);           
         }
       
 

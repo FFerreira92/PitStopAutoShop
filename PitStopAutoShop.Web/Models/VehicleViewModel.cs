@@ -48,5 +48,7 @@ namespace PitStopAutoShop.Web.Models
 
         public Customer Customer { get; set; }
 
+        public bool IsEstimate { get; set; }
+
     }
 }

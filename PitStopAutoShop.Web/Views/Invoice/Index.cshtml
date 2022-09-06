@@ -1,0 +1,99 @@
+﻿@model IEnumerable<PitStopAutoShop.Web.Data.Entities.Invoice>
+
+@{
+    Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
+    ViewData["Title"] = "Invoices";
+    ViewData["Controller"] = "Invoices";
+    ViewData["Action"] = null;       
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
+
+
+<div class="container-fluid" style="margin-bottom: 75px; ">
+    <div>            
+            <table class="hover stripe row-border" style="display:inline-table" id="MyTable">
+                <thead>
+                    <tr>
+                        <th>
+                            Invoice Nº.
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.FirstOrDefault().InvoicDate)
+                        </th>  
+                        <th>
+                            Customer Name
+                        </th>
+                        <th>
+                            Vehicle
+                        </th>
+                        <th>
+                            Service Done By
+                        </th>                        
+                        <th>
+                           @Html.DisplayNameFor(model => model.FirstOrDefault().Value)
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+            @foreach (var item in Model) 
+            {                 
+                    <tr id="rowEdit">
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.InvoicDate)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Customer.FullName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Vehicle.PlateNumber) (@Html.DisplayFor(modelItem => item.Vehicle.Brand.Name) @Html.DisplayFor(modelItem => item.Vehicle.Model.Name))                            
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.WorkOrder.ServiceDoneBy.FullName)
+                        </td>                        
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Value)
+                        </td>
+                        <td id="@item.Id">                           
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a>
+                        </td>
+                    </tr>
+            }
+                </tbody>
+            </table>
+    </div>   
+</div>
+
+<footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
+    <table>
+        <tr>
+            <td>
+                <i class="fas fa-list" style="background: #E0A800;padding:10px;border-radius: 50%; margin-left:10px; "></i> @Html.Raw(" = Details ") 
+            </td>            
+        </tr>
+    </table>  
+</footer>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+     <script type="text/javascript">
+        $(document).ready(function () {
+            var table = $('#MyTable').DataTable({
+                columnDefs: [                    
+                    { className: 'dt-center', targets: "_all" },
+                    {orderable: false, targets: 6},
+                    {className: "tableFont", targets: "_all" },
+                ],
+                paging: false,
+                info: false,
+                order: [[ 0, 'desc' ]],               
+            });                  
+        }); 
+    </script>
+}

@@ -1,4 +1,20 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿function onOverlayClick() {
+    var dialog = document.getElementById("dialog").ej2_instances[0];
+    dialog.hide();
+};
 
-// Write your JavaScript code.
+function onAddEstimateButtonClick() {
+    debugger;
+    var dialog = document.getElementById("dialog").ej2_instances[0];
+    dialog.header = "Add Estimate";
+    dialog.content = "New client?";
+    dialog.show();
+};
+
+function ondlgYesButtonClick() {
+    window.location.href = "/Customer/Create";
+};
+
+function ondlgNoButtonClick() {
+    window.location.href = "/Customer";
+};
