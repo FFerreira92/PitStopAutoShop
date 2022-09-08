@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace PitStopAutoShop.Web.Data.Entities
@@ -23,22 +24,15 @@ namespace PitStopAutoShop.Web.Data.Entities
         public override string PhoneNumber { get; set; }
 
         public string FullName => $"{FirstName} {LastName}";
+
+        [Display(Name ="Profile Picture")]
+        public Guid ProfilePitcure { get; set; }
+
+        public string ProfilePictureAltPath => ProfilePitcure == Guid.Empty ? null : $"https://pitstopautotpsi.blob.core.windows.net/profilepictures/{ProfilePitcure}";
+
+        public string ImageFullPath => ProfilePitcure == Guid.Empty ? null : 
+            $"https://pitstopautotpsi.blob.core.windows.net/profilepictures/{ProfilePitcure}";         
+
         
-        public string ProfilePitcure { get; set; }
-
-        public string ProfilePictureAltPath => ProfilePitcure == null ? null : ProfilePitcure.Substring(1);
-
-        public string ImageFullPath
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(ProfilePitcure))
-                {
-                    return null;
-                }
-
-                return $"https://pitstopautoshop.azurewebsites.net/{ProfilePitcure.Substring(1)}";
-            }
-        }
     }
 }

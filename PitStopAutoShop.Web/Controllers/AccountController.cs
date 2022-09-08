@@ -20,14 +20,16 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IMailHelper _mailHelper;
         private readonly ICustomerRepository _customerRepository;
         private readonly IFlashMessage _flashMessage;
+        private readonly IBlobHelper _blobHelper;
 
         public AccountController(IUserHelper userHelper,IMailHelper mailHelper,ICustomerRepository customerRepository,
-            IFlashMessage flashMessage)
+            IFlashMessage flashMessage, IBlobHelper blobHelper)
         {
             _userHelper = userHelper;
             _mailHelper = mailHelper;
             _customerRepository = customerRepository;
             _flashMessage = flashMessage;
+            _blobHelper = blobHelper;
         }
 
         public IActionResult Login()
@@ -418,25 +420,26 @@ namespace PitStopAutoShop.Web.Controllers
             
             if(user != null && file != null)
             {
-                var path = user.ProfilePitcure;                
+                
+                Guid imageId = user.ProfilePitcure;
 
-                if (file != null && file.Length > 0)
+                if(file != null && file.Length > 0)
                 {
-                    var guid = Guid.NewGuid().ToString();
-                    var guidFile = $"{guid}.jpg";
 
-                    path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\profilePictures", guidFile);
 
-                    //faz resize da imagem que o utilizador escolhe para o tamanho de 256*auto(height)
                     using var image = Image.Load(file.OpenReadStream());
                     image.Mutate(img => img.Resize(256, 0));
-                    await image.SaveAsync(path);
-
-                    path = $"~/images/profilePictures/{guidFile}";                    
+                    
+                    using (MemoryStream m = new MemoryStream())
+                    {
+                        image.SaveAsJpeg(m);
+                        byte[] imageBytes = m.ToArray();
+                        imageId = await _blobHelper.UploadBlobAsync(imageBytes, "profilepictures");
+                    }                 
                 }
 
-                user.ProfilePitcure = path;
-                
+                user.ProfilePitcure = imageId;
+
                 var response = await _userHelper.UpdateUserAsync(user);
                 
                 if (!response.Succeeded)
