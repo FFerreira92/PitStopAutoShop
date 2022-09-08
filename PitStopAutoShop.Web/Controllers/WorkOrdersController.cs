@@ -138,11 +138,12 @@ namespace PitStopAutoShop.Web.Controllers
                     return NotFound();
                 }
 
-                workOrder.ServiceDoneBy = employee.User;
+                workOrder.ServiceDoneBy = employee.User;                
                 workOrder.Observations = observations;
                 workOrder.IsFinished = true;
                 workOrder.awaitsReceipt = true;
                 workOrder.Status = "Done";
+                workOrder.Appointment.Mechanic = employee;
 
                 try
                 {
@@ -269,6 +270,7 @@ namespace PitStopAutoShop.Web.Controllers
             var workOrder = await _workOrderRepository.GetWorkOrderByIdAsync(workOrderId);
             var json = Json(workOrder);
             return json;
-        }
+        }       
+
     }
 }

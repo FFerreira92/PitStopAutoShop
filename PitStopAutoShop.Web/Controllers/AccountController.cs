@@ -4,8 +4,13 @@ using PitStopAutoShop.Web.Data.Repositories;
 using PitStopAutoShop.Web.Helpers;
 using PitStopAutoShop.Web.Models;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using Microsoft.AspNetCore.Http;
+using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
@@ -14,12 +19,15 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IUserHelper _userHelper;
         private readonly IMailHelper _mailHelper;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IFlashMessage _flashMessage;
 
-        public AccountController(IUserHelper userHelper,IMailHelper mailHelper,ICustomerRepository customerRepository)
+        public AccountController(IUserHelper userHelper,IMailHelper mailHelper,ICustomerRepository customerRepository,
+            IFlashMessage flashMessage)
         {
             _userHelper = userHelper;
             _mailHelper = mailHelper;
             _customerRepository = customerRepository;
+            _flashMessage = flashMessage;
         }
 
         public IActionResult Login()
@@ -310,7 +318,7 @@ namespace PitStopAutoShop.Web.Controllers
             if(user != null)
             {
                 model.Address = user.Address;
-                model.PhoneNumber = user.PhoneNumber;                
+                model.PhoneNumber = user.PhoneNumber;
             }
 
             return View(model);
@@ -323,11 +331,11 @@ namespace PitStopAutoShop.Web.Controllers
             {
                 var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
                 if (user != null)
-                {
+                {                    
+
                     user.Address = model.Address;
                     user.PhoneNumber = model.PhoneNumber;
-
-
+               
 
                     var response = await _userHelper.UpdateUserAsync(user);
                     if (response.Succeeded)
@@ -379,6 +387,71 @@ namespace PitStopAutoShop.Web.Controllers
             return View(model);
         }
 
+
+        public async Task<IActionResult> ViewUser()
+        {
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+
+            if(user == null)
+            {
+                return NotFound();
+            }
+
+            return View(user);
+        }
+
+        [HttpPost]
+        [Route("Account/GetProfilePicturePath")]
+        public async Task<JsonResult> GetProfilePicturePath()
+        {
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            var json = Json(user);
+            return json;
+        }
+
+        [HttpPost]
+        [Route("Account/ChangeProfilePic")]
+        public async Task<IActionResult> ChangeProfilePic(IFormFile file)
+        {
+            
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+            
+            if(user != null && file != null)
+            {
+                var path = user.ProfilePitcure;                
+
+                if (file != null && file.Length > 0)
+                {
+                    var guid = Guid.NewGuid().ToString();
+                    var guidFile = $"{guid}.jpg";
+
+                    path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\profilePictures", guidFile);
+
+                    //faz resize da imagem que o utilizador escolhe para o tamanho de 256*auto(height)
+                    using var image = Image.Load(file.OpenReadStream());
+                    image.Mutate(img => img.Resize(256, 0));
+                    await image.SaveAsync(path);
+
+                    path = $"~/images/profilePictures/{guidFile}";                    
+                }
+
+                user.ProfilePitcure = path;
+                
+                var response = await _userHelper.UpdateUserAsync(user);
+                
+                if (!response.Succeeded)
+                {
+                    _flashMessage.Danger("There was an error updating the profile picture.");
+                   
+                    return new ObjectResult(new { Status = "fail" });
+                }
+
+                return new ObjectResult(new { Status = "success" });
+            }
+
+
+            return new ObjectResult(new { Status = "fail" });
+        }
 
         public IActionResult NotAuthorized()
         {

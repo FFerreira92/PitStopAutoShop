@@ -62,7 +62,7 @@
                             @Html.DisplayFor(modelItem => item.ValueWithDiscount)
                         </td> 
                         <td id="@item.Id">                           
-                            <a asp-action="Edit" asp-route-id="@item.Id" asp-route-isNew="true" class="btn btn-info"><i class="fas fa-edit"></i></a>  @*Editar orçamento? sim ou não?*@
+                            <a asp-action="Edit" asp-route-id="@item.Id" asp-route-isNew="true" class="btn btn-info"><i class="fas fa-edit"></i></a>  
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning"><i class="fas fa-list"></i></a>   
                             <a asp-controller="Appointment" asp-action="AddAppointment" asp-route-id="@item.Id" class="btn btn-dark"><i class="fas fa-calendar-check"></i></a>  
                             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))

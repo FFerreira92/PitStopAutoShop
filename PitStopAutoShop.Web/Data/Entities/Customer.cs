@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -36,8 +37,9 @@ namespace PitStopAutoShop.Web.Data.Entities
 
         [Display(Name ="Full Name")]
         public string FullName => $"{FirstName} {LastName}";
+       
 
-        // falta adicionar lista de marcações e lista de viaturas
+        // falta adicionar lista de marcações
 
     }
 }

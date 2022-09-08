@@ -111,7 +111,7 @@ namespace PitStopAutoShop.Web.Controllers
                     {
                         ModelState.AddModelError(string.Empty, "The Vehicle Identification Number (VIN) must have 17 characters.");
                         vehicleModel.Brands = _brandRepository.GetComboBrands();
-                        vehicleModel.Models = _brandRepository.GetComboModels(0);
+                        vehicleModel.Models = _brandRepository.GetComboModels(vehicleModel.BrandId);                        
                         return View(vehicleModel);
                     }
                 }
@@ -122,6 +122,8 @@ namespace PitStopAutoShop.Web.Controllers
                 if (model == null || brand == null)
                 {
                     ModelState.AddModelError(string.Empty, "There was an error creating the vehicle.");
+                    vehicleModel.Brands = _brandRepository.GetComboBrands();
+                    vehicleModel.Models = _brandRepository.GetComboModels(vehicleModel.BrandId);                    
                     return View(vehicleModel);
                 }
 
@@ -175,6 +177,8 @@ namespace PitStopAutoShop.Web.Controllers
       
             }
 
+            vehicleModel.Brands = _brandRepository.GetComboBrands();
+            vehicleModel.Models = _brandRepository.GetComboModels(vehicleModel.BrandId);
             return View(vehicleModel);
         }
 
@@ -224,6 +228,8 @@ namespace PitStopAutoShop.Web.Controllers
                     if(vehicleModel.VehicleIdentificationNumber.Length < 17)
                     {
                         ModelState.AddModelError(string.Empty, "The Vehicle Identification Number (VIN) must have 17 characters.");
+                        vehicleModel.Brands = _brandRepository.GetComboBrands();
+                        vehicleModel.Models = _brandRepository.GetComboModels(vehicleModel.BrandId);
                         return View(vehicleModel);
                     }
                 }
@@ -235,6 +241,8 @@ namespace PitStopAutoShop.Web.Controllers
                 if(model == null || brand == null || vehicle == null)
                 {
                     ModelState.AddModelError(string.Empty, "There was an error editing the vehicle.");
+                    vehicleModel.Brands = _brandRepository.GetComboBrands();
+                    vehicleModel.Models = _brandRepository.GetComboModels(vehicleModel.BrandId);
                     return View(vehicleModel);
                 }
 
@@ -254,11 +262,15 @@ namespace PitStopAutoShop.Web.Controllers
                 {
 
                     ModelState.AddModelError(string.Empty, ex.InnerException.Message);
+                    vehicleModel.Brands = _brandRepository.GetComboBrands();
+                    vehicleModel.Models = _brandRepository.GetComboModels(vehicleModel.BrandId);
                     return View(vehicleModel);
                 }                
                 
                 return RedirectToAction(nameof(Index));
             }
+            vehicleModel.Brands = _brandRepository.GetComboBrands();
+            vehicleModel.Models = _brandRepository.GetComboModels(vehicleModel.BrandId);
             return View(vehicleModel);
         }
 
@@ -308,6 +320,10 @@ namespace PitStopAutoShop.Web.Controllers
         [Route("Vehicles/GetModelsAsync")]
         public async Task<JsonResult> GetModelsAsync(int brandId)
         {
+            if(brandId == 0)
+            {
+                return null;
+            }
             var brand = await _brandRepository.GetBrandWithModelsAsync(brandId);
             var json = Json(brand.Models.OrderBy(m => m.Name));
             return json;

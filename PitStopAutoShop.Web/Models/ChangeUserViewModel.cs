@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
 namespace PitStopAutoShop.Web.Models
@@ -13,7 +14,6 @@ namespace PitStopAutoShop.Web.Models
         [MaxLength(20, ErrorMessage = "The field {0} can only contain {1} characters.")]
         [RegularExpression("^[0-9]*$", ErrorMessage = "{0} must be numeric")]        
         public string PhoneNumber { get; set; }
-
 
     }
 }

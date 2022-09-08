@@ -1,0 +1,96 @@
+﻿@using PitStopAutoShop.Web.Helpers
+@model PitStopAutoShop.Web.Data.Entities.User
+
+@{
+    ViewData["Title"] = "ViewUser";    
+    var updateButton = new ButtonModel() { content = "Update", cssClass = "e-flat" };    
+}
+
+
+
+<h1>User Profile</h1>
+<div class="container" style="display:initial">
+<div class="row" style="margin-top:50px">
+    <div class="col-md-4 ">
+        
+            <div asp-validation-summary="ModelOnly"></div>             
+
+            <div class="form-group">
+                <label asp-for="FullName"></label>
+                <input asp-for="FullName" class="form-control" readonly/>                
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Address"></label>
+                <input asp-for="Address" class="form-control" readonly/>                
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control" readonly/>                
+            </div>
+
+             <div class="form-group">
+                <label asp-for="PhoneNumber"></label>
+                <input asp-for="PhoneNumber" class="form-control" readonly/>               
+            </div>        
+    </div>  
+
+    <div class="col-md-3"></div>
+
+    <div class="col-md-4" style="margin-top:32px">
+         <div class="form-group imageStyle" id="profilePictureBackground" style="background:Url('/images/blankProfilePicture.png')">               
+                <input class="form-control my_file" id="file" name="file" type="file" onchange="changeProfilePicture('file')"/>
+               
+         </div>
+    </div>
+
+    @*<div class="col-md-4" style="margin-top:32px" enctype="multipart/form-data">
+         <div class="form-group imageStyle">               
+                <input class="form-control my_file" id="select" name="file" type="file" onchange="openModal('select')" />               
+         </div>
+    </div>*@
+
+    <div class="col-md-1"></div>
+</div>
+<div class="row" style="position:absolute; bottom:50px;">
+     <div class="form-group">                
+          <a asp-action="ChangeUser" class="btn btn-success">Edit Profile</a>
+     </div>
+</div>
+</div>
+
+
+@*<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Change Profile Picture</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="main-cropper">
+            <img id="profilePicture" src="" style="display:block; max-width:100%"/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+*@
+
+
+
+@section Scripts
+{
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/Javascript">
+    window.onload = getBackgroundProfilePicture();
+    </script>
+}
+

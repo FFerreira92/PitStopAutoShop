@@ -12772,7 +12772,7 @@ body:not(.layout-fixed) .main-sidebar .sidebar {
 }
 
 @media (max-width: 991.98px) {
-  .sidebar-open #sidebar-overlay {
+    .sidebar-open #sidebar-overlay {
     display: block;
   }
 }

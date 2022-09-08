@@ -62,12 +62,14 @@ namespace PitStopAutoShop.Web
             });
 
             services.AddFlashMessage();
-
+           
             services.AddTransient<SeedDb>();
 
             services.AddScoped<IUserHelper,UserHelper>();
+            services.AddScoped<IImageHelper,ImageHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IConverterHelper,ConverterHelper>();
+
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<IVehicleRepository, VehicleRepository>();
@@ -114,12 +116,7 @@ namespace PitStopAutoShop.Web
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
-            {
-                //endpoints.MapControllerRoute(
-                //    name: "vehicles",
-                //    pattern: "{controller=Vehicles}/{action=Index}/{string?}");
-
-
+            {             
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");

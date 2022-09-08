@@ -34,6 +34,12 @@ namespace PitStopAutoShop.Web.Data.Repositories
                         .ThenInclude(v => v.Model);
         }
 
+        public async Task<int> GetOpenedWorkOrdersAsync()
+        {
+            var workOrders = _context.WorkOrders.Where(wo => wo.Status == "Opened");
+            return workOrders.Count();
+        }
+
         public async Task<WorkOrder> GetWorkOrderByIdAsync(int id)
         {
             return await _context.WorkOrders                

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
 
 namespace PitStopAutoShop.Web.Data.Entities
@@ -37,5 +38,6 @@ namespace PitStopAutoShop.Web.Data.Entities
         public User User { get; set; }
 
         public string Color { get; set; }
+       
     }
 }

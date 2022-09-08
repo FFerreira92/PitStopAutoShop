@@ -20,10 +20,25 @@ namespace PitStopAutoShop.Web.Data.Entities
 
         [Display(Name ="Phone Number")]
         [DataType(DataType.PhoneNumber)]
-        public string PhoneNumber { get; set; }
-
+        public override string PhoneNumber { get; set; }
 
         public string FullName => $"{FirstName} {LastName}";
+        
+        public string ProfilePitcure { get; set; }
 
+        public string ProfilePictureAltPath => ProfilePitcure == null ? null : ProfilePitcure.Substring(1);
+
+        public string ImageFullPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(ProfilePitcure))
+                {
+                    return null;
+                }
+
+                return $"https://pitstopautoshop.azurewebsites.net/{ProfilePitcure.Substring(1)}";
+            }
+        }
     }
 }

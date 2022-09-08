@@ -41,7 +41,7 @@ namespace PitStopAutoShop.Web.Controllers
         {
             //adiciona um refresh rate à ação index do controlador
             
-            Response.Headers.Add("Refresh", "10");
+            Response.Headers.Add("Refresh", "60");
             ViewData["Events"] = _appointmentRepository.GetAllEvents();
 
             return View();
