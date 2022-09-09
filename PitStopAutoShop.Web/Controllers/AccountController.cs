@@ -153,7 +153,7 @@ namespace PitStopAutoShop.Web.Controllers
 
                     Response response = _mailHelper.SendEmail(model.UserName, "Email confirmation", $"<h1>Email Confirmation</h1>" +
                         $" To allow you to access the website, " +
-                        $"please click in the following link:</br></br><a href= \"{tokenLink}\">Confirm Email </a>");
+                        $"please click in the following link:</br></br><a href= \"{tokenLink}\">Confirm Email </a>",null);
 
                     if (response.IsSuccess)
                     {
@@ -255,7 +255,7 @@ namespace PitStopAutoShop.Web.Controllers
 
                 Response response = _mailHelper.SendEmail(model.Email, "PitStop Lisbon Recover Password ", $"<h1>PitStop Lisbon password reset</h1>" +
                     $"To Reset the password click in the link bellow: </br></br>" +
-                    $"<a href = \"{link}\">Reset Password</a>");
+                    $"<a href = \"{link}\">Reset Password</a>",null);
 
                 if (response.IsSuccess)
                 {
@@ -414,8 +414,7 @@ namespace PitStopAutoShop.Web.Controllers
         [HttpPost]
         [Route("Account/ChangeProfilePic")]
         public async Task<IActionResult> ChangeProfilePic(IFormFile file)
-        {
-            
+        {            
             var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
             
             if(user != null && file != null)

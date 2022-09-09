@@ -46,5 +46,24 @@ namespace PitStopAutoShop.Web.Data.Repositories
                     .ThenInclude(v => v.Model)
                 .Where(i => i.Id == id).FirstAsync();
         }
+
+        public async Task<Invoice> GetRecentCreatedInvoiceAsync(int workOrderId)
+        {
+            return await _context.Invoices
+                .Include(i => i.WorkOrder)
+                    .ThenInclude(wo => wo.ServiceDoneBy)
+                .Include(i => i.WorkOrder)
+                    .ThenInclude(wo => wo.Appointment)
+                .Include(i => i.Customer)
+                .Include(i => i.CreatedBy)
+                .Include(i => i.Estimate)
+                    .ThenInclude(e => e.Services)
+                            .ThenInclude(es => es.Service)
+                .Include(i => i.Vehicle)
+                    .ThenInclude(v => v.Brand)
+                .Include(i => i.Vehicle)
+                    .ThenInclude(v => v.Model)
+                .Where(i => i.WorkOrder.Id == workOrderId).FirstAsync();
+        }
     }
 }

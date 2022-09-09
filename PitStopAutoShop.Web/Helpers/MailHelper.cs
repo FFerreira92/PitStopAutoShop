@@ -1,6 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+using System.Collections.Generic;
 
 namespace PitStopAutoShop.Web.Helpers
 {
@@ -8,12 +9,13 @@ namespace PitStopAutoShop.Web.Helpers
     {
         private readonly IConfiguration _configuration;
 
+
         public MailHelper(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        public Response SendEmail(string to, string subject, string body)
+        public Response SendEmail(string to, string subject, string body, string attachment)
         {
             var nameFrom = _configuration["Mail:NameFrom"];
             var from = _configuration["Mail:From"];
@@ -28,8 +30,14 @@ namespace PitStopAutoShop.Web.Helpers
 
             var bodybuilder = new BodyBuilder
             {
-                HtmlBody = body,
+                HtmlBody = body,                
             };
+            
+            if(attachment != null)
+            {
+                bodybuilder.Attachments.Add(attachment);
+            }            
+            
             message.Body = bodybuilder.ToMessageBody();
 
             try
@@ -56,7 +64,6 @@ namespace PitStopAutoShop.Web.Helpers
             {
                 IsSuccess = true
             };
-
         }
     }
 }

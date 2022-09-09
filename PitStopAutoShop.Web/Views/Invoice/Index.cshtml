@@ -60,6 +60,7 @@
                         </td>
                         <td id="@item.Id">                           
                             <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a>
+                             <a asp-action="Invoice"  asp-route-controller="pdf" asp-route-id="@item.Id" asp-route-sendEmail="false" target="_blank" class="btn btn-primary btn-sm"><i class="fas fa-file-arrow-down"></i></a>
                         </td>
                     </tr>
             }

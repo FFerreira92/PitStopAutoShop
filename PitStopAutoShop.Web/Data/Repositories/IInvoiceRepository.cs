@@ -8,5 +8,6 @@ namespace PitStopAutoShop.Web.Data.Repositories
     {
         IQueryable GetAllInvoices();
         Task<Invoice> GetInvoiceDetailsByIdAsync(int id);
+        Task<Invoice> GetRecentCreatedInvoiceAsync(int workOrderId);
     }
 }

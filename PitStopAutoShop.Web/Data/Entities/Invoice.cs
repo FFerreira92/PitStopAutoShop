@@ -21,6 +21,8 @@ namespace PitStopAutoShop.Web.Data.Entities
         public User CreatedBy { get; set; }
 
         [Display(Name ="Date")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(ApplyFormatInEditMode =false,DataFormatString ="{0:dd MMMM,yyyy}")]
         public DateTime InvoicDate { get; set; }
     }
 }

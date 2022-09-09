@@ -409,7 +409,7 @@ namespace PitStopAutoShop.Web.Controllers
                 Response isSent = _mailHelper.SendEmail(model.Email, "Welcome to PitStop Auto Lisbon", $"<h1>Email Confirmation</h1>" +
                    $"Welcome to PitStop Auto!</br></br>First of all congratulations! You are now a new PitStop AutoStop employee! </br>" +
                    $"To allow you to access the website and the management system, " +
-                   $"please click in the following link:<a href= \"{tokenLink}\"> Confirm Email </a>");                            
+                   $"please click in the following link:<a href= \"{tokenLink}\"> Confirm Email </a>", null);                            
 
                 if (isSent.IsSuccess)
                 {

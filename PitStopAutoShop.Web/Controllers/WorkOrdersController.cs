@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.JSInterop;
 using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Data.Repositories;
 using PitStopAutoShop.Web.Helpers;
 using System;
 using System.Threading.Tasks;
 using Vereyon.Web;
+
 
 namespace PitStopAutoShop.Web.Controllers
 {
@@ -16,6 +18,7 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IUserHelper _userHelper;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IJSRuntime _iJSRuntime;
 
         public WorkOrdersController(
             IWorkOrderRepository workOrderRepository,
@@ -23,7 +26,8 @@ namespace PitStopAutoShop.Web.Controllers
             IAppointmentRepository appointmentRepository,
             IUserHelper userHelper,
             IEmployeeRepository employeeRepository,
-            IInvoiceRepository invoiceRepository)
+            IInvoiceRepository invoiceRepository,
+            IJSRuntime iJSRuntime)
         {
             _workOrderRepository = workOrderRepository;
             _flashMessage = flashMessage;
@@ -31,18 +35,20 @@ namespace PitStopAutoShop.Web.Controllers
             _userHelper = userHelper;
             _employeeRepository = employeeRepository;
             _invoiceRepository = invoiceRepository;
+            _iJSRuntime = iJSRuntime;
         }
 
         public IActionResult Index()
-        {
+        {           
             var workOrders = _workOrderRepository.GetAllWorkOrders();
 
             return View(workOrders);
         }
 
         public async Task<IActionResult> Create(int? id)
-        {
-            if(id == null)
+        {            
+
+            if (id == null)
             {
                 return NotFound();
             }
@@ -99,7 +105,8 @@ namespace PitStopAutoShop.Web.Controllers
 
 
         public async Task<IActionResult> Details(int? id)
-        {
+        {           
+
             if (id == null)
             {
                 return NotFound();
@@ -200,18 +207,20 @@ namespace PitStopAutoShop.Web.Controllers
 
         }
 
-        public async Task<IActionResult> PrintInvoice(int? id)
+        [HttpPost]
+        [Route("WorkOrders/PrintInvoice")]
+        public async Task<int> PrintInvoice(int? id)
         {
             if (id == null)
             {
-                return NotFound();
+                return 0;
             }
 
             var workOrder = await _workOrderRepository.GetWorkOrderByIdAsync(id.Value);
 
             if (workOrder == null)
             {
-                return NotFound();
+                return 0;
             }
 
             if(workOrder.Status == "Done" && workOrder.IsFinished == true)
@@ -235,22 +244,21 @@ namespace PitStopAutoShop.Web.Controllers
                     workOrder.UpdatedBy = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
                     workOrder.awaitsReceipt = false;
                     await _workOrderRepository.UpdateAsync(workOrder);
-                    _flashMessage.Confirmation("The invoice was created with success.");
-                    return RedirectToAction(nameof(Index));
+                    var recentInvoice = await _invoiceRepository.GetRecentCreatedInvoiceAsync(workOrder.Id);
+                    _flashMessage.Confirmation("The invoice was created with success.");                  
+                    return recentInvoice.Id;
                 }
                 catch (Exception ex)
                 {
                     _flashMessage.Confirmation($"There was a problem creating the invoice. {ex.InnerException}");
-                    return RedirectToAction(nameof(Index));
+                    return 0;
                 }
             }
             else
             {
-                return NotFound();
-            }
-            
-        }
-
+                return 0;
+            }            
+        }       
 
 
 

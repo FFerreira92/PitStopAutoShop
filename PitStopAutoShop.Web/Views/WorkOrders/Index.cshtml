@@ -1,5 +1,7 @@
 ﻿@using PitStopAutoShop.Web.Helpers
+@using Microsoft.JSInterop
 @model IEnumerable<PitStopAutoShop.Web.Data.Entities.WorkOrder>
+@inject IJSRuntime JS
 
 @{
     Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
@@ -92,7 +94,8 @@
                             {
                                 if(item.IsFinished == true && item.Status == "Done")
                                 {
-                                  <a asp-action="PrintInvoice" asp-route-id="@item.Id" class="btn btn-primary btn-sm"><i class="fas fa-thumbs-up"></i></a>  
+                                  <a class="btn btn-primary btn-sm"  id="btnPrintInvoice"><i class="fas fa-thumbs-up"></i></a> 
+                                  @*onclick="printInvoice(@item.Id)"*@
                                 }                                
                             }
                             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
@@ -108,6 +111,30 @@
 
     <partial name="_DeleteDialog" />
     
+    <!-- Modal -->
+    <div class="modal fade" id="wantsEmail" tabindex="-1" role="dialog" aria-labelledby="wantsEmail" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered" role="document">
+           <div class="modal-content">
+             <div class="modal-header">
+               <h5 class="modal-title" id="exampleModalLongTitle">Send invoice by email?</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                 <span aria-hidden="true">&times;</span>
+               </button>
+             </div>
+             <div class="modal-body">
+               Do you wish to send the pdf file to the customer email?
+             </div>
+             <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" id="noSendEmail">No</button>
+               <button type="button" class="btn btn-primary" id="yesSendEmail">Send</button>
+             </div>
+           </div>
+         </div>
+    </div>
+    <!-- Modal end -->
+
+
+
 </div>
 
 <footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
@@ -151,6 +178,43 @@
             dialog.header = "Declare Work order nº"+id+" done?";
             dialog.show();
     };
+     
+    
+
+    //function printInvoice(id) {
+    //    workOrderId = id;     
+         
+
+    //    $.ajax({
+    //        url: '@Url.Action("PrintInvoice","WorkOrders")',
+    //        type: 'POST',
+    //        dataType: 'json',
+    //        data: { id: workOrderId},
+    //        success: function(result) {
+                
+    //            debugger;
+
+    //            if (result != 0) {
+
+    //                let invoiceUrl = "/pdf/Invoice/"+result+"?sendEmail=true";
+    //                console.log(invoiceUrl);
+
+    //                window.open(invoiceUrl, '_blank');
+
+    //                window.location.reload();
+    //            }
+    //            else {
+
+    //                window.location.reload();
+    //            }               
+    //        },
+    //        error: function(ex) {
+    //            console.log("error");
+    //        },
+    //    });
+
+
+    //}
 
     function ondlgButtonClick() {
      
@@ -288,9 +352,11 @@
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+  @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-     <script type="text/javascript">
+     
+    <script type="text/javascript">
+         
         $(document).ready(function () {
             var table = $('#MyTable').DataTable({
                 columnDefs: [                    
@@ -330,5 +396,86 @@
                 window.location.href = '/WorkOrders/Delete/' + id;
             });
         });
+
+
+        $(document).ready(function() {
+            debugger;
+        
+            let id = 0;
+        
+            $('a[id*=btnPrintInvoice]').click(function() {
+                debugger;
+                id = $(this).parent()[0].id;
+                $("#wantsEmail").modal('show');
+                return false;
+            });
+        
+            $("#noSendEmail").click(function() {
+        
+                $.ajax({
+                    url: '@Url.Action("PrintInvoice","WorkOrders")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: id },
+                    success: function(result) {
+        
+                        debugger;
+        
+                        if (result != 0) {
+        
+                            let invoiceUrl = "/pdf/Invoice/" + result + "?sendEmail=false";
+                            console.log(invoiceUrl);
+        
+                            window.open(invoiceUrl, '_blank');
+        
+                            window.location.reload();
+                        }
+                        else {
+        
+                            window.location.reload();
+                        }
+                    },
+                    error: function(ex) {
+                        console.log("error");
+                    },
+                });
+            });
+        
+            $("#yesSendEmail").click(function() {
+        
+                $.ajax({
+                    url: '@Url.Action("PrintInvoice","WorkOrders")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: id },
+                    success: function(result) {
+        
+                        debugger;
+        
+                        if (result != 0) {
+        
+                            let invoiceUrl = "/pdf/Invoice/" + result + "?sendEmail=true";
+                            console.log(invoiceUrl);
+        
+                            window.open(invoiceUrl, '_blank');
+        
+                            window.location.reload();
+                        }
+                        else {
+        
+                            window.location.reload();
+                        }
+                    },
+                    error: function(ex) {
+                        console.log("error");
+                    },
+                });
+            });
+        
+        });
+    
+
     </script>
-}
+
+ }
+
