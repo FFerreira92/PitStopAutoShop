@@ -151,7 +151,7 @@ namespace PitStopAutoShop.Web.Controllers
                         token = userToken
                     }, protocol: HttpContext.Request.Scheme);
 
-                    Response response = _mailHelper.SendEmail(model.UserName, "Email confirmation", $"<h1>Email Confirmation</h1>" +
+                    Response response = await _mailHelper.SendEmail(model.UserName, "Email confirmation", $"<h1>Email Confirmation</h1>" +
                         $" To allow you to access the website, " +
                         $"please click in the following link:</br></br><a href= \"{tokenLink}\">Confirm Email </a>",null);
 
@@ -253,7 +253,7 @@ namespace PitStopAutoShop.Web.Controllers
                 var userToken = await _userHelper.GeneratePasswordResetTokenAsync(user);
                 var link = Url.Action("ResetPassword", "Account", new { token = userToken,userId = user.Id }, protocol: HttpContext.Request.Scheme);
 
-                Response response = _mailHelper.SendEmail(model.Email, "PitStop Lisbon Recover Password ", $"<h1>PitStop Lisbon password reset</h1>" +
+                Response response = await _mailHelper.SendEmail(model.Email, "PitStop Lisbon Recover Password ", $"<h1>PitStop Lisbon password reset</h1>" +
                     $"To Reset the password click in the link bellow: </br></br>" +
                     $"<a href = \"{link}\">Reset Password</a>",null);
 

@@ -6,7 +6,9 @@
 
         public string Message { get; set; }
 
-        public bool Results;
+        public bool Results { get; set; }
+
+        public object Object { get; set; }
 
     }
 }

@@ -346,5 +346,21 @@ namespace PitStopAutoShop.Web.Data.Repositories
             await _context.SaveChangesAsync();
             return new Response { IsSuccess = true, Results = asWorkOrder };
         }
+
+        public async Task<Estimate> GetCreatedEstimateAsync(string userId, int customerId, int vehicleId)
+        {
+            var user = await _userHelper.GetUserByEmailAsync(userId);
+
+            if(user == null)
+            {
+                return null;
+            }
+
+            var estimate = await _context.Estimates
+                .Include(e => e.Customer).Include(e => e.Vehicle)
+                .Where(e => e.Customer.Id == customerId && e.Vehicle.Id == vehicleId && e.CreatedBy.Id == user.Id).OrderBy(e => e.Id).LastAsync();
+
+            return estimate;
+        }
     }
 }

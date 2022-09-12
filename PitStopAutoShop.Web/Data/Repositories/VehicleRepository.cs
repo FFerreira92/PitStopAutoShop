@@ -42,10 +42,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
                     Text = "[Select a Vehicle]",
                     Value = "0"
                 });
-            }
-
-
-            
+            }            
 
             return list;
         }

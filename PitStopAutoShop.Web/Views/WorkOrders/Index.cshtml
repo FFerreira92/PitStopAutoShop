@@ -94,8 +94,7 @@
                             {
                                 if(item.IsFinished == true && item.Status == "Done")
                                 {
-                                  <a class="btn btn-primary btn-sm"  id="btnPrintInvoice"><i class="fas fa-thumbs-up"></i></a> 
-                                  @*onclick="printInvoice(@item.Id)"*@
+                                  <a class="btn btn-primary btn-sm"  id="btnPrintInvoice"><i class="fas fa-thumbs-up"></i></a>                                   
                                 }                                
                             }
                             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
@@ -178,43 +177,7 @@
             dialog.header = "Declare Work order nº"+id+" done?";
             dialog.show();
     };
-     
-    
 
-    //function printInvoice(id) {
-    //    workOrderId = id;     
-         
-
-    //    $.ajax({
-    //        url: '@Url.Action("PrintInvoice","WorkOrders")',
-    //        type: 'POST',
-    //        dataType: 'json',
-    //        data: { id: workOrderId},
-    //        success: function(result) {
-                
-    //            debugger;
-
-    //            if (result != 0) {
-
-    //                let invoiceUrl = "/pdf/Invoice/"+result+"?sendEmail=true";
-    //                console.log(invoiceUrl);
-
-    //                window.open(invoiceUrl, '_blank');
-
-    //                window.location.reload();
-    //            }
-    //            else {
-
-    //                window.location.reload();
-    //            }               
-    //        },
-    //        error: function(ex) {
-    //            console.log("error");
-    //        },
-    //    });
-
-
-    //}
 
     function ondlgButtonClick() {
      
@@ -365,7 +328,7 @@
                     {className: "tableFont", targets: "_all" },
                     
                 ],
-                paging: false,
+                paging: true,
                 info: false,
                 order: [[ 0, 'desc' ]],
                 createdRow: function (row, data, index) {

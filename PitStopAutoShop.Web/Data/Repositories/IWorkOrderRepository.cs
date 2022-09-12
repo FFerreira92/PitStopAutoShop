@@ -11,5 +11,6 @@ namespace PitStopAutoShop.Web.Data.Repositories
         Task<WorkOrder> GetWorkOrderByIdAsync(int id);
 
         Task<int> GetOpenedWorkOrdersAsync();
+        Task<WorkOrder> GetWorkOrderByAppointmentIdAsync(int appointmentId);
     }
 }

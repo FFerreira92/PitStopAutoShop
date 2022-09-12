@@ -308,6 +308,12 @@ namespace PitStopAutoShop.Web.Controllers
                    response = await _estimateRepository.ConfirmEstimateAsync(this.User.Identity.Name, vehicle.CustomerId, vehicle.Id,faultDescription);
                    if (response.IsSuccess == true)
                    {
+                       var estimate = await _estimateRepository.GetCreatedEstimateAsync(this.User.Identity.Name, vehicle.CustomerId, vehicle.Id);
+                       if(estimate != null)
+                       {
+                            return RedirectToAction("Details", new { id = estimate.Id });
+                       } 
+
                        return RedirectToAction("Index");
                    }
                 }

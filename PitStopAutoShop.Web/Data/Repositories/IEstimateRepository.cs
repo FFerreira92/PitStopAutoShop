@@ -24,5 +24,6 @@ namespace PitStopAutoShop.Web.Data.Repositories
         Task CreateEstimatesDetailsTemps(IEnumerable<EstimateDetailTemp> estimateDetailTemps);
         Task<int> DeleteEstimateDetailTempsAsync(int vehicleId, int customerId);
         Task<Response> UpdateEstimateAsync(string username, int customerId, int vehicleId, string faultdescription);
+        Task<Estimate> GetCreatedEstimateAsync(string userId, int customerId, int vehicleId);
     }
 }

@@ -73,6 +73,7 @@ namespace PitStopAutoShop.Web
             services.AddScoped<IBlobHelper,BlobHelper>();
             services.AddScoped<IMailHelper, MailHelper>();
             services.AddScoped<IConverterHelper,ConverterHelper>();
+            
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();

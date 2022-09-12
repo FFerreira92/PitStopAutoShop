@@ -19,6 +19,7 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IJSRuntime _iJSRuntime;
+       
 
         public WorkOrdersController(
             IWorkOrderRepository workOrderRepository,
@@ -27,7 +28,8 @@ namespace PitStopAutoShop.Web.Controllers
             IUserHelper userHelper,
             IEmployeeRepository employeeRepository,
             IInvoiceRepository invoiceRepository,
-            IJSRuntime iJSRuntime)
+            IJSRuntime iJSRuntime
+            )
         {
             _workOrderRepository = workOrderRepository;
             _flashMessage = flashMessage;
@@ -36,6 +38,7 @@ namespace PitStopAutoShop.Web.Controllers
             _employeeRepository = employeeRepository;
             _invoiceRepository = invoiceRepository;
             _iJSRuntime = iJSRuntime;
+            
         }
 
         public IActionResult Index()
@@ -45,19 +48,21 @@ namespace PitStopAutoShop.Web.Controllers
             return View(workOrders);
         }
 
-        public async Task<IActionResult> Create(int? id)
-        {            
+        [HttpPost]
+        [Route("WorkOrders/Create")]
+        public async Task<int> Create(int? id)
+        {
 
             if (id == null)
             {
-                return NotFound();
+                return 0;
             }
 
-            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id.Value); 
+            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id.Value);
 
-            if(appointment == null)
+            if (appointment == null)
             {
-                return NotFound();
+                return 0;
             }
 
             var workOrder = new WorkOrder
@@ -76,14 +81,14 @@ namespace PitStopAutoShop.Web.Controllers
                 _flashMessage.Info($"{appointment.Customer.FullName} work Order was successfuly created.");
                 appointment.AsAttended = true;
                 await _appointmentRepository.UpdateAsync(appointment);
-                return RedirectToAction(nameof(Index));
+                return appointment.Id;            
             }
             catch (Exception ex)
             {
                 _flashMessage.Info($"There was an error creating {appointment.Customer.FullName} work order. {ex.InnerException}.");
-                return RedirectToAction("Index","Appointment");
+                return 0;
             }
-        }
+        }       
 
 
         public async Task<IActionResult> Edit(int? id)

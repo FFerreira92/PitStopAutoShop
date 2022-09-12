@@ -1,4 +1,4 @@
-﻿@model PitStopAutoShop.Web.Data.Entities.Invoice
+﻿@model PitStopAutoShop.Web.Data.Entities.Estimate
 
 @{    
     Layout = null;
@@ -41,10 +41,10 @@
                        </address>
                     </div>
                     <div class="invoice-date">
-                       <small>Invoice period</small>
-                       <div class="date text-inverse m-t-5">@Html.DisplayFor(model=> model.InvoicDate)</div>
+                       <small>Estimate date</small>
+                       <div class="date text-inverse m-t-5">@Html.DisplayFor(model=> model.EstimateDate)</div>
                        <div class="invoice-detail">
-                          Invoice number: @Html.DisplayFor(model=> model.Id)<br>
+                          Estimate number: @Html.DisplayFor(model=> model.Id)<br>
                           Services
                        </div>
                     </div>
@@ -65,7 +65,7 @@
                              </tr>
                           </thead>
                           <tbody>
-                                @foreach(var item in Model.Estimate.Services)
+                                @foreach(var item in Model.Services)
                                 {
                                     @if(item.Service != null)
                                     {
@@ -239,4 +239,3 @@
      }
 
 </style>
-

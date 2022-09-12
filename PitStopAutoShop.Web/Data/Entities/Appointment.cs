@@ -57,6 +57,7 @@ namespace PitStopAutoShop.Web.Data.Entities
             }
         }
 
+        public bool IsInformed { get; set; }
         
     }
 }

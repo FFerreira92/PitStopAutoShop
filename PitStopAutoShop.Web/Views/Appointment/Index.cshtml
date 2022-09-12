@@ -145,7 +145,37 @@
 
       function ondlgAttendedClick() {
           if (asAttendedStatus == false) {
-              window.location.href = '/WorkOrders/Create/' + eventClickedId;
+              //window.location.href = '/WorkOrders/Create/' + eventClickedId;
+              debugger;
+              $.ajax({
+                    url: '@Url.Action("Create","WorkOrders")',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: eventClickedId },
+                    success: function(result) {
+                        debugger;
+                        if (result != 0) {
+
+                            let workOrderUrl = "/pdf/WorkOrder/" + result;
+                            console.log(workOrderUrl);
+        
+                            window.open(workOrderUrl, '_blank');
+        
+                            window.location.reload();                             
+                        }                       
+                        else {
+        
+                            window.location.reload();
+                        }                      
+                    },
+                    error: function(ex) {
+                        console.log("error"+ex);
+                    },
+                });
+                
+
+
+
           }
           else {
               var innerDialog = document.getElementById("innerDialog").ej2_instances[0];            
