@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -64,9 +65,29 @@ namespace PitStopAutoShop.Web.Data.Repositories
                  .Include(a => a.Estimate)
                  .Include(a => a.Mechanic)
                  .Include(a => a.Vehicle)
+                    .ThenInclude(v => v.Brand)
+                 .Include(a => a.Vehicle)
+                    .ThenInclude(v => v.Model)
                  .Where(a => a.Id == eventId).FirstOrDefaultAsync();
 
             return appointment;
+        }
+
+        public async Task<List<Appointment>> GetTommorowAppointmentsAsync(DateTime tommorowDate)
+        {
+            List<Appointment> appointments = await _context.Appointments
+                                    .Include(a => a.CreatedBy)
+                                    .Include(a => a.UpdatedBy)
+                                    .Include(a => a.Customer)
+                                    .Include(a => a.Estimate)
+                                    .Include(a => a.Mechanic)
+                                    .Include(a => a.Vehicle)
+                                       .ThenInclude(v => v.Brand)
+                                    .Include(a => a.Vehicle)
+                                       .ThenInclude(v => v.Model)
+                                    .Where(a => a.AppointmentStartDate.Date == tommorowDate.Date).ToListAsync();
+
+            return appointments;
         }
     }
 }

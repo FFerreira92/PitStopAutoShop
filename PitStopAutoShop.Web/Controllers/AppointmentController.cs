@@ -22,11 +22,12 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IEstimateRepository _estimateRepository;
         private readonly IUserHelper _userHelper;
         private readonly IConverterHelper _converterHelper;
+        private readonly IMailHelper _mailHelper;
 
         public AppointmentController(IFlashMessage flashMessage,IAppointmentRepository appointmentRepository
                                     ,IEmployeeRepository employeeRepository, ICustomerRepository customerRepository
                                     ,IEstimateRepository estimateRepository, IUserHelper userHelper
-                                    ,IConverterHelper converterHelper)
+                                    ,IConverterHelper converterHelper, IMailHelper mailHelper)
         {
             _flashMessage = flashMessage;
             _appointmentRepository = appointmentRepository;
@@ -35,6 +36,7 @@ namespace PitStopAutoShop.Web.Controllers
             _estimateRepository = estimateRepository;
             _userHelper = userHelper;
             _converterHelper = converterHelper;
+            _mailHelper = mailHelper;
         }
         
         public IActionResult Index()
@@ -274,6 +276,57 @@ namespace PitStopAutoShop.Web.Controllers
             }           
         }
 
+        
+        public async Task<IActionResult> Cancel(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var appointment = await _appointmentRepository.GetAppointmentByIdAsync(id.Value);
+
+            if(appointment == null)
+            {
+                return NotFound();
+            }
+
+            if(appointment.AsAttended == true)
+            {
+                _flashMessage.Warning($"It is not possible to cancel the appointment. The appointment already has a work order going or done.");
+                return RedirectToAction(nameof(Index));
+            }
+
+            var customerFullName = appointment.Customer.FullName;
+            var estimate = appointment.Estimate;
+            var email = appointment.Customer.Email;
+            var appointmentDate = appointment.AppointmentStartDate.ToString("dd/MM/yyyy");
+            var appointmentHour = appointment.AppointmentStartDate.ToString("HH:mm");
+            var vehicle = appointment.Vehicle;
+
+            try
+            {               
+                await _appointmentRepository.DeleteAsync(appointment);
+                
+                estimate.HasAppointment = false;
+                await _estimateRepository.UpdateAsync(estimate);
+
+                await _mailHelper.SendEmail(email, "Appointment cancelation Pitstop Autoshop Lisbon", $"<h1>Appointment Cancelation</h1>" +
+                    $" Mr/Mrs {customerFullName},<br>We send you this email to inform you that the appointment you had with our services for {appointmentDate} " +
+                    $"at {appointmentHour} with your {vehicle.Brand.Name} {vehicle.Model.Name} ({vehicle.PlateNumber}) was canceled. For more information, please contact us by either replying to this email or" +
+                    $"to our contact number: 216589564. <br>" +
+                    $"<br>Thank you for your time and hope to see you soon! <br> Best regards, <br> Pitstop Autoshop Lisbon ", null);
+                
+                _flashMessage.Warning($"The appointment from {customerFullName} was canceled with success.");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                _flashMessage.Warning($"There was a problem canceling the appointment. {ex.InnerException}.");
+                return RedirectToAction(nameof(Index));  
+            }
+
+        }
 
     }
 }

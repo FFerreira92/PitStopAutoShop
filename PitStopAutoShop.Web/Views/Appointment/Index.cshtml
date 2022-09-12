@@ -6,6 +6,9 @@
     Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
     var editButton = new ButtonModel() { content = "Edit", cssClass = "e-flat" };
     var asAttendedButton = new ButtonModel() { content = "Print Work Order", cssClass = "e-flat" };
+    var cancelButton = new ButtonModel() { content = "Cancel", cssClass = "e-flat" };
+    var yesButton = new ButtonModel() { content = "Yes", cssClass = "e-flat" };
+    var noButton = new ButtonModel() { content = "No", cssClass = "e-flat" };
 }
 
  <script>
@@ -35,15 +38,17 @@
               }
               ],
               customButtons: {
-                  addAppointment: {
-                      text: 'Add Appointment',
+                  InformCustomers: {
+                      text: 'Inform',
+                      hint: "Send an email to customers about their appointments for tommorow.",
                       click: function() {
-                          window.location.href = '/Appointment/AddAppointment/';
+                          window.location.href = "/Mailbox/InformCustomerAppointment";
+                          
                       }
                   }
               },
               headerToolbar: {
-                  left: 'prev,next today',
+                  left: 'prev,next today InformCustomers',
                   center: 'title',
                   right: 'dayGridMonth,timeGridWeek,timeGridDay'
               },
@@ -66,7 +71,7 @@
                   let eventStartTime = eventObj.start;
                   let content = eventObj.title + eventObj.extendedProps.description;
                   eventClickedId = eventObj.id;
-                  asAttendedStatus = eventObj.extendedProps.asAttended;
+                  asAttendedStatus = eventObj.extendedProps.asAttended;                 
                   console.log(content);
                   dialog.content = eventObj.extendedProps.description;
                   dialog.header = eventStartTime.toUTCString();
@@ -144,6 +149,7 @@
       };
 
       function ondlgAttendedClick() {
+          
           if (asAttendedStatus == false) {
               //window.location.href = '/WorkOrders/Create/' + eventClickedId;
               debugger;
@@ -171,11 +177,7 @@
                     error: function(ex) {
                         console.log("error"+ex);
                     },
-                });
-                
-
-
-
+              });               
           }
           else {
               var innerDialog = document.getElementById("innerDialog").ej2_instances[0];            
@@ -183,8 +185,24 @@
           };
       };
 
+      function ondlgCancelClick() {
+          var innerDialogCancel = document.getElementById("cancelConfirmation").ej2_instances[0];
+          innerDialogCancel.show();
+      }
 
-      
+      function ondlgYesButtonClick() {         
+          
+          window.location.href = "/Appointment/Cancel/" + eventClickedId; 
+          
+      }
+
+      function ondlgNoButtonClick() {
+            var innerDialogCancel = document.getElementById("cancelConfirmation").ej2_instances[0];
+            var dialog = document.getElementById("dialog").ej2_instances[0];
+            dialog.hide();
+            innerDialogCancel.hide();
+      }
+
  </script>
 
  
@@ -195,27 +213,56 @@
 </div>
 
 <div id='container' style="height:auto">
+    
     <ejs-dialog id='dialog' visible="false" isModal="true" width="400px" showCloseIcon="true" allowDragging="true" overlayClick="onOverlayClick" target="#container">
         <e-dialog-animationsettings effect="Fade" duration="400" delay="0"></e-dialog-animationsettings>
+
         <e-dialog-buttons>
-                <e-dialog-dialogbutton buttonModel="@editButton" click="ondlgButtonClick"></e-dialog-dialogbutton>
-                <e-dialog-dialogbutton buttonModel="@asAttendedButton" click="ondlgAttendedClick"></e-dialog-dialogbutton>
+            @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+            {
+                <e-dialog-dialogbutton buttonModel="@cancelButton" click="ondlgCancelClick"></e-dialog-dialogbutton>
+            }            
+            <e-dialog-dialogbutton buttonModel="@editButton" click="ondlgButtonClick"></e-dialog-dialogbutton>
+            <e-dialog-dialogbutton buttonModel="@asAttendedButton" click="ondlgAttendedClick"></e-dialog-dialogbutton>
+            
         </e-dialog-buttons>
        
     </ejs-dialog>
-        <ejs-dialog id='innerDialog' allowDragging="true" visible="false" showCloseIcon="true" header="Work Order in Place" closeOnEscape="false" content="This appointment already has a work order in place." target="#dialog" height="150px" width="200px" >
-        <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
-        <e-dialog-position X="80" Y="80"> </e-dialog-position>
-    </ejs-dialog>
+            
+        <!-- Begin Inner Dialogs -->
+        <ejs-dialog id='innerDialog' allowDragging="true" visible="false" showCloseIcon="true" header="Work Order in Place" closeOnEscape="true" content="This appointment already has a work order in place." target="#dialog" height="150px" width="200px" >
+            <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
+            <e-dialog-position X="80" Y="80"> </e-dialog-position>
+        </ejs-dialog>
+    
+        <ejs-dialog id='notAllowedDate' allowDragging="true" visible="false" showCloseIcon="true" header="Action not possible" closeOnEscape="true" content="You can only inform appointments for tommorow!." target="#dialog" height="150px" width="200px" >
+            <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
+            <e-dialog-position X="80" Y="80"> </e-dialog-position>
+        </ejs-dialog>
+
+        <ejs-dialog id='cancelConfirmation' allowDragging="true" visible="false" showCloseIcon="true" header="Cancel Appointment" closeOnEscape="true" content="Are you sure do you want to cancel this appointment?" target="#dialog" height="200px" width="200px" >            
+            <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
+            <e-dialog-position X="80" Y="80"> </e-dialog-position>
+            <e-dialog-buttons>
+                <e-dialog-dialogbutton buttonModel="@yesButton" click="ondlgYesButtonClick"></e-dialog-dialogbutton>
+                <e-dialog-dialogbutton buttonModel="@noButton" click="ondlgNoButtonClick"></e-dialog-dialogbutton>
+            </e-dialog-buttons>            
+        </ejs-dialog>
+        <!-- End Inner Dialogs -->
 </div>
 
 <script>     
     
     function onOverlayClick() {
-         var dialog = document.getElementById("dialog").ej2_instances[0];
-         var innerDialog = document.getElementById("innerDialog").ej2_instances[0];
-         dialog.hide();
-         innerDialog.hide();
+            var dialog = document.getElementById("dialog").ej2_instances[0];   
+            var innerDialog = document.getElementById("innerDialog").ej2_instances[0];
+            var innerDialogCancel = document.getElementById("cancelConfirmation").ej2_instances[0];
+            var innerDialogDate = document.getElementById("notAllowedDate").ej2_instances[0];
+
+            dialog.hide();
+            innerDialog.hide(); 
+            innerDialogCancel.hide();
+            innerDialogDate.hide();
     }; 
 
 </script>  

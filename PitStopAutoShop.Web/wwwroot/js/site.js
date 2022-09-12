@@ -1,7 +1,9 @@
 ﻿
 function onOverlayClick() {
-    var dialog = document.getElementById("dialog").ej2_instances[0];
+    var dialog = document.getElementById("dialog").ej2_instances[0];   
+    var innerDialog = document.getElementById("innerDialog").ej2_instances[0]; 
     dialog.hide();
+    innerDialog.hide();
 };
 
 function onAddEstimateButtonClick() {
