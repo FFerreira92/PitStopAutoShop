@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Models;
 using System.Collections.Generic;
@@ -101,6 +102,14 @@ namespace PitStopAutoShop.Web.Helpers
             return await _roleManager.GetRoleNameAsync(role);
         }
 
+        public async Task<int> GetTotalUsersAsync()
+        {
+            var users = await _userManager.Users.ToListAsync();
+
+            return users.Count;
+
+        }
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _userManager.FindByEmailAsync(email);
@@ -109,6 +118,29 @@ namespace PitStopAutoShop.Web.Helpers
         public async Task<User> GetUserByIdAsync(string userId)
         {
             return await _userManager.FindByIdAsync(userId);
+        }
+
+        public async Task<List<UserDataChartModel>> GetUsersChartDataAsync()
+        {
+
+            List<UserDataChartModel> list = new List<UserDataChartModel>();
+            string[] roles = new string[4] { "Customer", "Technician", "Admin", "Receptionist" };
+            string[] colors = new string[4] { "#181818", "#8758FF", "#5CB8E4", "#F2F2F2" };
+            int identer = 0;
+
+            foreach (string role in roles)
+            {                
+                var users = await _userManager.GetUsersInRoleAsync(role);
+                list.Add(new UserDataChartModel
+                {
+                    UserRoleName = role,
+                    Quantity = users.Count(),
+                    Color = colors[identer]
+                });
+                identer++;
+            }
+
+            return list.OrderBy(l => l.UserRoleName).ToList();
         }
 
         public async Task<SignInResult> LoginAsync(LoginViewModel model)

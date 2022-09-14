@@ -313,8 +313,8 @@ namespace PitStopAutoShop.Web.Controllers
 
                 await _mailHelper.SendEmail(email, "Appointment cancelation Pitstop Autoshop Lisbon", $"<h1>Appointment Cancelation</h1>" +
                     $" Mr/Mrs {customerFullName},<br>We send you this email to inform you that the appointment you had with our services for {appointmentDate} " +
-                    $"at {appointmentHour} with your {vehicle.Brand.Name} {vehicle.Model.Name} ({vehicle.PlateNumber}) was canceled. For more information, please contact us by either replying to this email or" +
-                    $"to our contact number: 216589564. <br>" +
+                    $"at {appointmentHour} with your {vehicle.Brand.Name} {vehicle.Model.Name} ({vehicle.PlateNumber}) was canceled.<br> For more information, please contact us by either replying to this email or" +
+                    $" to our contact number: 216589564. <br>" +
                     $"<br>Thank you for your time and hope to see you soon! <br> Best regards, <br> Pitstop Autoshop Lisbon ", null);
                 
                 _flashMessage.Warning($"The appointment from {customerFullName} was canceled with success.");

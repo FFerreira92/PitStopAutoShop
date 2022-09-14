@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
+using PitStopAutoShop.Web.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,6 +15,13 @@ namespace PitStopAutoShop.Web.Data.Repositories
         public WorkOrderRepository(DataContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<int> GetActiveWorkOrdersNumber()
+        {
+            var workOrders = await _context.WorkOrders.Where(wo => wo.Status != "Closed").ToListAsync();
+
+            return workOrders.Count;
         }
 
         public IQueryable GetAllWorkOrders()
@@ -84,6 +94,30 @@ namespace PitStopAutoShop.Web.Data.Repositories
                     .ThenInclude(a => a.Vehicle)
                         .ThenInclude(v => v.Model)
                 .Where(wo => wo.Id == id).FirstAsync();
+        }
+
+        public async Task<List<WorkOrderChartDataModel>> GetWorkOrdersChartAsync(int month)
+        {
+            List<WorkOrderChartDataModel> list = new List<WorkOrderChartDataModel>();
+            string[] status = new string[3] { "Closed", "Opened", "Done" };
+            string[] color = new string[3] { "#990000", "#FFA500", "#9EB23B" };
+            int id = 0;
+
+            foreach(string statusItem in status)
+            {
+                var workOrders = await _context.WorkOrders.Where(wo => wo.Status == statusItem && wo.OrderDateStart.Month == month && wo.OrderDateStart.Year == DateTime.UtcNow.Year).ToListAsync();
+
+                list.Add(new WorkOrderChartDataModel
+                {
+                    Status = statusItem,
+                    Quantity = workOrders.Count(),
+                    Color = color[id]
+                });
+
+                id++;
+            }
+
+            return list;
         }
     }
 }

@@ -43,5 +43,7 @@ namespace PitStopAutoShop.Web.Helpers
         Task<string> GetRoleNameByRoleIdAsync(string roleId);
 
         Task<string> GetRoleIdWithRoleNameAsync(string roleName);
+        Task<List<UserDataChartModel>> GetUsersChartDataAsync();
+        Task<int> GetTotalUsersAsync();
     }
 }
