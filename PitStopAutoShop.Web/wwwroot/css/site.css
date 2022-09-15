@@ -69,3 +69,88 @@ body {
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
 }
+
+
+/* Dashboard panel Style */
+
+.card {
+    box-shadow: 5px 5px 10px #e1e1e1;
+    height: 100%;
+}
+
+    .card:hover {
+        color: #e5e5e5;
+    }
+
+#graphsContainer.card {
+}
+
+#chart {
+    border-bottom-left-radius: 2em;
+    border-bottom-right-radius: 2em;
+    border-top-right-radius: 2em;
+    border-top-left-radius: 2em;
+}
+
+#users {
+    border-bottom-left-radius: 2em;
+    border-top-right-radius: 2em;
+    background: linear-gradient(to left, white 50%,#26282b 50%);
+    background-position: right;
+    transition: background-position 0.5s ease-out;
+    background-size: 210%;
+}
+
+    #users.card:hover {
+        background-position: left;
+        transition: 0.5s ease-in;
+        cursor: pointer;
+    }
+
+
+#workOrders {
+    border-bottom-right-radius: 2em;
+    border-top-left-radius: 2em;
+    background: linear-gradient(to left, white 50%,#5a189a 50%);
+    background-position: right;
+    transition: background-position 0.5s ease-out;
+    background-size: 220%;
+}
+
+    #workOrders.card:hover {
+        background-position: left;
+        transition: 0.5s ease-in;
+        cursor: pointer;
+    }
+
+
+#cars {
+    border-bottom-right-radius: 2em;
+    border-top-left-radius: 2em;
+    background: linear-gradient(to left, white 50%,#e63946 50%);
+    background-position: right;
+    transition: background-position 0.5s ease-out;
+    background-size: 210%;
+}
+
+    #cars.card:hover {
+        background-position: left;
+        transition: 0.5s ease-in;
+        cursor: pointer;
+    }
+
+
+#services {
+    border-bottom-left-radius: 2em;
+    border-top-right-radius: 2em;
+    background: linear-gradient(to left, white 50%,#fca311 50%);
+    background-position: right;
+    transition: background-position 0.5s ease-out;
+    background-size: 210%;
+}
+
+    #services.card:hover {
+        background-position: left;
+        transition: 0.5s ease-in;
+        cursor: pointer;
+    }

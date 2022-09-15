@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
+using PitStopAutoShop.Web.Models;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,6 +17,12 @@ namespace PitStopAutoShop.Web.Data.Repositories
         public VehicleRepository(DataContext context) : base(context)
         {
             _context = context;
+        }
+
+        public async Task<int> GetAllRegisteredVehiclesNumberAsync()
+        {
+            var vehicles = await _context.Vehicles.ToListAsync();
+            return vehicles.Count;
         }
 
         public IQueryable GetAllWithCustomers()
@@ -68,6 +77,42 @@ namespace PitStopAutoShop.Web.Data.Repositories
                                           .Include(b => b.Brand)
                                           .Include(m => m.Model)
                                           .Where(v => v.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<List<VehicleChartModel>> GetVehiclesChartDataAsync()
+        {
+            List<VehicleChartModel> list = new List<VehicleChartModel>();
+
+            var vehicles = await _context.Vehicles.Include(v => v.Brand).Include(v => v.Model).ToListAsync();
+            var brands = await _context.Brands.ToListAsync();
+            Random r = new Random();
+            var vehiclesTotal = vehicles.Count;
+
+            foreach(var brand in brands)
+            {
+                var quantity = 0;
+                
+                foreach(var vehicle in vehicles)
+                {
+                    if(vehicle.Brand.Name == brand.Name)
+                    {
+                        quantity++;
+                    }
+                }
+
+                var percentage = ((double)quantity / (double)vehiclesTotal).ToString("p1");
+
+                list.Add(new VehicleChartModel
+                {
+                    Brand = brand.Name,
+                    Quantity = quantity,
+                    Color = String.Format("#{0:X6}", r.Next(0x1000000)),
+                    TotalVehicles = vehicles.Count,
+                    Percentage = percentage,
+                });                
+            }
+
+            return list;
         }
     }
 }

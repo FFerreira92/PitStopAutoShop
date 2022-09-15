@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Helpers;
 using PitStopAutoShop.Web.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -78,6 +79,52 @@ namespace PitStopAutoShop.Web.Data.Repositories
             });
 
             return list;
+        }
+
+        public async Task<List<ServiceChartModel>> GetMostSoldServicesData()
+        {
+            List<ServiceChartModel> list = new List<ServiceChartModel>();
+            Random r = new Random();
+
+            var thisMonthInvoices = await _context.Invoices
+                .Include(i => i.Estimate)
+                .ThenInclude(e => e.Services)
+                .ThenInclude(s => s.Service)
+                .Where(i => i.InvoicDate.Month == DateTime.UtcNow.Month)
+                .ToListAsync();
+
+
+            var services = await _context.Services.ToListAsync();
+            
+
+
+            foreach(var service in services)
+            {
+                int quantity = 0;
+
+                foreach(var invoice in thisMonthInvoices)
+                {                    
+                    foreach(var srv in invoice.Estimate.Services)
+                    {
+                        if(srv.Service != null)
+                        {
+                            if (srv.Service.Name == service.Name)
+                            {
+                                quantity++;
+                            }
+                        }                     
+                    }
+                }
+
+                list.Add(new ServiceChartModel
+                {
+                    Name = service.Name,
+                    Quantity = quantity,
+                    Color = String.Format("#{0:X6}", r.Next(0x1000000)),
+                });
+            }
+
+            return list.OrderBy(l => l.Quantity).Take(10).ToList();
         }
     }
 }

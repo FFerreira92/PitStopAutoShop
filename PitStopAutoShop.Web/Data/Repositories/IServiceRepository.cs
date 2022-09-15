@@ -12,5 +12,6 @@ namespace PitStopAutoShop.Web.Data.Repositories
         public IEnumerable<SelectListItem> GetComboServices();
 
         Task AddServiceToEstimateAsync(AddServiceToEstimateViewModel model, string userName);
+        Task<List<ServiceChartModel>> GetMostSoldServicesData();
     }
 }

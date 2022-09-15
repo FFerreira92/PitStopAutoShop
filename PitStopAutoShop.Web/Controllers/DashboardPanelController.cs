@@ -12,12 +12,20 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IWorkOrderRepository _workOrderRepository;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IUserHelper _userHelper;
+        private readonly IVehicleRepository _vehicleRepository;
+        private readonly IServiceRepository _serviceRepository;
 
-        public DashboardPanelController(IWorkOrderRepository workOrderRepository, IInvoiceRepository invoiceRepository,IUserHelper userHelper)
+        public DashboardPanelController(IWorkOrderRepository workOrderRepository
+            ,IInvoiceRepository invoiceRepository
+            ,IUserHelper userHelper
+            ,IVehicleRepository vehicleRepository
+            ,IServiceRepository serviceRepository)
         {
             _workOrderRepository = workOrderRepository;
             _invoiceRepository = invoiceRepository;
             _userHelper = userHelper;
+            _vehicleRepository = vehicleRepository;
+            _serviceRepository = serviceRepository;
         }
         public async Task<IActionResult> Index()
         {
@@ -34,14 +42,17 @@ namespace PitStopAutoShop.Web.Controllers
             ViewBag.color3 = color3;
 
             //all months overal sales graphic data
-
             var overallMonthsSales = await _invoiceRepository.GetYearSalesByMonthAsync(DateTime.UtcNow.Year);
-
-            ViewBag.OverallMonthsSales = overallMonthsSales;                     
-
+            ViewBag.OverallMonthsSales = overallMonthsSales; 
+            //total users data
             ViewBag.totalUsers = await _userHelper.GetTotalUsersAsync();
-
+            //active work orders data
             ViewBag.activeWorkOrders = await _workOrderRepository.GetActiveWorkOrdersNumber();
+            //Total Registered Vehicles
+            ViewBag.registeredVehicles = await _vehicleRepository.GetAllRegisteredVehiclesNumberAsync();
+            //Most sold Service
+            var services = await _serviceRepository.GetMostSoldServicesData();
+            ViewBag.mostSoldService = services.Last().Name;
 
             return View();
         }
@@ -73,6 +84,26 @@ namespace PitStopAutoShop.Web.Controllers
         {
             var workOrdersData = await _workOrderRepository.GetWorkOrdersChartAsync(DateTime.UtcNow.Month);
             var json = Json(workOrdersData);
+            return json;
+        }
+
+
+        [HttpPost]
+        [Route("DashboardPanel/GetVehiclesChartData")]
+        public async Task<JsonResult> GetVehiclesChartData()
+        {
+            var vehiclesData = await _vehicleRepository.GetVehiclesChartDataAsync();
+            var json = Json(vehiclesData);
+            return json;
+        }
+
+
+        [HttpPost]
+        [Route("DashboardPanel/GetServicesChartData")]
+        public async Task<JsonResult> GetServicesChartData()
+        {
+            var servicesData = await _serviceRepository.GetMostSoldServicesData();
+            var json = Json(servicesData);
             return json;
         }
 

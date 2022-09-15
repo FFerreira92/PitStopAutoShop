@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using PitStopAutoShop.Web.Data.Entities;
+using PitStopAutoShop.Web.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,5 +18,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
         IQueryable GetCustomerVehiclesAsync(int customerId);
 
         Task<Vehicle> GetNewlyAddedVehicleAsync(int id);
+        Task<int> GetAllRegisteredVehiclesNumberAsync();
+        Task<List<VehicleChartModel>> GetVehiclesChartDataAsync();
     }
 }
