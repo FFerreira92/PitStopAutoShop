@@ -1,6 +1,46 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+.carousel-inner > .item > img, .carousel-inner > .item > a > img {
+    height: 65vh;
+    min-height: 350px;
+    width: 100%;
+    margin: 0 auto;
+    background: no-repeat center center scroll;  
+    background-size: cover;
+}
+
+#myHeader {
+    height:50px;
+    background-color: #353535;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #f4f3ee;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+
+.overallShadow {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+a:link, a:visited, a:hover, a:active {
+    text-decoration: none;
+}
+
+a:hover {
+    color: #f7b801;
+}
+
+.aColor {
+    color: #f4f3ee;
+}
+
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;
@@ -27,7 +67,7 @@ a {
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
-  font-size: 14px;
+    font-size: 14px;    
 }
 @media (min-width: 768px) {
   html {
@@ -59,98 +99,16 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+     Margin bottom by footer height 
+    margin-bottom: 60px;
+    overflow-x: hidden;
 }
 .footer {
   position: absolute;
   bottom: 0;
   width: 100%;
   white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+  line-height: 60px;  Vertically center the text there 
 }
 
 
-/* Dashboard panel Style */
-
-.card {
-    box-shadow: 5px 5px 10px #e1e1e1;
-    height: 100%;
-}
-
-    .card:hover {
-        color: #e5e5e5;
-    }
-
-#graphsContainer.card {
-}
-
-#chart {
-    border-bottom-left-radius: 2em;
-    border-bottom-right-radius: 2em;
-    border-top-right-radius: 2em;
-    border-top-left-radius: 2em;
-}
-
-#users {
-    border-bottom-left-radius: 2em;
-    border-top-right-radius: 2em;
-    background: linear-gradient(to left, white 50%,#26282b 50%);
-    background-position: right;
-    transition: background-position 0.5s ease-out;
-    background-size: 210%;
-}
-
-    #users.card:hover {
-        background-position: left;
-        transition: 0.5s ease-in;
-        cursor: pointer;
-    }
-
-
-#workOrders {
-    border-bottom-right-radius: 2em;
-    border-top-left-radius: 2em;
-    background: linear-gradient(to left, white 50%,#5a189a 50%);
-    background-position: right;
-    transition: background-position 0.5s ease-out;
-    background-size: 220%;
-}
-
-    #workOrders.card:hover {
-        background-position: left;
-        transition: 0.5s ease-in;
-        cursor: pointer;
-    }
-
-
-#cars {
-    border-bottom-right-radius: 2em;
-    border-top-left-radius: 2em;
-    background: linear-gradient(to left, white 50%,#e63946 50%);
-    background-position: right;
-    transition: background-position 0.5s ease-out;
-    background-size: 210%;
-}
-
-    #cars.card:hover {
-        background-position: left;
-        transition: 0.5s ease-in;
-        cursor: pointer;
-    }
-
-
-#services {
-    border-bottom-left-radius: 2em;
-    border-top-right-radius: 2em;
-    background: linear-gradient(to left, white 50%,#fca311 50%);
-    background-position: right;
-    transition: background-position 0.5s ease-out;
-    background-size: 210%;
-}
-
-    #services.card:hover {
-        background-position: left;
-        transition: 0.5s ease-in;
-        cursor: pointer;
-    }

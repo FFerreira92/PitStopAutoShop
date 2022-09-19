@@ -95,6 +95,25 @@ namespace PitStopAutoShop.Web.Data.Repositories
                 .Where(i => i.WorkOrder.Id == workOrderId).FirstAsync();
         }
 
+        public async Task<List<Invoice>> GetUserInvoicesAsync(int customerId)
+        {
+            return await _context.Invoices
+                   .Include(i => i.WorkOrder)
+                    .ThenInclude(wo => wo.ServiceDoneBy)
+                .Include(i => i.WorkOrder)
+                    .ThenInclude(wo => wo.Appointment)
+                .Include(i => i.Customer)
+                .Include(i => i.CreatedBy)
+                .Include(i => i.Estimate)
+                    .ThenInclude(e => e.Services)
+                            .ThenInclude(es => es.Service)
+                .Include(i => i.Vehicle)
+                    .ThenInclude(v => v.Brand)
+                .Include(i => i.Vehicle)
+                    .ThenInclude(v => v.Model)
+                .Where(i => i.Customer.Id == customerId).ToListAsync();
+        }
+
         public async Task<List<SalesChartDataModel>> GetYearSalesByMonthAsync(int year)
         {
             DateTime requestedYearDate = new DateTime(year, DateTime.UtcNow.Month, DateTime.UtcNow.Day);

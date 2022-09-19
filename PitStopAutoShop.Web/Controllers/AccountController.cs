@@ -21,15 +21,17 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly ICustomerRepository _customerRepository;
         private readonly IFlashMessage _flashMessage;
         private readonly IBlobHelper _blobHelper;
+        private readonly IInvoiceRepository _invoiceRepository;
 
         public AccountController(IUserHelper userHelper,IMailHelper mailHelper,ICustomerRepository customerRepository,
-            IFlashMessage flashMessage, IBlobHelper blobHelper)
+            IFlashMessage flashMessage, IBlobHelper blobHelper, IInvoiceRepository invoiceRepository)
         {
             _userHelper = userHelper;
             _mailHelper = mailHelper;
             _customerRepository = customerRepository;
             _flashMessage = flashMessage;
             _blobHelper = blobHelper;
+            _invoiceRepository = invoiceRepository;
         }
 
         public IActionResult Login()
@@ -211,7 +213,10 @@ namespace PitStopAutoShop.Web.Controllers
                     var result = await _userHelper.ChangePasswordAsync(user,"DefaultPassword123", model.Password);
                     if (result.Succeeded)
                     {
-                        return RedirectToAction("AccountCreated", "Account");
+
+                        ViewBag.Success = "You can now login into the system.";
+                        return View(model);
+                        
                     }
                     else
                     {
@@ -224,11 +229,6 @@ namespace PitStopAutoShop.Web.Controllers
                 }
             }
             return View(model);
-        }
-
-        public IActionResult AccountCreated()
-        {
-            return View();
         }
 
 
@@ -293,22 +293,34 @@ namespace PitStopAutoShop.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            var user = await _userHelper.GetUserByEmailAsync(model.UserName);
-            if(user != null)
+
+            if (ModelState.IsValid)
             {
-                var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
-                if (result.Succeeded)
-                {                    
-                    ViewBag.Message = "Password Reset Successful, you can now Login with the new credentials.";
-                    return View();                    
+                var user = await _userHelper.GetUserByEmailAsync(model.UserName);
+                if (user != null)
+                {
+                    var result = await _userHelper.ResetPasswordAsync(user, model.Token, model.Password);
+                    if (result.Succeeded)
+                    {
+                        if (user.EmailConfirmed == false)
+                        {
+                            var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                            await _userHelper.ConfirmEmailAsync(user, token);
+                        }
+
+                        ViewBag.Message = "Password Reset Successful, you can now Login with the new credentials.";
+                        return View();
+                    }
+
+
+                    ViewBag.Message = "There was an error while resseting your password.";
+                    return View(model);
                 }
 
-
-                ViewBag.Message = "There was an error while resseting your password.";
+                ViewBag.Message = "User was not found";
                 return View(model);
             }
 
-            ViewBag.Message = "User was not found";
             return View(model);
         }
 
@@ -389,7 +401,6 @@ namespace PitStopAutoShop.Web.Controllers
             return View(model);
         }
 
-
         public async Task<IActionResult> ViewUser()
         {
             var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
@@ -401,6 +412,48 @@ namespace PitStopAutoShop.Web.Controllers
 
             return View(user);
         }
+
+        public async Task<IActionResult> ServiceHistory()
+        {           
+            var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+
+            if(user == null)
+            {
+                return NotFound();
+            }
+
+            var customer = await _customerRepository.GetCustomerByUserIdAsync(user.Id);
+            
+            if(customer == null)
+            {
+                return NotFound();
+            }
+
+            var invoiceHistory = await _invoiceRepository.GetUserInvoicesAsync(customer.Id);
+
+            return View(invoiceHistory);
+
+        }
+
+        public async Task<IActionResult> InvoiceDetails(int? id)
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var invoice = await _invoiceRepository.GetInvoiceDetailsByIdAsync(id.Value);
+
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+
+            return View(invoice);
+        }
+
+
 
         [HttpPost]
         [Route("Account/GetProfilePicturePath")]
@@ -459,6 +512,7 @@ namespace PitStopAutoShop.Web.Controllers
         {
             return View();
         }
+
 
     }
 }

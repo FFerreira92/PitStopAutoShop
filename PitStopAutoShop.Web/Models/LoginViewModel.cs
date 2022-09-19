@@ -7,6 +7,7 @@ namespace PitStopAutoShop.Web.Models
 {
 
         [Required]
+        [Display(Name ="Email Address")]
         [EmailAddress]        
         public string UserName { get; set; }
 
