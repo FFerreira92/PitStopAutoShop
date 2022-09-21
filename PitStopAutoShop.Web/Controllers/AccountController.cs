@@ -11,6 +11,7 @@ using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using Microsoft.AspNetCore.Http;
 using Vereyon.Web;
+using Newtonsoft.Json;
 
 namespace PitStopAutoShop.Web.Controllers
 {
@@ -22,9 +23,10 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IFlashMessage _flashMessage;
         private readonly IBlobHelper _blobHelper;
         private readonly IInvoiceRepository _invoiceRepository;
+        private readonly IVehicleRepository _vehicleRepository;
 
         public AccountController(IUserHelper userHelper,IMailHelper mailHelper,ICustomerRepository customerRepository,
-            IFlashMessage flashMessage, IBlobHelper blobHelper, IInvoiceRepository invoiceRepository)
+            IFlashMessage flashMessage, IBlobHelper blobHelper, IInvoiceRepository invoiceRepository, IVehicleRepository vehicleRepository)
         {
             _userHelper = userHelper;
             _mailHelper = mailHelper;
@@ -32,6 +34,7 @@ namespace PitStopAutoShop.Web.Controllers
             _flashMessage = flashMessage;
             _blobHelper = blobHelper;
             _invoiceRepository = invoiceRepository;
+            _vehicleRepository = vehicleRepository;
         }
 
         public IActionResult Login()
@@ -322,84 +325,67 @@ namespace PitStopAutoShop.Web.Controllers
             }
 
             return View(model);
-        }
+        }                
+             
 
-
-        public async Task<IActionResult> ChangeUser()
-        {
-            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-            var model = new ChangeUserViewModel();
-            if(user != null)
-            {
-                model.Address = user.Address;
-                model.PhoneNumber = user.PhoneNumber;
-            }
-
-            return View(model);
-        }
 
         [HttpPost]
-        public async Task<IActionResult> ChangeUser(ChangeUserViewModel model)
+        [Route("Account/ChangePassword")]
+        public async Task<JsonResult> ChangePassword(string oldPassword, string newPassword,string repeatedPassword)
         {
-            if (ModelState.IsValid)
+
+            Response response;
+
+            if(newPassword != repeatedPassword)
             {
-                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-                if (user != null)
-                {                    
-
-                    user.Address = model.Address;
-                    user.PhoneNumber = model.PhoneNumber;
-               
-
-                    var response = await _userHelper.UpdateUserAsync(user);
-                    if (response.Succeeded)
-                    {
-                        ViewBag.UserMessage = "User Updated!";
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, response.Errors.FirstOrDefault().Description);
-                    }
-                }
-            }
-
-            return View(model);
-        }
-
-        public IActionResult ChangePassword()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
-
-                if(user != null)
+                response = new Response
                 {
-                    var result = await _userHelper.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("ChangeUser");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError(string.Empty, result.Errors.FirstOrDefault().Description);
-                    }
+                    IsSuccess = false,
+                    Message = "New password is not equivalent to the repeated password."
+                };
 
+                return Json(response);
+            }         
+
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+
+            if(user == null)
+            {
+                return Json(new Response
+                {
+                    IsSuccess = false,
+                    Message = "User is not valid",
+                });
+            }
+
+            var isActualUser = await _userHelper.CheckPasswordAsync(user, oldPassword);
+
+            if (isActualUser.Succeeded)
+            {
+
+                var result = await _userHelper.ChangePasswordAsync(user, oldPassword, newPassword);
+                if (result.Succeeded)
+                {
+                    return Json(new Response { IsSuccess = true, Message="Password was succefully changed!" });
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "User not found.");
+                    return Json(new Response
+                    {
+                        IsSuccess = false,
+                        Message = "There was a problem changing the password.",
+                    });
                 }
-
             }
 
-            return View(model);
+            return Json(new Response
+            {
+                IsSuccess = false,
+                Message = "The old password is not correct.",
+            });
+
         }
+        
 
         public async Task<IActionResult> ViewUser()
         {
@@ -410,7 +396,59 @@ namespace PitStopAutoShop.Web.Controllers
                 return NotFound();
             }
 
-            return View(user);
+            ChangeUserViewModel model = null;
+            bool isCustomer =false;
+
+            if (this.User.IsInRole("Customer"))
+            {
+                var customer = await _customerRepository.GetCustomerByUserIdAsync(user.Id);
+                isCustomer = true;
+                if(customer == null)
+                {
+                    return NotFound();
+                }
+
+                model = new ChangeUserViewModel
+                {
+                    PhoneNumber = customer.PhoneNumber,
+                    FirstName = customer.FirstName,
+                    Address = customer.Address,
+                    Email = customer.Email,
+                    LastName = customer.LastName,
+                    Nif = customer.Nif,
+                    ProfilePitcure = user.ProfilePitcure,
+                };
+
+               
+            }
+            else
+            {
+
+                model = new ChangeUserViewModel
+                {
+                    PhoneNumber = user.PhoneNumber,
+                    LastName = user.LastName,
+                    FirstName = user.FirstName,
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    ProfilePitcure = user.ProfilePitcure,
+                    Address = user.Address,
+                };
+                                       
+            }
+
+            ViewBag.JsonModel = JsonConvert.SerializeObject(model);
+            ViewBag.IsCustomer = JsonConvert.SerializeObject(isCustomer);
+
+
+
+            Random r = new Random();
+            string[] images = new string[5] { "/images/siteContent/ponte.jpg", "/images/siteContent/recoverPassword.jpg", "/images/siteContent/teste.jpg",
+                 "/images/siteContent/karts.jpg", "/images/siteContent/city.jpg" };
+            string selectedImage = images[r.Next(5)];            
+            ViewBag.Image = selectedImage;
+
+            return View(model);
         }
 
         public async Task<IActionResult> ServiceHistory()
@@ -453,6 +491,27 @@ namespace PitStopAutoShop.Web.Controllers
             return View(invoice);
         }
 
+        public async Task<IActionResult> Vehicles()
+        {
+            var user = await _userHelper.GetUserByEmailAsync(this.User.Identity.Name);
+
+            if(user == null)
+            {
+                return NotFound();
+            }
+
+            var customer = await _customerRepository.GetCustomerByUserIdAsync(user.Id);
+
+            if(customer == null)
+            {
+                return NotFound();
+            }
+
+            var vehicles = _vehicleRepository.GetCustomerVehiclesAsync(customer.Id);
+
+            return View(vehicles);
+
+        }
 
 
         [HttpPost]
@@ -508,11 +567,64 @@ namespace PitStopAutoShop.Web.Controllers
             return new ObjectResult(new { Status = "fail" });
         }
 
+
+
+        [HttpPost]
+        [Route("Account/UpdateUser")]
+        public async Task<JsonResult> UpdateUser(string email,long phoneNumber,long nif,string address,bool isCustomer)
+        {
+            bool isValid = false;
+            var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
+
+            if (user == null)
+            {
+                return Json(isValid); 
+            }
+
+            if (isCustomer)
+            {
+                var customer = await _customerRepository.GetCustomerByUserIdAsync(user.Id);
+                if (customer == null)
+                {
+                    return Json(isValid);
+                }
+                user.Email = email;
+                user.UserName = email;
+                customer.Email = email;
+                customer.PhoneNumber = phoneNumber.ToString();
+                customer.Address = address;
+                customer.Nif = nif.ToString();
+
+                try
+                {
+                    await _customerRepository.UpdateAsync(customer);
+                }
+                catch (Exception)
+                {
+                    return Json(isValid);
+                }
+            }        
+            
+            user.Address = address;
+            user.PhoneNumber = phoneNumber.ToString();
+
+            try
+            {
+                await _userHelper.UpdateUserAsync(user);
+
+                isValid = true;
+            }
+            catch (Exception)
+            {
+                return Json(isValid);               
+            }
+           
+            return Json(isValid);
+        }
+
         public IActionResult NotAuthorized()
         {
             return View();
         }
-
-
     }
 }

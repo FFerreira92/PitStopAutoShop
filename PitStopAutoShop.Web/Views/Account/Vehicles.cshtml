@@ -1,7 +1,7 @@
-﻿@model List<PitStopAutoShop.Web.Data.Entities.Invoice>
+﻿@model IQueryable<PitStopAutoShop.Web.Data.Entities.Vehicle>
 
 @{
-    ViewData["Title"] = "ServiceHistory";
+    ViewData["Title"] = "Vehicles";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,49 +11,51 @@
    <div class="col-1"></div>
    <div class="col-10" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); margin-bottom:25px;margin-top:25px; background-color:#f4f3ee;padding:0;">
 
-            @if(Model.Count > 0)
+            @if(Model.Count() != 0)
             {
                 <div style="margin-top:50px; max-width:1200px;margin:auto"> 
                     
                         <div class="row" style="margin-bottom:30px;margin-top:30px;">
-                            <h5 style="margin:auto">Your Services History</h5>
+                            <h5 style="margin:auto">Your Registered Vehicles</h5>
                         </div>
 
-                        <table class="hover stripe row-border compact" style="max-width:1200px;margin:auto;font-size:14px" id="MyTable">
+                        <table class="hover stripe row-border compact" style="max-width:1200px;margin:auto; font-size:14px" id="MyTable">
                             <thead>                                
                                 <tr>
                                     <th>
-                                        @Html.Raw("Invoice Number")
+                                        @Html.DisplayNameFor(model => model.FirstOrDefault().PlateNumber)
                                     </th>            
                                     <th>
-                                        @Html.DisplayNameFor(model => model.FirstOrDefault().InvoicDate)
+                                        @Html.Raw("Model")
                                     </th>
                                     <th>
-                                        @Html.Raw("Vehicle")
+                                        @Html.DisplayNameFor(model => model.FirstOrDefault().DateOfConstruction)
                                     </th>    
                                     <th>
-                                        @Html.DisplayNameFor(model => model.FirstOrDefault().Value)
+                                       @Html.DisplayNameFor(model => model.FirstOrDefault().VehicleIdentificationNumber)
                                     </th> 
-                                    <th></th>
+                                    <th>
+                                       @Html.DisplayNameFor(model => model.FirstOrDefault().Horsepower)
+                                    </th>                                   
                                 </tr>
                             </thead>
                             <tbody>
                         @foreach (var item in Model) {
                                 <tr>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Id)
+                                        @Html.DisplayFor(modelItem => item.PlateNumber)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.InvoicDate)
+                                        @Html.DisplayFor(modelItem => item.Brand.Name) @Html.DisplayFor(modelItem => item.Model.Name)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Vehicle.Brand.Name) @Html.DisplayFor(modelItem => item.Vehicle.Model.Name) (@Html.DisplayFor(modelItem => item.Vehicle.PlateNumber))
+                                       @Html.DisplayFor(modelItem => item.DateOfConstruction) 
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.Value)
+                                        @Html.DisplayFor(modelItem => item.VehicleIdentificationNumber)
                                     </td>
                                     <td>
-                                        <a asp-action="InvoiceDetails" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a>
+                                        @Html.DisplayFor(modelItem => item.Horsepower)
                                     </td>
                                 </tr>
                         }
@@ -63,20 +65,18 @@
             }
             else
             {
-
-
-                 <div style="margin-top:50px">
-                    <table class="stripe cell-border" style="max-width:1200px;margin:auto;font-size:14px" id="MyTable2">
+                <div style="margin-top:50px">
+                    <table class="stripe cell-border" style="max-width:1200px;margin:auto; font-size:14px" id="MyTable2">
                         <thead>
                              <tr>                                     
                                  <th style="margin:auto">
-                                    Services
+                                    Vehicles
                                  </th>                    
                              </tr>
                         </thead>
                          <tbody>             
                             <tr>                   
-                                 <td style="margin:auto">@Html.Raw("There is no records of services done yet.") </td> 
+                                 <td style="margin:auto">@Html.Raw("There is no vehicles registered in your name yet.") </td> 
                             </tr>
                          </tbody>
                      </table>
@@ -89,7 +89,7 @@
 <style>
     #MyTable{
         background-color:white;
-        border:solid 3px #f7b801;        
+        border:solid 3px #f7b801;       
     }
 </style>
 
@@ -183,4 +183,5 @@
 
      </Script>
 }
+
 

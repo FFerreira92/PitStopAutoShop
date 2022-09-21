@@ -38,6 +38,11 @@ namespace PitStopAutoShop.Web.Helpers
             return await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
         }
 
+        public async Task<SignInResult> CheckPasswordAsync(User user, string oldPassword)
+        {
+            return await _signInManager.CheckPasswordSignInAsync(user, oldPassword, false);
+        }
+
         public async Task CheckRoleAsync(string roleName)
         {
            
@@ -149,8 +154,9 @@ namespace PitStopAutoShop.Web.Helpers
                 model.UserName,
                 model.Password,
                 model.RememberMe,
-                false);
+                false);            
         }
+
 
         public async Task LogoutAsync()
         {

@@ -19,8 +19,9 @@
     <link rel="stylesheet" href="~/lib/font-awesome/css/all.min.css">
     <!-- Croppie -->    
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.css" />
-     
-    
+    <!-- Syncfusion ASP.NET Core controls styles -->
+    <link rel="stylesheet" href="https://cdn.syncfusion.com/ej2/20.2.43/fluent.css" />
+    <script src="https://cdn.syncfusion.com/ej2/20.2.43/dist/ej2.min.js"></script>
     
     <link rel="stylesheet" href="~/css/custom.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -96,7 +97,7 @@
           </nav>
     </div>
 
-    <div class="container-fluid" style="padding:0;padding-bottom:10px">
+    <div class="container-fluid" style="padding:0;padding-bottom:10px" id="Container">
         
                 
         @RenderBody()
@@ -119,7 +120,8 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     
     <script src="~/js/site.js" asp-append-version="true"></script>   
-   
+     <!-- Syncfusion ASP.NET Core Script Manager -->
+    <ejs-scripts></ejs-scripts>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.5/croppie.min.js"></script>
      <style>
         .croppie-container {

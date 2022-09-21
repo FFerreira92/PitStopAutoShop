@@ -23,6 +23,7 @@ namespace PitStopAutoShop.Web.Data.Entities
         [DataType(DataType.PhoneNumber)]
         public override string PhoneNumber { get; set; }
 
+        [Display(Name ="Full Name")]
         public string FullName => $"{FirstName} {LastName}";
 
         [Display(Name ="Profile Picture")]

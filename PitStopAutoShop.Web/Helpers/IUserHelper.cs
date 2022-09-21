@@ -4,6 +4,7 @@ using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Helpers
@@ -45,5 +46,6 @@ namespace PitStopAutoShop.Web.Helpers
         Task<string> GetRoleIdWithRoleNameAsync(string roleName);
         Task<List<UserDataChartModel>> GetUsersChartDataAsync();
         Task<int> GetTotalUsersAsync();
+        Task<SignInResult> CheckPasswordAsync(User user, string oldPassword);
     }
 }
