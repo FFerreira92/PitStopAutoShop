@@ -373,6 +373,7 @@ namespace PitStopAutoShop.Web.Controllers
                     UserName = model.Email,
                     PhoneNumber = model.PhoneNumber,
                     Address = model.Address,
+                    ProfilePitcure = new Guid(),
                 };
 
                 var result = await _userHelper.AddUserAsync(newUser, "DefaultPassword123");                

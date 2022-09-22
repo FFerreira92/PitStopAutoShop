@@ -81,7 +81,7 @@ namespace PitStopAutoShop.Web.Helpers
                 User = user,
                 Email = model.Email,
                 Color = model.Color,
-                //Falta acrescentar foto/imagem
+                PhotoId = model.PhotoId == Guid.Empty? new Guid(): model.PhotoId,                
             };
 
             if (isNew)
@@ -119,7 +119,8 @@ namespace PitStopAutoShop.Web.Helpers
                 Roles = _employeesRolesRepository.GetComboRoles(),
                 Specialties = _employeesRolesRepository.GetComboSpecialty(isNew? 0 : employee.Role.Id),
                 UserId = employee.User.Id,
-                Color = employee.Color
+                Color = employee.Color,
+                PhotoId = employee.PhotoId                
             };
 
             return model;

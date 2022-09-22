@@ -1,0 +1,62 @@
+﻿
+@{
+    ViewData["Title"] = "Contact";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row" style="height:80vh">
+   <div class="col-1"></div>
+   <div  class="col-10" style="box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); margin-bottom:25px;margin-top:25px; background-color:#f4f3ee;padding:0;display:flex">
+            
+            
+            <div class="col-6">
+                
+            </div>
+            <div class="col-6">
+                <div id="map">
+
+                </div>
+
+            </div>             
+     
+   </div>
+   <div class="col-1"></div>
+</div>
+
+<script type="text/javascript">
+    let map;
+    const pitstop = { lat: 38.705, lng: -9.183 };
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: pitstop,
+        zoom: 16,
+      });
+
+      const marker = new google.maps.Marker({
+          position: pitstop,
+          map: map,
+      });
+
+    }
+
+    window.initMap = initMap;
+
+  
+
+</script>
+
+<style>
+    #map {
+        height: 70%;
+        width:90%;
+        margin: auto;
+        top: 50%;
+        transform: translateY(-50%);
+        border: solid 2px black;
+        box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+    }
+
+ 
+
+</style>

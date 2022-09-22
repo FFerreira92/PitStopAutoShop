@@ -4,7 +4,7 @@
   "parameters": {
     "resourceGroupName": {
       "type": "string",
-      "defaultValue": "SuperShopResourceGroup",
+      "defaultValue": "PitStopTPSIResourceGroup",
       "metadata": {
         "_parameterType": "resourceGroup",
         "description": "Name of the resource group for the resource. It is recommended to put resources under same resource group for better tracking."
@@ -51,23 +51,23 @@
             {
               "kind": "v12.0",
               "location": "[parameters('resourceLocation')]",
-              "name": "filipeserver",
+              "name": "pitstoptpsidb",
               "type": "Microsoft.Sql/servers",
               "apiVersion": "2017-10-01-preview"
             },
             {
               "sku": {
-                "name": "Standard",
-                "tier": "Standard",
-                "capacity": 10
+                "name": "Basic",
+                "tier": "Basic",
+                "capacity": 5
               },
               "kind": "v12.0,user",
               "location": "[parameters('resourceLocation')]",
-              "name": "filipeserver/PitStopAutoShop.Web_db",
+              "name": "pitstoptpsidb/PitStopAutoShop.Web_db",
               "type": "Microsoft.Sql/servers/databases",
               "apiVersion": "2017-10-01-preview",
               "dependsOn": [
-                "filipeserver"
+                "pitstoptpsidb"
               ]
             }
           ]

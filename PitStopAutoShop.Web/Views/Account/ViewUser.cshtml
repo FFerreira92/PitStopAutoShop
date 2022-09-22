@@ -111,6 +111,11 @@
             var currentPhone = document.getElementById("phone");
             currentPhone.Value = model.PhoneNumber;
 
+            if (!isCustomer) {                
+                $(".dialogCard").css('min-height', '350px');                
+            }
+            
+
             dialog.show();
     };
 
@@ -335,11 +340,11 @@
 
 </script>
 
+<div id='container'>
 
-<div id='container' style="height:auto">
-
-     <ejs-dialog id='dialog' visible="false" isModal="true" width="450px" showCloseIcon="true" allowDragging="true" overlayClick="onThisOverlayClick" target="#container" header="Edit User" style="min-height:600px">
-            <e-dialog-animationsettings effect="Fade" duration="400" delay="0"></e-dialog-animationsettings>
+     <ejs-dialog id='dialog' class="dialogCard" visible="false" isModal="true" width="450px" showCloseIcon="true" allowDragging="true" overlayClick="onThisOverlayClick" target="#container" header="Edit User">
+            
+         <e-dialog-animationsettings effect="Fade" duration="400" delay="0"></e-dialog-animationsettings>
     
             <e-content-template>
                 <form>
@@ -448,9 +453,9 @@
 
 <style>
 
-    /*#showOld:hover,#showNew:hover,#showRepeat:hover{
-
-    }*/
+    .dialogCard{
+        min-height:600px;
+    }
 
     .fontawesome{
         font-size:18px;

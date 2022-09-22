@@ -24,9 +24,11 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IBlobHelper _blobHelper;
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IVehicleRepository _vehicleRepository;
+        private readonly IEmployeeRepository _employeeRepository;
 
         public AccountController(IUserHelper userHelper,IMailHelper mailHelper,ICustomerRepository customerRepository,
-            IFlashMessage flashMessage, IBlobHelper blobHelper, IInvoiceRepository invoiceRepository, IVehicleRepository vehicleRepository)
+            IFlashMessage flashMessage, IBlobHelper blobHelper, IInvoiceRepository invoiceRepository, IVehicleRepository vehicleRepository,
+            IEmployeeRepository employeeRepository)
         {
             _userHelper = userHelper;
             _mailHelper = mailHelper;
@@ -35,6 +37,7 @@ namespace PitStopAutoShop.Web.Controllers
             _blobHelper = blobHelper;
             _invoiceRepository = invoiceRepository;
             _vehicleRepository = vehicleRepository;
+            _employeeRepository = employeeRepository;
         }
 
         public IActionResult Login()
@@ -550,6 +553,25 @@ namespace PitStopAutoShop.Web.Controllers
                 }
 
                 user.ProfilePitcure = imageId;
+
+                if (!this.User.IsInRole("Customer") && !this.User.IsInRole("Admin"))
+                {
+                    var employee = await _employeeRepository.GetByEmailAsync(User.Identity.Name);
+                    if(employee == null)
+                    {
+                        return new ObjectResult(new { Status = "fail" });
+                    }
+
+                    employee.PhotoId = imageId;
+                    try
+                    {
+                        await _employeeRepository.UpdateAsync(employee);
+                    }
+                    catch (Exception)
+                    {
+                        return new ObjectResult(new { Status = "fail" });
+                    }
+                }
 
                 var response = await _userHelper.UpdateUserAsync(user);
                 

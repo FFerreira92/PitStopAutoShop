@@ -31,13 +31,16 @@ namespace PitStopAutoShop.Web.Data.Entities
         public string About { get; set; }
 
         [Display(Name = "Photo")]
-        public string? ImageUrl { get; set; }
+        public Guid PhotoId { get; set; }
 
         public string FullName => $"{FirstName} {LastName}";
 
         public User User { get; set; }
 
         public string Color { get; set; }
-       
+
+        public string ImageFullPath => PhotoId == Guid.Empty ? "/images/blankprofilepicture.png" :
+            $"https://pitstoptpsi.blob.core.windows.net/profilepictures/{PhotoId}";
+
     }
 }

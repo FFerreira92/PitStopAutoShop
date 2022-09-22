@@ -76,5 +76,14 @@ namespace PitStopAutoShop.Web.Data.Repositories
 
             return employee;
         }
+
+        public async Task<List<Employee>> GetTechniciansEmployeesAsync()
+        {
+            List<Employee> list = new List<Employee>();
+
+            list = await _context.Employees.Include(e => e.User).Include(e => e.Role).Include(e => e.Specialty).Where(e => e.Role.Name == "Technician").ToListAsync();
+
+            return list;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PitStopAutoShop.Web.Data.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
@@ -53,6 +54,8 @@ namespace PitStopAutoShop.Web.Models
         public IEnumerable<SelectListItem> Specialties { get; set; }
 
         public string Color { get; set; }
+
+        public Guid PhotoId { get; set; }
        
     }
 }
