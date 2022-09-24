@@ -26,10 +26,12 @@ namespace PitStopAutoShop.Web.Data
             await AddUserAsync();
             await AddEmployeesRolesAsync();
             await AddEmployeesAsync();
-            await AddBrandsAsync();
-            await AddServicesAsync();
+            await AddBrandsAsync();     
+            await AddServicesAsync();            
 
         }
+
+
 
         private async Task AddServicesAsync()
         {

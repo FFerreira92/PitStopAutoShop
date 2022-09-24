@@ -13,5 +13,7 @@ namespace PitStopAutoShop.Web.Helpers
         List<SelectListItem> Destinations();
 
         Task<Response> SendAnnouncementAsync(int to, string subject, string body, string path);
+
+        Task<Response> SendContactEmailAsync(string email, string subject, string message,string custName);
     }
 }

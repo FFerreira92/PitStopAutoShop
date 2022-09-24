@@ -1,12 +1,10 @@
 ﻿using MailKit.Net.Smtp;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
-using PitStopAutoShop.Web.Data.Entities;
+using System.Linq;
 using PitStopAutoShop.Web.Data.Repositories;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Helpers
@@ -16,12 +14,13 @@ namespace PitStopAutoShop.Web.Helpers
         private readonly IConfiguration _configuration;
         private readonly ICustomerRepository _customerRepository;
         private readonly IEmployeeRepository _employeeRepository;
+    
 
         public MailHelper(IConfiguration configuration, ICustomerRepository customerRepository, IEmployeeRepository employeeRepository)
         {
             _configuration = configuration;
             _customerRepository = customerRepository;
-            _employeeRepository = employeeRepository;
+            _employeeRepository = employeeRepository;            
         }
 
         public List<SelectListItem> Destinations()
@@ -108,6 +107,54 @@ namespace PitStopAutoShop.Web.Helpers
             }
         }
 
+        public async Task<Response> SendContactEmailAsync(string email, string subject, string message, string custName)
+        {
+
+            var nameTo = _configuration["Mail:NameFrom"];
+            var to = _configuration["Mail:From"];
+            var smtp = _configuration["Mail:Smtp"];
+            var port = _configuration["Mail:Port"];
+            var password = _configuration["Mail:Password"];
+            var mimeMessage = new MimeMessage();
+
+            mimeMessage.From.Add(new MailboxAddress(custName, email));
+            mimeMessage.To.Add(new MailboxAddress(nameTo, to));
+            mimeMessage.Subject = subject;
+
+            var bodybuilder = new BodyBuilder
+            {
+                HtmlBody = message,
+            };
+
+            mimeMessage.Body = bodybuilder.ToMessageBody();
+
+            try
+            {
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(smtp, int.Parse(port), false);
+                    client.Authenticate(to, password);
+                    await client.SendAsync(mimeMessage);
+                    client.Disconnect(true);
+                }
+            }
+            catch (System.Exception ex)
+            {
+
+                return new Response
+                {
+                    IsSuccess = false,
+                    Message = ex.Message
+                };
+            }
+
+            return new Response
+            {
+                IsSuccess = true
+            };
+
+        }
+
         public async Task<Response> SendEmail(string to, string subject, string body, string attachment)
         {
             var nameFrom = _configuration["Mail:NameFrom"];
@@ -158,5 +205,10 @@ namespace PitStopAutoShop.Web.Helpers
                 IsSuccess = true
             };
         }
+
+
+
+
+
     }
 }

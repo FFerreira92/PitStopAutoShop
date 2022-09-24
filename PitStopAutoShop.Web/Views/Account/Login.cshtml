@@ -5,14 +5,35 @@
     Layout = "~/Views/Shared/_PasswordLayout.cshtml";
 }
 
- <section class="vh-100">
+<style>
+    .persBack{
+        background:url(/images/siteContent/login_picture_3.jpg);
+        background-size: 100%;
+        background-position: center;
+        filter: grayscale(0.5);
+    }
+
+    form{
+        color:white;
+        background-color: rgba(255,255,255,0.3);
+        background-clip: border-box;
+        padding: 10px;
+    }
+
+
+</style>
+
+
+ <section class="vh-100 persBack">
+     
   <div class="container py-5 h-100">
+
     <div class="row d-flex align-items-center justify-content-center h-100">
-      <div class="col-md-8 col-lg-7 col-xl-6">
-        <img src="/images/siteContent/login_picture_3.jpg"
-          class="img-fluid" alt="Phone image">
-      </div>
-      <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+      @*<div class="col-md-8 col-lg-7 col-xl-6">*@
+        @*<img src="/images/siteContent/login_picture_3.jpg"
+          class="img-fluid" alt="Phone image">*@
+     @* </div>*@
+      <div class="col-md-12 col-lg-5 col-xl-5 offset-xl-1">
         <form method="post">
           <div asp-validation-summary="ModelOnly" ></div>
 
@@ -42,7 +63,7 @@
           <button type="submit" class="btn sharp btn-primary btn-lg btn-block">Sign in</button>
 
           <div class="divider d-flex align-items-center my-4">
-            <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
+            <p class="text-center fw-bold mx-3 mb-0" style="color:white">OR</p>
           </div>
 
           <a asp-action="Register" class="btn sharp btn-primary btn-lg btn-block social" style="background-color: #f7b801">

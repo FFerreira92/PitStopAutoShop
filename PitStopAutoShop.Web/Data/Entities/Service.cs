@@ -24,10 +24,7 @@ namespace PitStopAutoShop.Web.Data.Entities
 
         [Display(Name="Price with Discount")]
         [DisplayFormat(DataFormatString = "{0:C2}", ApplyFormatInEditMode = false)]
-        public decimal PriceWithDiscount => Price * (1-(Discount/100));
-
-
-        //colocar imagem do serviço
+        public decimal PriceWithDiscount => Price * (1-(Discount/100));     
 
     }
 }
