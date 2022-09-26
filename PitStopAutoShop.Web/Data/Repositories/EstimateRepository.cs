@@ -121,23 +121,11 @@ namespace PitStopAutoShop.Web.Data.Repositories
 
         public async Task<Estimate> GetEstimateWithDetailsByIdAsync(int value)
         {
-            if(value == 0)
-            {
-                return null;
-            }
-
-            var estimate = await _context.Estimates.Include(e => e.Vehicle).ThenInclude(e => e.Brand).ThenInclude(e => e.Models)
+            return await _context.Estimates.Include(e => e.Vehicle).ThenInclude(e => e.Brand).ThenInclude(e => e.Models)
                                     //.Include(e => e.Vehicle).ThenInclude(e=> e.Model)
                                     .Include(e => e.Customer)
                                     .Include(e=>e.Services).ThenInclude(e => e.Service)
-                                    .Where(ed => ed.Id == value).FirstAsync();
-
-            if(estimate == null)
-            {
-                return null;
-            }
-
-            return estimate;
+                                    .Where(ed => ed.Id == value).FirstOrDefaultAsync();            
         }
 
         public async Task<EstimateDetailTemp> GetEstimateDetailTempAsync(string userName)
@@ -174,7 +162,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
                 return null;
             }
 
-            var estimate = await _context.EstimateDetailTemps.Where(edt => edt.User == user && edt.VehicleId == vehicle.Id).FirstAsync();
+            var estimate = await _context.EstimateDetailTemps.Where(edt => edt.User == user && edt.VehicleId == vehicle.Id).FirstOrDefaultAsync();
 
             if (estimate == null)
             {
@@ -291,7 +279,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
                 .Include(e => e.CreatedBy)
                 .Include(e => e.Customer)
                 .Include(e => e.Vehicle)
-                .Where(e => e.Id == estimateTemps.FirstOrDefault().EstimateId).FirstAsync();
+                .Where(e => e.Id == estimateTemps.FirstOrDefault().EstimateId).FirstOrDefaultAsync();
 
             if(estimate == null)
             {
@@ -328,8 +316,8 @@ namespace PitStopAutoShop.Web.Data.Repositories
            
             try
             {
-                var appointment = await _context.Appointments.Where(e => e.Estimate.Id == estimate.Id).FirstAsync();
-                var workOrder = await _context.WorkOrders.Where(wo => wo.Appointment.Id == appointment.Id).FirstAsync();
+                var appointment = await _context.Appointments.Where(e => e.Estimate.Id == estimate.Id).FirstOrDefaultAsync();
+                var workOrder = await _context.WorkOrders.Where(wo => wo.Appointment.Id == appointment.Id).FirstOrDefaultAsync();
                 if (workOrder != null)
                 {
                     asWorkOrder = true;
@@ -358,7 +346,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
 
             var estimate = await _context.Estimates
                 .Include(e => e.Customer).Include(e => e.Vehicle)
-                .Where(e => e.Customer.Id == customerId && e.Vehicle.Id == vehicleId && e.CreatedBy.Id == user.Id).OrderBy(e => e.Id).LastAsync();
+                .Where(e => e.Customer.Id == customerId && e.Vehicle.Id == vehicleId && e.CreatedBy.Id == user.Id).OrderBy(e => e.Id).LastOrDefaultAsync();
 
             return estimate;
         }

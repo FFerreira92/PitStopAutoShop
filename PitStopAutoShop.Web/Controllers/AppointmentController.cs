@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Data.Repositories;
 using PitStopAutoShop.Web.Helpers;
@@ -12,7 +13,7 @@ using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
-    
+    [Authorize(Roles = "Admin, Technician, Receptionist")]
     public class AppointmentController : Controller
     {
         private readonly IFlashMessage _flashMessage;

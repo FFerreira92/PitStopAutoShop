@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PitStopAutoShop.Web.Data.Repositories;
 using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Controllers
 {
+    [Authorize(Roles = "Admin, Technician, Receptionist")]
     public class InvoiceController : Controller
     {
         private readonly IInvoiceRepository _invoiceRepository;

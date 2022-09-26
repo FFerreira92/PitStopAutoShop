@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.JSInterop;
 using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Data.Repositories;
@@ -10,6 +11,7 @@ using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
+    [Authorize(Roles = "Admin, Technician, Receptionist")]
     public class WorkOrdersController : Controller
     {
         private readonly IWorkOrderRepository _workOrderRepository;

@@ -68,7 +68,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
 
         public async Task<Vehicle> GetNewlyAddedVehicleAsync(int id)
         {
-            return await _context.Vehicles.Include(b => b.Brand).Include(v => v.Model).Where(v => v.CustomerId == id).FirstAsync();
+            return await _context.Vehicles.Include(b => b.Brand).Include(v => v.Model).Where(v => v.CustomerId == id).FirstOrDefaultAsync();
         }
 
         public async Task<Vehicle> GetVehicleDetailsByIdAsync(int id)

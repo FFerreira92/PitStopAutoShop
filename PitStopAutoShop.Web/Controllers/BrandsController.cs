@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Data.Repositories;
 using PitStopAutoShop.Web.Models;
@@ -8,6 +9,7 @@ using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
+    [Authorize(Roles = "Admin, Technician, Receptionist")]
     public class BrandsController : Controller
     {
         private readonly IBrandRepository _brandRepository;

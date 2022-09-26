@@ -70,7 +70,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
                 .Include(wo => wo.Appointment)
                     .ThenInclude(a => a.Vehicle)
                         .ThenInclude(v => v.Model)
-                .Where(wo => wo.Appointment.Id == appointmentId).FirstAsync();
+                .Where(wo => wo.Appointment.Id == appointmentId).FirstOrDefaultAsync();
         }
 
         public async Task<WorkOrder> GetWorkOrderByIdAsync(int id)
@@ -93,7 +93,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
                 .Include(wo => wo.Appointment)
                     .ThenInclude(a => a.Vehicle)
                         .ThenInclude(v => v.Model)
-                .Where(wo => wo.Id == id).FirstAsync();
+                .Where(wo => wo.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<List<WorkOrderChartDataModel>> GetWorkOrdersChartAsync(int month)
