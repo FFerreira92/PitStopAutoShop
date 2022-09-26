@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PitStopAutoShop.Web.Data.Entities;
@@ -22,6 +23,10 @@ namespace PitStopAutoShop.Web.Helpers
             _signInManager = signInManager;
         }
 
+        public async Task<IdentityResult> AddLoginAsync(User user, ExternalLoginInfo info)
+        {
+            return await _userManager.AddLoginAsync(user, info);
+        }
 
         public async Task<IdentityResult> AddUserAsync(User user, string password)
         {
@@ -61,9 +66,24 @@ namespace PitStopAutoShop.Web.Helpers
            return await _userManager.IsInRoleAsync(user,roleName);            
         }
 
+        public AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirect)
+        {
+            return _signInManager.ConfigureExternalAuthenticationProperties(provider, redirect);
+        }
+
         public async Task<IdentityResult> ConfirmEmailAsync(User user, string token)
         {
             return await _userManager.ConfirmEmailAsync(user, token);
+        }
+
+        public async Task<IdentityResult> CreateAsync(User user)
+        {
+            return await _userManager.CreateAsync(user);
+        }
+
+        public async Task<SignInResult> ExternalLoginSignInAsync(string loginProvider, string providerKey, bool isPersistent)
+        {
+            return await _signInManager.ExternalLoginSignInAsync(loginProvider, providerKey, isPersistent);           
         }
 
         public async Task<string> GenerateEmailConfirmationTokenAsync(User user)
@@ -91,6 +111,12 @@ namespace PitStopAutoShop.Web.Helpers
             });
 
             return list;
+        }
+
+        public async Task<ExternalLoginInfo> GetExternalLoginInfoAsync()
+        {
+            var info = await _signInManager.GetExternalLoginInfoAsync();
+            return info;
         }
 
         public async Task<string> GetRoleIdWithRoleNameAsync(string roleName)
@@ -148,6 +174,11 @@ namespace PitStopAutoShop.Web.Helpers
             return list.OrderBy(l => l.UserRoleName).ToList();
         }
 
+        public async Task<bool> HasPasswordAsync(User user)
+        {
+            return await _userManager.HasPasswordAsync(user);
+        }
+
         public async Task<SignInResult> LoginAsync(LoginViewModel model)
         {
             return await _signInManager.PasswordSignInAsync(
@@ -166,6 +197,16 @@ namespace PitStopAutoShop.Web.Helpers
         public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string password)
         {
             return await _userManager.ResetPasswordAsync(user,token,password);
+        }
+
+        public async Task SignInAsync(User user, bool isPersistent)
+        {
+            await _signInManager.SignInAsync(user, isPersistent);
+        }
+
+        public async Task<IdentityResult> UpdateExternalAuthenticationTokensAsync(ExternalLoginInfo info)
+        {
+            return await _signInManager.UpdateExternalAuthenticationTokensAsync(info);
         }
 
         public async Task<IdentityResult> UpdateUserAsync(User user)

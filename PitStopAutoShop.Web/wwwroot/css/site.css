@@ -145,3 +145,26 @@ body {
 .serviceContent {
     padding: 80px;
 }
+
+/*Login Styles*/
+
+.persBack {
+    background: url(/images/siteContent/login_picture_3.jpg);
+    background-size: 100%;
+    background-position: center;
+    filter: grayscale(0.5);
+}
+
+.formStyle {
+    color: white;
+    background-color: rgba(255,255,255,0.3);
+    background-clip: border-box;
+    padding: 10px;
+}
+
+.extLogins {
+    max-width: 100%;
+    align-items: center;
+    margin: auto;
+    padding: 0;
+}

@@ -12,6 +12,9 @@ using SixLabors.ImageSharp.Processing;
 using Microsoft.AspNetCore.Http;
 using Vereyon.Web;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 
 namespace PitStopAutoShop.Web.Controllers
 {
@@ -92,6 +95,135 @@ namespace PitStopAutoShop.Web.Controllers
             ModelState.AddModelError(string.Empty, "Failed to login");
             return View(model);
         }
+
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult ExternalLogin(string provider, string returnurl = null)
+        {
+            var redirect = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnurl });
+            var properties = _userHelper.ConfigureExternalAuthenticationProperties(provider, redirect);
+            return Challenge(properties,provider);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> ExternalLoginCallback(string returnurl = null, string remoteError = null)
+        {
+            if(remoteError != null)
+            {
+                ModelState.AddModelError(string.Empty, "Error from external provider");
+                return View("Login");
+            }
+
+            var info = await _userHelper.GetExternalLoginInfoAsync();
+
+            if(info == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var result = await _userHelper.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+
+            if (result.Succeeded)
+            {
+                await _userHelper.UpdateExternalAuthenticationTokensAsync(info);
+                if (returnurl != null)
+                {
+                    return LocalRedirect(returnurl);
+                }
+                else return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ViewData["ReturnUrl"] = returnurl;
+                ViewData["ProvierDisplayName"] = info.ProviderDisplayName;
+                var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                return View("ExternalLoginConfirmation", new ExternalLoginViewModel { Email = email});
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ExternalLoginConfirmation(ExternalLoginViewModel model, string? returnurl = null)
+        {
+            returnurl = returnurl ?? Url.Content("~/");
+
+            if (ModelState.IsValid)
+            {
+                var info = await _userHelper.GetExternalLoginInfoAsync();
+                if(info == null)
+                {
+                    return View("Error");
+                }
+                var user = new User
+                {
+                    Email = model.Email,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    UserName = model.Email,
+                };
+
+                var result = await _userHelper.CreateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    var customer = new Customer
+                    {
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        Email = model.Email,                       
+                        User = user
+                    };
+
+                    await _customerRepository.CreateAsync(customer);
+
+                    result = await _userHelper.AddUserToRoleAsync(user, "Customer");
+
+                    if (!result.Succeeded)
+                    {
+                        ModelState.AddModelError(string.Empty, "The user couldn't be created, failed to assign as customer");
+                        return View(model);
+                    }
+
+                    var token = await _userHelper.GenerateEmailConfirmationTokenAsync(user);
+                    await _userHelper.ConfirmEmailAsync(user, token);
+                    await _userHelper.UpdateUserAsync(user);
+
+                    var loginResult = await _userHelper.AddLoginAsync(user, info);
+
+                    if (loginResult.Succeeded)
+                    {
+                        await _userHelper.SignInAsync(user, isPersistent: false);
+                        await _userHelper.UpdateExternalAuthenticationTokensAsync(info);
+                        return LocalRedirect(returnurl);
+                    }
+                }
+                ModelState.AddModelError("Email", "User already exists");
+            }
+
+            ViewData["ReturnUrl"] = returnurl;
+            return View(model);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public async Task<IActionResult> Logout()
         {
@@ -399,6 +531,9 @@ namespace PitStopAutoShop.Web.Controllers
                 return NotFound();
             }
 
+            var hasPassword = await _userHelper.HasPasswordAsync(user);
+
+
             ChangeUserViewModel model = null;
             bool isCustomer =false;
 
@@ -420,6 +555,7 @@ namespace PitStopAutoShop.Web.Controllers
                     LastName = customer.LastName,
                     Nif = customer.Nif,
                     ProfilePitcure = user.ProfilePitcure,
+                    HasPassword = hasPassword,
                 };
 
                
@@ -436,6 +572,7 @@ namespace PitStopAutoShop.Web.Controllers
                     UserName = user.UserName,
                     ProfilePitcure = user.ProfilePitcure,
                     Address = user.Address,
+                    HasPassword= hasPassword,
                 };
                                        
             }

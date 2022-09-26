@@ -10,5 +10,7 @@ namespace PitStopAutoShop.Web.Models
         [Display(Name = "Tax Identification Number / NIF")]
         public string Nif { get; set; }  
 
+        public bool HasPassword { get; set; }
+
     }
 }

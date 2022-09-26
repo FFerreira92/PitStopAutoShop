@@ -66,7 +66,17 @@ namespace PitStopAutoShop.Web
             });
 
             services.AddFlashMessage();
-           
+
+            services.AddAuthentication().AddFacebook(opts =>
+            {
+                opts.AppId = "393577519646563";
+                opts.AppSecret = "b2981bbf32e7949f1d55d437e0d7f2bf";
+            }).AddGoogle(opts =>
+            {
+                opts.ClientId = "486303141274-m91i9qtjqemkhtcad1uuudg9kvknaddj.apps.googleusercontent.com";
+                opts.ClientSecret = "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";
+            });
+
             services.AddTransient<SeedDb>();
 
             services.AddScoped<IUserHelper,UserHelper>();

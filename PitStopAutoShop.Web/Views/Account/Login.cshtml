@@ -1,27 +1,12 @@
 ﻿@model PitStopAutoShop.Web.Models.LoginViewModel
+@using Microsoft.AspNetCore.Identity
+@using PitStopAutoShop.Web.Data.Entities
+@inject SignInManager<User> signInManager
 
 @{
     ViewData["Title"] = "Login";
     Layout = "~/Views/Shared/_PasswordLayout.cshtml";
 }
-
-<style>
-    .persBack{
-        background:url(/images/siteContent/login_picture_3.jpg);
-        background-size: 100%;
-        background-position: center;
-        filter: grayscale(0.5);
-    }
-
-    form{
-        color:white;
-        background-color: rgba(255,255,255,0.3);
-        background-clip: border-box;
-        padding: 10px;
-    }
-
-
-</style>
 
 
  <section class="vh-100 persBack">
@@ -29,11 +14,8 @@
   <div class="container py-5 h-100">
 
     <div class="row d-flex align-items-center justify-content-center h-100">
-      @*<div class="col-md-8 col-lg-7 col-xl-6">*@
-        @*<img src="/images/siteContent/login_picture_3.jpg"
-          class="img-fluid" alt="Phone image">*@
-     @* </div>*@
-      <div class="col-md-12 col-lg-5 col-xl-5 offset-xl-1">
+     
+      <div class="col-md-12 col-lg-5 col-xl-5 offset-xl-1 formStyle">
         <form method="post">
           <div asp-validation-summary="ModelOnly" ></div>
 
@@ -71,16 +53,32 @@
               Register New User          
           </a>
 
-          <a class="btn sharp btn-primary btn-lg btn-block social" style="background-color: #3b5998" href="#!"
-            role="button">
-            <i class="fab fa-facebook-f me-2"></i> Continue with Facebook
-          </a>
-          <a class="btn sharp btn-primary btn-lg btn-block social" style="background-color: #db4437" href="#!"
-            role="button">
-            <i class="fa-brands fa-google"></i> Continue with Google
-        </a>
-
         </form>
+
+        @{
+            var schemes = await signInManager.GetExternalAuthenticationSchemesAsync();
+            var loginProviders = schemes.ToList();
+        }
+          @if(loginProviders.Count() > 0)
+          {
+             <div class="col-md-12 col-lg-5 col-xl-5 offset-xl-1 extLogins" style="margin-top:10px">
+                                       
+                <form asp-controller="Account" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" role="form">
+                    <div>   
+                        
+                         <button type="submit" class="btn sharp btn-primary btn-lg btn-block social" name="provider" value="@loginProviders[0].Name"
+                        title="Log in using your @loginProviders[0].Name account" style="background-color: #3b5998">
+                        <i class="fab fa-facebook-f me-2"></i> Continue with @loginProviders[0].Name</button>
+
+                        <button type="submit" class="btn sharp btn-primary btn-lg btn-block social" name="provider" value="@loginProviders[1].Name"
+                        title="Log in using your @loginProviders[1].Name Account" style="background-color: #db4437">
+                        <i class="fa-brands fa-google"></i> Continue with @loginProviders[1].Name</button>
+                        
+                    </div>
+                </form>
+                
+             </div>
+          }
       </div>
     </div>
   </div>

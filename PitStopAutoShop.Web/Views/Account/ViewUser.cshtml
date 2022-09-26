@@ -28,9 +28,14 @@
                             <a asp-action="ServiceHistory" class="btn btn-dark sharp" style="width:256px; margin-left:6px;margin-top:20px">My Service History</a>
                             <a asp-action="Vehicles" class="btn btn-primary sharp" style="width:256px; margin-left:6px;margin-top:20px">My Vehicles</a>
                         }
+                    
+                        <a style="width:256px; margin-left:6px;margin-top:20px" class="btn btn-success sharp" onclick="editUser()">Edit Profile</a>  
+
+                        @if(Model.HasPassword != false)
+                        {
+                            <a style="width:256px; margin-left:6px; margin-bottom:20px;margin-top:20px" class="btn btn-danger sharp" onclick="changePassword()">Change Password</a>
+                        }
                 
-                      <a style="width:256px; margin-left:6px;margin-top:20px" class="btn btn-success sharp" onclick="editUser()">Edit Profile</a>
-                      <a style="width:256px; margin-left:6px; margin-bottom:20px;margin-top:20px" class="btn btn-danger sharp" onclick="changePassword()">Change Password</a>
 
                  </div>
              

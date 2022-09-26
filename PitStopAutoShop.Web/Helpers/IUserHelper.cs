@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PitStopAutoShop.Web.Data.Entities;
 using PitStopAutoShop.Web.Models;
@@ -47,5 +48,19 @@ namespace PitStopAutoShop.Web.Helpers
         Task<List<UserDataChartModel>> GetUsersChartDataAsync();
         Task<int> GetTotalUsersAsync();
         Task<SignInResult> CheckPasswordAsync(User user, string oldPassword);
+
+
+        AuthenticationProperties ConfigureExternalAuthenticationProperties(string provider, string redirect);
+
+        Task<ExternalLoginInfo> GetExternalLoginInfoAsync();
+
+        Task<SignInResult> ExternalLoginSignInAsync(string loginProvider, string providerKey, bool isPersistent);
+
+        Task<IdentityResult> UpdateExternalAuthenticationTokensAsync(ExternalLoginInfo info);
+
+        Task<IdentityResult> CreateAsync(User user);
+        Task<IdentityResult> AddLoginAsync(User user, ExternalLoginInfo info);
+        Task SignInAsync(User user, bool isPersistent);
+        Task<bool> HasPasswordAsync(User user);
     }
 }
