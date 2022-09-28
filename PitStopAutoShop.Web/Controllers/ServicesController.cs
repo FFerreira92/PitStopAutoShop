@@ -10,7 +10,7 @@ using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
-    [Authorize(Roles = "Admin, Technician, Receptionist")]
+    [Authorize(Roles = "Admin")]
     public class ServicesController : Controller
     {
         private readonly IServiceRepository _serviceRepository;

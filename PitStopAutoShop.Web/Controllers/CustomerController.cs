@@ -11,7 +11,7 @@ using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
-    [Authorize(Roles = "Admin, Technician, Receptionist")]
+    [Authorize(Roles = "Admin, Receptionist")]
     public class CustomerController : Controller
     {
         private readonly ICustomerRepository _customerRepository;
@@ -196,26 +196,7 @@ namespace PitStopAutoShop.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                //var user = await _userHelper.GetUserByIdAsync(model.UserId);
-
-                //if(user == null)
-                //{
-                //    ModelState.AddModelError(string.Empty, "There was an error updating user info. User not found.");
-                //    return View(model);
-                //}
-
-                //user.FirstName = model.FirstName;
-                //user.LastName = model.LastName;
-                //user.PhoneNumber = model.PhoneNumber;
-                //user.Address = model.Address;
-                //user.Email = model.Email;
-                //user.UserName = model.Email;
-                
-                //await _userHelper.UpdateUserAsync(user);
-                //user updated
-                //------------ / Fará sentido fazer update também aos dados do user? / ----------------------
-                //------------/ se decidir alterar dados de user tambem, não esquecer colocar confirmação do novo email do user automáticamente / ------
-
+               
                 var customer = await _customerRepository.GetCustomerByUserIdAsync(model.UserId);
 
                 if(customer == null)
@@ -278,7 +259,7 @@ namespace PitStopAutoShop.Web.Controllers
             return View(customer);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if(id == null)

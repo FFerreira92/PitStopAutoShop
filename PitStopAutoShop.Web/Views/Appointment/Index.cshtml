@@ -93,9 +93,8 @@
                       },
                       error: function(ex) {
 
-                          var dialog = document.getElementById("dialog").ej2_instances[0];
-                          dialog.content = ex.message;
-                          dialog.header = "There was an error updating the event!";
+                          var dialog = document.getElementById("errorDialog").ej2_instances[0];                          
+                          dialog.content = "You are not allowed to perform this action!";
                           dialog.show();
                           console.log("failed " + ex.message);
                       }
@@ -116,9 +115,8 @@
                       },
                       error: function(ex) {
 
-                          var dialog = document.getElementById("dialog").ej2_instances[0];
-                          dialog.content = ex.message;
-                          dialog.header = "There was an error updating the event!";
+                          var dialog = document.getElementById("errorDialog").ej2_instances[0];                          
+                          dialog.content = "You are not allowed to perform this action!";
                           dialog.show();
                           console.log("failed " + ex.message);
                       }
@@ -224,32 +222,43 @@
                 <e-dialog-dialogbutton buttonModel="@cancelButton" click="ondlgCancelClick"></e-dialog-dialogbutton>
             }            
             <e-dialog-dialogbutton buttonModel="@editButton" click="ondlgButtonClick"></e-dialog-dialogbutton>
-            <e-dialog-dialogbutton buttonModel="@asAttendedButton" click="ondlgAttendedClick"></e-dialog-dialogbutton>
+            @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Technician"))
+            {
+                <e-dialog-dialogbutton buttonModel="@asAttendedButton" click="ondlgAttendedClick"></e-dialog-dialogbutton>
+            }
+            
             
         </e-dialog-buttons>
        
     </ejs-dialog>
             
-        <!-- Begin Inner Dialogs -->
-        <ejs-dialog id='innerDialog' allowDragging="true" visible="false" showCloseIcon="true" header="Work Order in Place" closeOnEscape="true" content="This appointment already has a work order in place." target="#dialog" height="150px" width="200px" >
-            <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
-            <e-dialog-position X="80" Y="80"> </e-dialog-position>
-        </ejs-dialog>
+    <!-- Begin Inner Dialogs -->
+    <ejs-dialog id='innerDialog' allowDragging="true" visible="false" showCloseIcon="true" header="Work Order in Place" closeOnEscape="true" content="This appointment already has a work order in place." target="#dialog" height="150px" width="200px" >
+        <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
+        <e-dialog-position X="80" Y="80"> </e-dialog-position>
+    </ejs-dialog>
     
-        <ejs-dialog id='notAllowedDate' allowDragging="true" visible="false" showCloseIcon="true" header="Action not possible" closeOnEscape="true" content="You can only inform appointments for tommorow!." target="#dialog" height="150px" width="200px" >
-            <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
-            <e-dialog-position X="80" Y="80"> </e-dialog-position>
-        </ejs-dialog>
+    <ejs-dialog id='notAllowedDate' allowDragging="true" visible="false" showCloseIcon="true" header="Action not possible" closeOnEscape="true" content="You can only inform appointments for tommorow!." target="#dialog" height="150px" width="200px" >
+        <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
+        <e-dialog-position X="80" Y="80"> </e-dialog-position>
+    </ejs-dialog>
 
-        <ejs-dialog id='cancelConfirmation' allowDragging="true" visible="false" showCloseIcon="true" header="Cancel Appointment" closeOnEscape="true" content="Are you sure do you want to cancel this appointment?" target="#dialog" height="200px" width="200px" >            
-            <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
-            <e-dialog-position X="80" Y="80"> </e-dialog-position>
-            <e-dialog-buttons>
-                <e-dialog-dialogbutton buttonModel="@yesButton" click="ondlgYesButtonClick"></e-dialog-dialogbutton>
-                <e-dialog-dialogbutton buttonModel="@noButton" click="ondlgNoButtonClick"></e-dialog-dialogbutton>
-            </e-dialog-buttons>            
-        </ejs-dialog>
+    <ejs-dialog id='cancelConfirmation' allowDragging="true" visible="false" showCloseIcon="true" header="Cancel Appointment" closeOnEscape="true" content="Are you sure do you want to cancel this appointment?" target="#dialog" height="200px" width="200px" >            
+        <e-dialog-animationsettings effect="Fade"></e-dialog-animationsettings>
+        <e-dialog-position X="80" Y="80"> </e-dialog-position>
+        <e-dialog-buttons>
+            <e-dialog-dialogbutton buttonModel="@yesButton" click="ondlgYesButtonClick"></e-dialog-dialogbutton>
+            <e-dialog-dialogbutton buttonModel="@noButton" click="ondlgNoButtonClick"></e-dialog-dialogbutton>
+        </e-dialog-buttons>            
+    </ejs-dialog>
         <!-- End Inner Dialogs -->
+
+        <!--Error Dialog-->
+    <ejs-dialog id='errorDialog' visible="false" isModal="true" width="500px" showCloseIcon="true" allowDragging="true" overlayClick="onOverlayClick" target="#container" header="Not Allowed">
+            <e-dialog-animationsettings effect="Fade" duration="400" delay="0"></e-dialog-animationsettings>
+
+    </ejs-dialog>
+        <!--Error Dialog-->
 </div>
 
 <script>     
@@ -259,11 +268,13 @@
             var innerDialog = document.getElementById("innerDialog").ej2_instances[0];
             var innerDialogCancel = document.getElementById("cancelConfirmation").ej2_instances[0];
             var innerDialogDate = document.getElementById("notAllowedDate").ej2_instances[0];
+            var errorDialog = document.getElementById("errorDialog").ej2_instances[0];   
 
             dialog.hide();
             innerDialog.hide(); 
             innerDialogCancel.hide();
             innerDialogDate.hide();
+            errorDialog.hide();
     }; 
 
 </script>  

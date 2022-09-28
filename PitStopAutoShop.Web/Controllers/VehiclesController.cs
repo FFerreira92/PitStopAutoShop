@@ -287,9 +287,8 @@ namespace PitStopAutoShop.Web.Controllers
             
             return vinIsNull;
         }
-     
 
-        // POST: Vehicles/Delete/5              
+        [Authorize(Roles = "Admin")]               
         public async Task<IActionResult> Delete(int? id)
         {
 

@@ -237,40 +237,43 @@
               </p>
             </a>            
           </li>
-
-          <li class="nav-item">
-            <a asp-area="" asp-action="Index" asp-controller="Estimates" class="nav-link">
-              <i class="nav-icon fas fa-file-alt"></i>
-              <p>
-                Estimates            
-              </p>
-            </a>            
-          </li>
-
-          <li class="nav-item">
-            <a asp-area="" asp-action="Index" asp-controller="Customer" class="nav-link">
-              <i class="nav-icon fas fa-users-line"></i>
-              <p>
-                Customers 
-                    <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-                <li class="nav-item">
+          @if(this.User.Identity.IsAuthenticated && !this.User.IsInRole("Technician"))
+          {
+             <li class="nav-item">
+               <a asp-area="" asp-action="Index" asp-controller="Estimates" class="nav-link">
+                 <i class="nav-icon fas fa-file-alt"></i>
+                 <p>
+                   Estimates            
+                 </p>
+               </a>            
+             </li>
+          
+            <li class="nav-item">
                 <a asp-area="" asp-action="Index" asp-controller="Customer" class="nav-link">
-                  <i class="far fa-circle nav-icon text-danger"></i>
-                  <p>View All</p>
+                  <i class="nav-icon fas fa-users-line"></i>
+                  <p>
+                    Customers 
+                        <i class="fas fa-angle-left right"></i>
+                  </p>
                 </a>
-              </li>
+                 <ul class="nav nav-treeview">
+                     <li class="nav-item">
+                     <a asp-area="" asp-action="Index" asp-controller="Customer" class="nav-link">
+                       <i class="far fa-circle nav-icon text-danger"></i>
+                       <p>View All</p>
+                     </a>
+                   </li>
 
-              <li class="nav-item">
-                <a asp-area="" asp-action="Create" asp-controller="Customer" class="nav-link">
-                  <i class="far fa-circle nav-icon text-info"></i>
-                  <p>Add Customer</p>
-                </a>
-              </li>
-            </ul>
-          </li>
+                   <li class="nav-item">
+                     <a asp-area="" asp-action="Create" asp-controller="Customer" class="nav-link">
+                       <i class="far fa-circle nav-icon text-info"></i>
+                       <p>Add Customer</p>
+                     </a>
+                   </li>
+                 </ul>
+           </li>  
+          }
+            
 
           <li class="nav-item">
             <a asp-area="" asp-action="Index" asp-controller="Vehicles" class="nav-link">
@@ -280,44 +283,45 @@
               </p>
             </a>            
           </li>
+          @if (this.User.Identity.IsAuthenticated && !this.User.IsInRole("Technician"))
+          {
+              <li class="nav-item">
+                  <a asp-area="" asp-action="Index" asp-controller="Invoice" class="nav-link">
+                      <i class="nav-icon fas fa-comment-dollar"></i>
+                      <p>
+                          Invoices                
+                      </p>
+                  </a>            
+              </li>         
 
-          <li class="nav-item">
-            <a asp-area="" asp-action="Index" asp-controller="Invoice" class="nav-link">
-              <i class="nav-icon fas fa-comment-dollar"></i>
-              <p>
-                Invoices                
-              </p>
-            </a>            
-          </li>         
-                    
-          <li class="nav-header">
-              UTILITIES
-          </li>
-          
-          <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon far fa-envelope"></i>
-              <p>
-                Mailbox
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="https://mail.google.com/mail/u/pitstopautoshoplisbon@gmail.com" target="_blank" class="nav-link">
-                  <i class="fas fa-inbox nav-icon"></i>
-                  <p>Go to Gmail</p>
-                </a>
+              <li class="nav-header">
+                  UTILITIES
               </li>
+
               <li class="nav-item">
-                <a asp-area="" asp-action="Announcement" asp-controller="Mailbox" class="nav-link">
-                  <i class="fas fa-bullhorn nav-icon"></i>
-                  <p>Send Announcement</p>
-                </a>
-              </li>              
-            </ul>
-          </li>                 
-         
+                  <a href="#" class="nav-link">
+                      <i class="nav-icon far fa-envelope"></i>
+                      <p>
+                          Mailbox
+                          <i class="fas fa-angle-left right"></i>
+                      </p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                      <li class="nav-item">
+                          <a href="https://mail.google.com/mail/u/pitstopautoshoplisbon@gmail.com" target="_blank" class="nav-link">
+                              <i class="fas fa-inbox nav-icon"></i>
+                              <p>Go to Gmail</p>
+                          </a>
+                      </li>
+                      <li class="nav-item">
+                          <a asp-area="" asp-action="Announcement" asp-controller="Mailbox" class="nav-link">
+                              <i class="fas fa-bullhorn nav-icon"></i>
+                              <p>Send Announcement</p>
+                          </a>
+                      </li>              
+                  </ul>
+              </li>
+          }
           @if (User.IsInRole("Admin"))
           {
               

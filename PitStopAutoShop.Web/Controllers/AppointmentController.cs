@@ -50,6 +50,8 @@ namespace PitStopAutoShop.Web.Controllers
             return View();
         }
 
+
+        [Authorize(Roles = "Admin,Receptionist")]
         public async  Task<IActionResult> AddAppointment(int? id)
         {
 
@@ -86,6 +88,7 @@ namespace PitStopAutoShop.Web.Controllers
             return RedirectToAction("Index","Estimates");            
         }
 
+        [Authorize(Roles = "Admin,Receptionist")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddAppointment(AppointmentViewModel model)
@@ -242,6 +245,7 @@ namespace PitStopAutoShop.Web.Controllers
                       
         }
 
+        [Authorize(Roles = "Admin,Receptionist")]
         [HttpPost]
         [Route("Appointment/EventResize")]
         public async Task<bool> EventResize(int eventId, string startTime,string endTime)
@@ -277,7 +281,7 @@ namespace PitStopAutoShop.Web.Controllers
             }           
         }
 
-        
+        [Authorize(Roles = "Admin,Receptionist")]
         public async Task<IActionResult> Cancel(int? id)
         {
             if(id == null)

@@ -42,13 +42,13 @@
           </div>
 
           <!-- Submit button -->
-          <button type="submit" class="btn sharp btn-primary btn-lg btn-block">Sign in</button>
+          <button type="submit" class="btn sharp btn-primary btn-lg btn-block over">Sign in</button>
 
           <div class="divider d-flex align-items-center my-4">
             <p class="text-center fw-bold mx-3 mb-0" style="color:white">OR</p>
           </div>
 
-          <a asp-action="Register" class="btn sharp btn-primary btn-lg btn-block social" style="background-color: #f7b801">
+          <a asp-action="Register" class="btn sharp btn-primary btn-lg btn-block over" style="background-color: #f7b801">
               <i class="fa-solid fa-user-astronaut me-2"></i>
               Register New User          
           </a>
@@ -66,11 +66,11 @@
                 <form asp-controller="Account" asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" role="form">
                     <div>   
                         
-                         <button type="submit" class="btn sharp btn-primary btn-lg btn-block social" name="provider" value="@loginProviders[0].Name"
+                         <button type="submit" class="btn sharp btn-primary btn-lg btn-block over" name="provider" value="@loginProviders[0].Name"
                         title="Log in using your @loginProviders[0].Name account" style="background-color: #3b5998">
                         <i class="fab fa-facebook-f me-2"></i> Continue with @loginProviders[0].Name</button>
 
-                        <button type="submit" class="btn sharp btn-primary btn-lg btn-block social" name="provider" value="@loginProviders[1].Name"
+                        <button type="submit" class="btn sharp btn-primary btn-lg btn-block over" name="provider" value="@loginProviders[1].Name"
                         title="Log in using your @loginProviders[1].Name Account" style="background-color: #db4437">
                         <i class="fa-brands fa-google"></i> Continue with @loginProviders[1].Name</button>
                         
@@ -79,6 +79,10 @@
                 
              </div>
           }
+
+          <div>
+                 <a class="btn btn-warning btn-lg btn-block social sharp over" style="margin-top:10px" asp-area="" asp-action="Index" asp-controller="Home"><i class="fas fa-home"></i> Back to Homepage</a>
+          </div>
       </div>
     </div>
   </div>

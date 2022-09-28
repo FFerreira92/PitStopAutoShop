@@ -9,7 +9,7 @@ using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
-    [Authorize(Roles = "Admin, Technician, Receptionist")]
+    [Authorize(Roles = "Admin")]
     public class BrandsController : Controller
     {
         private readonly IBrandRepository _brandRepository;
@@ -96,7 +96,7 @@ namespace PitStopAutoShop.Web.Controllers
 
             return View(brand);
         }
-
+             
         public async Task<IActionResult> Delete(int? id)
         {
             if(id == null)

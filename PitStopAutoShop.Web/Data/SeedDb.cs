@@ -27,7 +27,7 @@ namespace PitStopAutoShop.Web.Data
             await AddEmployeesRolesAsync();
             await AddEmployeesAsync();
             await AddBrandsAsync();     
-            await AddServicesAsync();            
+            await AddServicesAsync();           
 
         }
 
@@ -59,6 +59,7 @@ namespace PitStopAutoShop.Web.Data
 
         private async Task AddEmployeesRolesAsync()
         {
+
             if (!_context.EmployeesRoles.Any())
             {
                 var specialties = new List<Specialty>();

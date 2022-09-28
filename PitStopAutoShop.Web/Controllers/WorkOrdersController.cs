@@ -51,10 +51,10 @@ namespace PitStopAutoShop.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Receptionist")]
         [Route("WorkOrders/Create")]
         public async Task<int> Create(int? id)
         {
-
             if (id == null)
             {
                 return 0;
@@ -90,9 +90,9 @@ namespace PitStopAutoShop.Web.Controllers
                 _flashMessage.Info($"There was an error creating {appointment.Customer.FullName} work order. {ex.InnerException}.");
                 return 0;
             }
-        }       
+        }
 
-
+        [Authorize(Roles = "Admin,Receptionist")]
         public async Task<IActionResult> Edit(int? id)
         {
             if(id == null)
@@ -129,6 +129,8 @@ namespace PitStopAutoShop.Web.Controllers
             return View(workOrder);
         }
 
+
+        [Authorize(Roles = "Admin,Technician")]
         public async Task<IActionResult> DeclareDone(int? id, string observations,int employeeId)
         {
             if (id == null)
@@ -176,7 +178,7 @@ namespace PitStopAutoShop.Web.Controllers
                 return NotFound();
             }            
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -214,6 +216,7 @@ namespace PitStopAutoShop.Web.Controllers
 
         }
 
+        [Authorize(Roles = "Admin,Receptionist")]
         [HttpPost]
         [Route("WorkOrders/PrintInvoice")]
         public async Task<int> PrintInvoice(int? id)

@@ -13,7 +13,7 @@ using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
-    [Authorize(Roles = "Admin, Technician, Receptionist")]
+    [Authorize(Roles = "Admin, Receptionist")]
     public class MailboxController : Controller
     {
         private readonly IMailHelper _mailHelper;

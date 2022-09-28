@@ -209,22 +209,6 @@ namespace PitStopAutoShop.Web.Controllers
         }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public async Task<IActionResult> Logout()
         {
             await _userHelper.LogoutAsync();

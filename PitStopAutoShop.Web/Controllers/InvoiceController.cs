@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PitStopAutoShop.Web.Controllers
 {
-    [Authorize(Roles = "Admin, Technician, Receptionist")]
+    [Authorize(Roles = "Admin, Receptionist")]
     public class InvoiceController : Controller
     {
         private readonly IInvoiceRepository _invoiceRepository;

@@ -12,7 +12,7 @@ using Vereyon.Web;
 
 namespace PitStopAutoShop.Web.Controllers
 {
-    [Authorize(Roles = "Admin, Technician, Receptionist")]
+    [Authorize(Roles = "Admin, Receptionist")]
     public class EstimatesController : Controller
     {
         private readonly IEstimateRepository _estimateRepository;
@@ -451,7 +451,7 @@ namespace PitStopAutoShop.Web.Controllers
             return View(estimate);
         }
 
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
