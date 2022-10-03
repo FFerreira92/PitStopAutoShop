@@ -14,3 +14,9 @@
     font-size: 14px;
 }
 
+
+/*Datatables border */
+
+.testTable {
+    border: solid 1px black;
+}

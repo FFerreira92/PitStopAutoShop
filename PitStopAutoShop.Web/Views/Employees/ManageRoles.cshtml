@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
 
 
-<div class="container-fluid">
+<div class="container-fluid" style="max-width:90%">
     <div>
-        <table class="hover stripe compact row-border" style="display:inline-table" id="MyTable">
+        <table class="hover stripe compact row-border testTable" style="display:inline-table" id="MyTable">
             <thead>
                 <tr>
                     <th>
@@ -33,9 +33,9 @@
                         @Html.DisplayFor(modelItem => item.NumberOfSpecialties)
                     </td>                    
                     <td id="@item.Id">
-                        <a asp-action="EditRole" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-edit"></i></a> 
-                        <a asp-action="RoleDetails" asp-route-id="@item.Id"  class="btn btn-warning"><i class="fas fa-list"></i></a> 
-                        <a asp-action="DeleteRole" asp-route-id="@item.Id" class="btn btn-danger pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
+                        <a asp-action="EditRole" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a> 
+                        <a asp-action="RoleDetails" asp-route-id="@item.Id"  class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a> 
+                        <a asp-action="DeleteRole" asp-route-id="@item.Id" class="btn btn-danger btn-sm pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>
                 }
@@ -43,9 +43,10 @@
         </table>
 
     </div>
-</div>
 
-<a asp-action="CreateRole" class="btn btn-primary btn-sm"><i class="fas fa-folder-plus"></i>  Add Role</a>
+    <a asp-action="CreateRole" class="btn btn-primary btn-sm"><i class="fas fa-folder-plus"></i>  Add Role</a>
+
+</div>
 
 <partial name="_DeleteDialog" />
 

@@ -8,16 +8,16 @@
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
 
-
-
-<div class="container-fluid">
-    <div>
+ <div>
         <hr />
           <p style="text-align:center">Edit estimate Nº @Model.FirstOrDefault().EstimateId</p> 
         <hr />          
                
-       
-            <table class="hover stripe compact row-border" style="display:inline-table" id="MyTable">
+ </div>
+
+<div class="container-fluid" style="max-width:90%">
+   
+            <table class="hover stripe compact row-border testTable" style="display:inline-table;" id="MyTable">
             <thead>
                 <tr>
                     <th>
@@ -96,7 +96,7 @@
                 <a asp-action="AddService" asp-route-id="@Model.First().VehicleId" asp-route-isEdit="true" class="btn btn-info btn-sm"><i class="fas fa-file-medical"></i>  Add Service</a>   
                 <a asp-action="ConfirmEstimate" asp-route-isEdit="true" class="btn btn-success btn-sm" id="btnConfirm"><i class="fas fa-check-square"></i>  Save Estimate</a>  
             </div>
-    </div>
+    
 </div>
 
 
@@ -136,7 +136,7 @@
     </div>
 </div>
 
-<div style="position: fixed; bottom: 65px; width: 100%;">
+<div style="position: fixed; bottom: 65px; width: 100%; left:18%">
     <table>
         <tr>
             <td style="margin-right:10px;">

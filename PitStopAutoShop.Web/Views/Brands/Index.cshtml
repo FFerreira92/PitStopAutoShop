@@ -9,9 +9,9 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
 
 
-<div class="container-fluid">
+<div class="container-fluid" style="max-width:90%">
     <div>
-        <table class="hover stripe compact row-border" style="display:inline-table" id="MyTable">
+        <table class="hover stripe compact row-border testTable" style="display:inline-table" id="MyTable">
             <thead>
                 <tr>
                     <th>
@@ -33,9 +33,9 @@
                         @Html.DisplayFor(modelItem => item.NumberOfModels)
                     </td>                    
                     <td id="@item.Id">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-edit"></i></a> 
-                        <a asp-action="Details" asp-route-id="@item.Id"  class="btn btn-warning"><i class="fas fa-list"></i></a> 
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fas fa-edit"></i></a> 
+                        <a asp-action="Details" asp-route-id="@item.Id"  class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a> 
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger pull-right btn-sm" id="btnDelete"><i class="fas fa-trash"></i></a>
                     </td>
                 </tr>
                 }
@@ -43,9 +43,10 @@
         </table>
 
     </div>
+    <a asp-action="Create" asp-controller="Brands" style="margin-top:50px" class="btn btn-primary btn-sm"><i class="fas fa-folder-plus"></i>  Add Brand</a>
 </div>
 
-<a asp-action="Create" asp-controller="Brands" class="btn btn-primary btn-sm"><i class="fas fa-folder-plus"></i>  Add Brand</a>
+
 
 <partial name="_DeleteDialog" />
 

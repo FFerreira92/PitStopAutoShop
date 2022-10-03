@@ -6,8 +6,14 @@
     ViewData["BreadCrumb"] = "Edit Customer";
 }
 
-<hr />
-<div class="row">
+
+ <div>
+        <hr />
+          <p style="text-align:center">Edit @Html.DisplayFor(model => model.FirstName) @Html.DisplayFor(model => model.LastName)</p> 
+        <hr />         
+ </div>
+
+<div class="row" style="justify-content:center;margin-top:50px">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -48,13 +54,14 @@
             <div class="form-group">
                 <input type="submit" value="Update Customer" class="btn btn-primary" />
                 <a asp-action="Create" asp-controller="Vehicles" asp-route-email="@Model.Email" asp-route-isEstimate="false" class="btn btn-danger"><i class="fas fa-car"></i> Add Vehicle</a>
+                <a asp-action="Index" class="btn btn-success" style="margin-left:147px"><i class="fas fa-arrow-circle-left"></i> Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index" class="btn btn-success"><i class="fas fa-arrow-circle-left"></i> Back to List</a>
+    
 </div>
 
 @section Scripts {

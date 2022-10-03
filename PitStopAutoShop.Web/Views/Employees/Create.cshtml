@@ -10,8 +10,8 @@
 
 <h4 style="text-align:center">Add new Employee</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row"  style="margin-top:50px;">
+    <div class="col-md-12">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
@@ -19,59 +19,88 @@
             <input type="hidden" asp-for="User" /> 
             <input type="hidden" asp-for="UserId" /> 
 
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-2">
+                     <div class="form-group">
+                        <label asp-for="FirstName" class="control-label"></label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                     </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label asp-for="LastName" class="control-label"></label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                     <div class="form-group">
+                        <label asp-for="PhoneNumber" class="control-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                     </div> 
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Email" class="control-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-1"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                     <div class="form-group">
+                         <label asp-for="Address" class="control-label"></label>
+                         <input asp-for="Address" class="form-control" />
+                         <span asp-validation-for="Address" class="text-danger"></span>
+                     </div>
+                </div>
+                <div class="col-md-1"></div>
+            </div>       
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-3">
+                     <div class="form-group">
+                        <label asp-for="RoleId" class="control-label"></label>
+                        <select asp-for="RoleId" asp-items="Model.Roles" class="form-control"></select>
+                        <span asp-validation-for="RoleId" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                      <div class="form-group">
+                         <label asp-for="SpecialtyId" class="control-label"></label>
+                         <select asp-for="SpecialtyId" asp-items="Model.Specialties" class="form-control" ></select>
+                         <span asp-validation-for="SpecialtyId" class="text-danger"></span>
+                     </div>  
+                </div>
+                <div class="col-md-2">
+                     <div class="form-group">
+                        <label asp-for="Color" class="control-label"></label> <br />           
+                        <ejs-colorpicker id="element" ejs-for="Color"></ejs-colorpicker>
+                        <span asp-validation-for="Color" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-3"></div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Address" class="control-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>          
-
-            <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <select asp-for="RoleId" asp-items="Model.Roles" class="form-control"></select>
-                <span asp-validation-for="RoleId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="SpecialtyId" class="control-label"></label>
-                <select asp-for="SpecialtyId" asp-items="Model.Specialties" class="form-control" ></select>
-                <span asp-validation-for="SpecialtyId" class="text-danger"></span>
-            </div>    
-            
-            <div class="form-group">
-                <label asp-for="About" class="control-label"></label>
-                <input asp-for="About" class="form-control" />
-                <span asp-validation-for="About" class="text-danger"></span>
-            </div>
-
-            <div class='wrap'>
-            <label asp-for="Color" class="control-label"></label>            
-            <ejs-colorpicker id="element" ejs-for="Color"></ejs-colorpicker>
-            <span asp-validation-for="Color" class="text-danger"></span>
-            </div>
+           <div class="row">
+               <div class="col-md-1"></div>
+               <div class="col-md-10">
+                     <div class="form-group">
+                         <label asp-for="About" class="control-label"></label>
+                         <input asp-for="About" class="form-control" />
+                         <span asp-validation-for="About" class="text-danger"></span>
+                    </div>
+               </div>
+               <div class="col-md-1"></div>
+           </div>
 
             <style>
                 .wrap {
@@ -81,9 +110,15 @@
                 }
             </style>
 
-            <div class="form-group" style="margin-top:20px;">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>           
+            <div class="row"  style="margin-top:20px;">
+                <div class="col-md-1"></div>
+                <div class="col-md-11">
+                     <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                     </div>      
+                </div>
+            </div>
+               
 
         </form>
     </div>

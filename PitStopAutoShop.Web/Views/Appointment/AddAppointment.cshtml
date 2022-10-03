@@ -135,7 +135,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="AddAppointment">
+        <form asp-action="AddAppointment" style="height:100%">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
             <input type="hidden" asp-for="EstimateId"/> 
@@ -183,7 +183,7 @@
                 <span asp-validation-for="Observations" class="text-danger"></span>
             </div>
              
-            <div class="form-group" style="margin-top:50px;">
+            <div class="form-group" style="bottom: 1%; position: absolute;">   
             <input type="submit" value="Add Appointment" class="btn btn-primary" style="margin-right: 10px" />
             <a asp-action="Index" asp-controller="Estimates" class="btn btn-danger">Back to Estimates List</a>
             </div>
