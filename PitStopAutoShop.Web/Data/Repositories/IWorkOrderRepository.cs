@@ -17,5 +17,7 @@ namespace PitStopAutoShop.Web.Data.Repositories
         
         Task<List<WorkOrderChartDataModel>> GetWorkOrdersChartAsync(int month);
         Task<int> GetActiveWorkOrdersNumber();
+
+        Task<List<APIServiceViewModel>> GetAllWorkOrdersByPlateNumberAsync(string plateNumber);
     }
 }

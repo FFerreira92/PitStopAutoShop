@@ -44,6 +44,45 @@ namespace PitStopAutoShop.Web.Data.Repositories
                         .ThenInclude(v => v.Model);
         }
 
+        public async Task<List<APIServiceViewModel>> GetAllWorkOrdersByPlateNumberAsync(string plateNumber)
+        {
+
+           List<APIServiceViewModel> list = new List<APIServiceViewModel>();
+
+           var vehicle = _context.Vehicles
+                .Include(v => v.Brand)
+                .Include(v => v.Model)
+                .Where(v => v.PlateNumber == plateNumber).FirstOrDefault();
+
+
+           var workOrders = await _context.WorkOrders
+                .Include(wo => wo.Appointment)
+                    .ThenInclude(a => a.Vehicle)
+                 .Include(wo => wo.Appointment)
+                    .ThenInclude(a => a.Mechanic)
+                .Where(wo => wo.Appointment.Vehicle.Id == vehicle.Id).ToListAsync();
+
+            foreach(var workOrder in workOrders)
+            {
+                list.Add(new APIServiceViewModel
+                {
+                    Id = workOrder.Id,
+                    PlateNumber = vehicle.PlateNumber,
+                    Brand = vehicle.Brand.Name,
+                    Model = vehicle.Model.Name,
+                    Vin = vehicle.VehicleIdentificationNumber,
+                    ServiceDateStart = workOrder.OrderDateStart,
+                    ServiceDateEnd = workOrder.OrderDateEnd,
+                    IsFinished = workOrder.IsFinished,
+                    Observations = workOrder.Observations,
+                    Status = workOrder.Status,
+                    ServiceDoneBy = workOrder.Appointment.Mechanic.FullName
+                });
+            }
+
+            return list;
+        }
+
         public async Task<int> GetOpenedWorkOrdersAsync()
         {
             var workOrders = _context.WorkOrders.Where(wo => wo.Status == "Opened");
