@@ -59,9 +59,9 @@
                                 @Html.DisplayFor(modelItem => item.ValueWithDiscount)
                             </td>  
                             <td id="@item.Id">                
-                                <a asp-action="Increase" asp-route-id="@item.Id" asp-route-isEdit="true" class="btn btn-warning"><i class="fa fa-plus"></i></a>
-                                <a asp-action="Decrease" asp-route-id="@item.Id" asp-route-isEdit="true" class="btn btn-info"><i class="fa fa-minus"></i></a> 
-                                <a asp-action="DeleteItem" asp-route-id="@item.Id" asp-route-isEdit="true" class="btn btn-danger" id="btnDeleteItem">Delete</a> 
+                                <a asp-action="Increase" asp-route-id="@item.Id" asp-route-isEdit="true" class="btn btn-sm btn-warning"><i class="fa fa-plus"></i></a>
+                                <a asp-action="Decrease" asp-route-id="@item.Id" asp-route-isEdit="true" class="btn btn-sm btn-info"><i class="fa fa-minus"></i></a> 
+                                <a asp-action="DeleteItem" asp-route-id="@item.Id" asp-route-isEdit="true" class="btn btn-sm btn-danger" id="btnDeleteItem">Delete</a> 
                             </td>
                             </tr>
                         }                  
@@ -93,8 +93,8 @@
             </div>     
 
             <div style="margin-top:20px">
-                <a asp-action="AddService" asp-route-id="@Model.First().VehicleId" asp-route-isEdit="true" class="btn btn-info btn-sm"><i class="fas fa-file-medical"></i>  Add Service</a>   
-                <a asp-action="ConfirmEstimate" asp-route-isEdit="true" class="btn btn-success btn-sm" id="btnConfirm"><i class="fas fa-check-square"></i>  Save Estimate</a>  
+                <a asp-action="AddService" asp-route-id="@Model.First().VehicleId" asp-route-isEdit="true" style="width:100%" class="btn btn-info btn-sm"><i class="fas fa-file-medical"></i>  Add Service</a> <br />
+                <a asp-action="ConfirmEstimate" asp-route-isEdit="true" class="btn btn-success btn-sm" style="width:100%;margin-top:10px" id="btnConfirm"><i class="fas fa-check-square"></i>  Save Estimate</a>  
             </div>
     
 </div>
@@ -140,10 +140,10 @@
     <table>
         <tr>
             <td style="margin-right:10px;">
-                <i class="fa fa-plus" style="background: #FFCA2C;padding:10px;border-radius: 50%;"></i> @Html.Raw(" = Increase ") 
+                <i class="fa fa-plus" style="background: #FFCA2C;padding:10px;"></i> @Html.Raw(" = Increase ") 
             </td>
             <td>
-                <i class="fa fa-minus" style="background: #31D2F2;padding:10px;border-radius: 50%; margin-left:10px "></i> @Html.Raw(" = Decrease ")
+                <i class="fa fa-minus" style="background: #31D2F2;padding:10px; margin-left:10px "></i> @Html.Raw(" = Decrease ")
             </td>          
         </tr>
     </table>    

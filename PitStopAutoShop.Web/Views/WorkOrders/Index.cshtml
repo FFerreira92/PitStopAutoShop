@@ -135,35 +135,33 @@
     </div>
     <!-- Modal end -->
 
-
-
 </div>
 
 <footer class="footer" style="position:Absolute; bottom:65px;font-size:14px;left: 18%;">
     <table>
         <tr>
             <td style="margin-right:10px;">
-               <i class="fas fa-edit" style="background: #31D2F2;padding:10px;border-radius: 50%; color:white;"></i> @Html.Raw(" = Edit Work Order Services ") 
+               <i class="fas fa-edit" style="background: #31D2F2;padding:10px; color:white;"></i> @Html.Raw(" = Edit Work Order Services ") 
             </td>
             <td>
-                <i class="fas fa-list" style="background: #E0A800;padding:10px;border-radius: 50%; margin-left:10px; "></i> @Html.Raw(" = Details ") 
+                <i class="fas fa-list" style="background: #E0A800;padding:10px; margin-left:10px; "></i> @Html.Raw(" = Details ") 
             </td>
             @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Receptionist"))
             {
                <td>
-                <i class="fas fa-check" style="background: #157347;padding:10px;border-radius: 50%; margin-left:10px; color:white;"></i> @Html.Raw(" = Declare Work Order Done ") 
+                <i class="fas fa-check" style="background: #157347;padding:10px; margin-left:10px; color:white;"></i> @Html.Raw(" = Declare Work Order Done ") 
                </td> 
             }
             @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Technician"))
             {
                <td>
-                <i class="fas fa-thumbs-up" style="background: #0B5ED7;padding:10px;border-radius: 50%; margin-left:10px; color:white; "></i> @Html.Raw(" = Print Invoice ") 
+                <i class="fas fa-thumbs-up" style="background: #0B5ED7;padding:10px; margin-left:10px; color:white; "></i> @Html.Raw(" = Print Invoice ") 
                </td> 
             }
             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
             {
                 <td>
-                    <i class="fas fa-trash" style="background: #C82333;padding:10px;border-radius: 50%; margin-left:10px; color:white "></i> @Html.Raw(" = Delete Estimate ")
+                    <i class="fas fa-trash" style="background: #C82333;padding:10px; margin-left:10px; color:white "></i> @Html.Raw(" = Delete Estimate ")
                 </td>               
             }
         </tr>

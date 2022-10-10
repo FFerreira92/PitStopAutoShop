@@ -20,3 +20,7 @@
 .testTable {
     border: solid 1px black;
 }
+
+.btn {
+    border-radius:0;
+}

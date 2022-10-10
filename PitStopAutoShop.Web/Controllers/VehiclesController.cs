@@ -48,24 +48,6 @@ namespace PitStopAutoShop.Web.Controllers
             return View(vehicles);
         }
 
-        // GET: Vehicles/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var vehicle = await _vehicleRepository.GetVehicleDetailsByIdAsync(id.Value);
-
-            if (vehicle == null)
-            {
-                return NotFound();
-            }
-
-            return View(vehicle);
-        }
-
         // GET: Vehicles/Create
         public async Task<IActionResult> Create(string email, bool isEstimate)
         {
@@ -310,12 +292,34 @@ namespace PitStopAutoShop.Web.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.InnerException.Message);                
+                _flashMessage.Danger("It is not possible to delete this vehicle. It has services and invoices already registered.");                               
             }
 
             return RedirectToAction(nameof(Index));
         }
 
+
+        [HttpPost]
+        [Route("Vehicles/VehicleDetails")]
+        public async Task<JsonResult> VehicleDetails(int Id)
+        {
+            if (Id == 0)
+            {
+                return null;
+            }
+            var vehicle = await _vehicleRepository.GetVehicleDetailsByIdAsync(Id);
+            var vehicleDetails = new VehicleDetailsViewModel
+            {
+                BrandName = vehicle.Brand.Name,
+                ModelName = vehicle.Model.Name,
+                DateOfConstruction = vehicle.DateOfConstruction.ToString("dd/MM/yyyy"),
+                HorsePower = vehicle.Horsepower.ToString(),
+                VIN = vehicle.VehicleIdentificationNumber,
+                PlateNumber = vehicle.PlateNumber,
+            };
+            var json = Json(vehicleDetails);
+            return json;
+        }
 
         [HttpPost]
         [Route("Vehicles/GetModelsAsync")]

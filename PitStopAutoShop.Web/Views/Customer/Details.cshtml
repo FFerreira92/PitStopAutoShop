@@ -110,9 +110,11 @@
                                     @Html.DisplayFor(modelItem => item.Horsepower)
                                 </td>
                                 <td id="@item.Id">
-                                    <a asp-action="Edit" asp-controller="Vehicles" asp-route-id="@item.Id" class="btn btn-info"><i class="fas fa-edit"></i> </a>
-                                    <a asp-action="Details" asp-controller="Vehicles" asp-route-id="@item.Id" class="btn btn-warning"><i class="fas fa-list"></i> </a>
-                                    <a asp-action="Delete" asp-controller="Vehicles" asp-route-id="@item.Id" class="btn btn-danger pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
+                                    <a asp-action="Edit" asp-controller="Vehicles" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fas fa-edit"></i> </a>   
+                                    @if(this.User.Identity.IsAuthenticated && this.User.IsInRole("Admin"))
+                                    {
+                                         <a asp-action="Delete" asp-controller="Vehicles" asp-route-id="@item.Id" class="btn btn-danger btn-sm pull-right" id="btnDelete"><i class="fas fa-trash"></i></a>
+                                    }                               
                                 </td>
                             </tr>
                         }
@@ -128,13 +130,30 @@
     }
 
     <div class="container-fluid" style="max-width:90%; margin-top:50px">
-    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning"><i class="fas fa-user-pen"></i> Edit</a> 
-    <a asp-action="Index" class="btn btn-success"><i class="fas fa-arrow-circle-left"></i> Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id" style="width:100%;border-radius:0" class="btn btn-warning"><i class="fas fa-user-pen"></i> Edit</a> <br />
+    <a asp-action="Index" class="btn btn-success" style="width:100%;border-radius:0;margin-top:10px" ><i class="fas fa-arrow-circle-left"></i> Back to List</a>
     </div>
 
 
 
 <partial name="_DeleteDialog" />
+
+
+<footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
+    <table>
+        <tr>
+            <td>
+                <i class="fas fa-edit" style="background: #31D2F2;padding:10px; margin-left:10px;color:white"></i> @Html.Raw(" = Edit ") 
+            </td> 
+            @if(this.User.Identity.IsAuthenticated && this.User.IsInRole("Admin"))
+            {
+                 <td>
+                     <i class="fas fa-trash" style="background: #C82333;padding:10px; margin-left:10px;color:white "></i> @Html.Raw(" = Delete ") 
+                 </td> 
+            }
+        </tr>
+    </table>  
+</footer>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -142,9 +161,13 @@
      <script type="text/javascript">
         $(document).ready(function () {
             $('#MyTable').DataTable({
-                columnDefs: [{
-                    className: 'dt-center', targets: "_all"
-                }]
+                columnDefs: [
+                    {className: 'dt-center', targets: "_all"},
+                    {className: "tableFont", targets: "_all" },
+                ],
+                searching: false,
+                paging: false,
+                info: false,
             });
         });
 

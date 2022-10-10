@@ -81,13 +81,12 @@
                 </tbody>
             </table>
     </div>
-    <a class="btn btn-primary btn-sm" onclick="onAddEstimateButtonClick()"><i class="fas fa-file-alt"></i>  Add Estimate</a>
+    <a class="btn btn-primary btn-sm" style="width:100%;margin-top:20px" onclick="onAddEstimateButtonClick()"><i class="fas fa-file-alt"></i>  Add Estimate</a>
 
     <partial name="_DeleteDialog" />
     
 </div>
 
-@*asp-action="Index" asp-controller="Customer"*@
 
 <div id='container' style="height:auto">
     <ejs-dialog id='dialog' visible="false" isModal="true" width="300px" showCloseIcon="true" allowDragging="true" overlayClick="onOverlayClick" target="#container">
@@ -105,18 +104,18 @@
     <table>
         <tr>
             <td style="margin-right:10px;">
-               <i class="fas fa-edit" style="background: #31D2F2;padding:10px;border-radius: 50%; color:white;"></i> @Html.Raw(" = Edit ") 
+               <i class="fas fa-edit" style="background: #31D2F2;padding:10px; color:white;"></i> @Html.Raw(" = Edit ") 
             </td>
             <td>
-                <i class="fas fa-list" style="background: #E0A800;padding:10px;border-radius: 50%; margin-left:10px; "></i> @Html.Raw(" = Details ") 
+                <i class="fas fa-list" style="background: #E0A800;padding:10px; margin-left:10px; "></i> @Html.Raw(" = Details ") 
             </td>
             <td>
-                <i class="fas fa-calendar-check" style="background: #23272B;padding:10px;border-radius: 50%; margin-left:10px ;color:white "></i> @Html.Raw(" = Add Appointment ")
+                <i class="fas fa-calendar-check" style="background: #23272B;padding:10px; margin-left:10px ;color:white "></i> @Html.Raw(" = Add Appointment ")
             </td>            
             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
             {
                 <td>
-                    <i class="fas fa-trash" style="background: #C82333;padding:10px;border-radius: 50%; margin-left:10px; color:white "></i> @Html.Raw(" = Delete Estimate ")
+                    <i class="fas fa-trash" style="background: #C82333;padding:10px; margin-left:10px; color:white "></i> @Html.Raw(" = Delete Estimate ")
                 </td>               
             }
         </tr>

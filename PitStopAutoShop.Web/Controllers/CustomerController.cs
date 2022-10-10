@@ -277,12 +277,11 @@ namespace PitStopAutoShop.Web.Controllers
 
             try
             {
-                await _customerRepository.DeleteAsync(customer);
-                //deveria remover a conta de utilizador tambem? 
+                await _customerRepository.DeleteAsync(customer);                
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.Message);                
+                _flashMessage.Danger("It is not possible to delete this customer. There is an estimate/work Order already going on. If you want to remove the customer, please see customer history and remove any related files.");           
             }
 
             return RedirectToAction(nameof(Index));

@@ -42,12 +42,9 @@
                             @Html.DisplayFor(modelItem => item.Nif)
                         </td>            
                         <td>
-                            @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Customer"))
-                            {                   
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fas fa-user-pen"></i></a> 
-                            }                     
-                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a>
-                                 <a asp-action="SelectVehicle" asp-controller="Estimates" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-file-alt"></i></a>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fas fa-user-pen"></i></a> 
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a>
+                            <a asp-action="SelectVehicle" asp-controller="Estimates" asp-route-id="@item.Id" class="btn btn-success btn-sm"><i class="fas fa-file-alt"></i></a>
 
                             @if(this.User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                             {
@@ -60,6 +57,30 @@
             </table>
     </div>
 </div>
+
+
+<footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
+    <table>
+        <tr>
+            <td>
+                <i class="fas fa-user-pen" style="background: #138496;padding:10px; margin-left:10px;color:white"></i> @Html.Raw(" = Edit ") 
+            </td> 
+            <td>
+                <i class="fas fa-list" style="background: #E0A800;padding:10px; margin-left:10px; "></i> @Html.Raw(" = Details ") 
+            </td> 
+            <td>
+                <i class="fas fa-file-alt" style="background: #157347;padding:10px; margin-left:10px;color:white; "></i> @Html.Raw(" = New Estimate ") 
+            </td> 
+            @if(this.User.Identity.IsAuthenticated && this.User.IsInRole("Admin"))
+            {
+                 <td>
+                     <i class="fas fa-trash" style="background: #C82333;padding:10px; margin-left:10px;color:white "></i> @Html.Raw(" = Delete ") 
+                 </td> 
+            }
+        </tr>
+    </table>  
+</footer>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

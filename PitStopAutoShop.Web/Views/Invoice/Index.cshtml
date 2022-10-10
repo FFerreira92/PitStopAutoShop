@@ -8,9 +8,9 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
 
 
-<div class="container-fluid" style="margin-bottom: 75px; ">
+<div class="container-fluid" style="margin-bottom: 75px; max-width:90% ">
     <div>            
-            <table class="hover stripe row-border" style="display:inline-table" id="MyTable">
+            <table class="hover stripe row-border testTable" style="display:inline-table" id="MyTable">
                 <thead>
                     <tr>
                         <th>
@@ -71,8 +71,11 @@
     <table>
         <tr>
             <td>
-                <i class="fas fa-list" style="background: #E0A800;padding:10px;border-radius: 50%; margin-left:10px; "></i> @Html.Raw(" = Details ") 
-            </td>            
+                <i class="fas fa-list" style="background: #E0A800;padding:10px; margin-left:10px; "></i> @Html.Raw(" = Details ") 
+            </td>    
+            <td>
+                <i class="fas fa-file-pdf" style="background: #0069D9;padding:10px; margin-left:10px;color:white "></i> @Html.Raw(" = Print Pdf ") 
+            </td> 
         </tr>
     </table>  
 </footer>
