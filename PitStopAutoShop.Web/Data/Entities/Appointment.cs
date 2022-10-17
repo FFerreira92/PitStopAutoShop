@@ -27,7 +27,7 @@ namespace PitStopAutoShop.Web.Data.Entities
         [Display(Name = "Appointment Start Date and Time")]
         [Required(ErrorMessage = "Must insert the {0}")]
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]        
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = false)]        
         [NotOnSundaysValidator(ErrorMessage = "The Shop is closed on Sundays")]
         [DateAfterCurrentTimeValidator(ErrorMessage = "Date/Time must be after the current day/time.")]
         [PitStopAutoShopScheduleValidator(ErrorMessage ="Appointment must be inside bussiness hours.")]
@@ -36,7 +36,7 @@ namespace PitStopAutoShop.Web.Data.Entities
         [Display(Name = "Appointment End Date and Time")]
         [Required(ErrorMessage = "Must insert the {0}")]
         [DataType(DataType.DateTime)]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = false)]
         [NotOnSundaysValidator(ErrorMessage = "The Shop is closed on Sundays")]
         [PitStopAutoShopScheduleValidator(ErrorMessage = "Appointment must be inside bussiness hours.")]
         public DateTime AppointmentEndDate { get; set; }

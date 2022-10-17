@@ -43,7 +43,27 @@
         </table>
 
     </div>
-    <a asp-action="Create" asp-controller="Brands" style="margin-top:50px" class="btn btn-primary btn-sm"><i class="fas fa-folder-plus"></i>  Add Brand</a>
+    <a asp-action="Create" asp-controller="Brands" style="margin-top:50px;width:100%" class="btn btn-primary btn-sm"><i class="fas fa-folder-plus"></i>  Add Brand</a>
+
+
+
+
+    <footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
+        <table>
+            <tr>
+                <td>
+                    <i class="fas fa-edit" style="background: #138496;padding:10px; margin-left:10px; color:white"></i> @Html.Raw(" = Edit ") 
+                </td>
+                <td>
+                    <i class="fas fa-list" style="background: #E0A800;padding:10px; margin-left:10px; "></i> @Html.Raw(" = Details ") 
+                </td>    
+                <td>
+                    <i class="fas fa-trash" style="background: #C82333;padding:10px; margin-left:10px;color:white "></i> @Html.Raw(" = Delete ")  
+                </td> 
+            </tr>
+    </table>  
+    </footer>
+
 </div>
 
 

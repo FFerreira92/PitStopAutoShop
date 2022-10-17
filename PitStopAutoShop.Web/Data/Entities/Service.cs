@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace PitStopAutoShop.Web.Data.Entities
 {
@@ -9,17 +10,22 @@ namespace PitStopAutoShop.Web.Data.Entities
         [Required]
         [MaxLength(100)]
         public string Name { get; set; }
+        public static readonly CultureInfo UnitedKingdom =
+    CultureInfo.GetCultureInfo("en-GB");
 
         [Required]
-        [DisplayFormat(DataFormatString ="{0:C2}",ApplyFormatInEditMode =false)]
+        [DisplayFormat(DataFormatString ="{0:C2}", ApplyFormatInEditMode =false)]
         public decimal Price { get; set; }
 
         [MaxLength(200)]
         public string Description { get; set; }
 
+     
+
+
         [Required]
-        [Display(Name="Discount(%)")]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = false)]       
+        [Display(Name="Discount(%)")]        
+        [DisplayFormat(DataFormatString = "{0:N2}",ApplyFormatInEditMode = false)]       
         public decimal Discount { get; set; }
 
         [Display(Name="Price with Discount")]

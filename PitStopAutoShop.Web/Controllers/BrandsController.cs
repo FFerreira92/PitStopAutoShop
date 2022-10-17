@@ -245,7 +245,7 @@ namespace PitStopAutoShop.Web.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, ex.InnerException.Message);
+                _flashMessage.Danger("There was an error trying to delete the model. Probably the model is being used in a car. Try deleting cars with the model you want to delete first.");
             }
 
             return RedirectToAction($"Details", new { id = brandId });

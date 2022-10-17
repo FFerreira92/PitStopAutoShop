@@ -7,6 +7,43 @@
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
 
+
+<script type="text/javascript">
+
+    function showEmployeeDetails(employeeId) {
+        debugger;
+
+        $.ajax({
+                      url: '@Url.Action("EmployeeDetails","Employees")',
+                      type: 'POST',
+                      dataType: 'json',
+                      data: {Id: employeeId},
+                      success: function(employeeData) {                         
+                          console.log(employeeData);
+                          
+                          var dialog = document.getElementById("dialog").ej2_instances[0];                         
+                          dialog.header = employeeData.fullName + " Details";
+
+                          dialog.content = "<b>Full Name: </b>" + employeeData.fullName + "<br/>" +
+                              "<b>Email: </b>" + employeeData.email + "<br/>" +
+                              "<b>Address: </b>" + employeeData.user.address + "<br/>" +
+                              "<b>Phone Number: </b>" + employeeData.user.phoneNumber + "<br/>" +
+                              "<b>Specialty: </b>" + employeeData.role.name + " - " + employeeData.specialty.name + "<br/>" +
+                              "<b>About: </b>" + employeeData.about + "<br/>";
+
+                          dialog.show();
+                      },
+                      error: function(ex) 
+                      {
+                          console.log("failed " + ex.message);
+                      }
+        });
+
+    }
+
+</script>
+
+
 <div class="container-fluid" style="max-width:90%">
     <div>            
             <table class="hover stripe row-border testTable" style="display:inline-table" id="MyTable">
@@ -42,7 +79,7 @@
                                 <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-info btn-sm"><i class="fas fa-user-pen"></i></a> 
                             }                     
                             
-                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a>
+                                 <a onclick="showEmployeeDetails(@item.Id)" class="btn btn-warning btn-sm"><i class="fas fa-list"></i></a>
             
                             @if(this.User.Identity.IsAuthenticated && !User.IsInRole("Customer"))
                             {
@@ -54,9 +91,44 @@
                 </tbody>
             </table>
     </div>
+
+    <div id='container' style="height:auto">
+    
+        <ejs-dialog id='dialog' visible="false" isModal="true" width="550px" showCloseIcon="true" allowDragging="false" overlayClick="onOverlayClick" target="#container">
+            <e-dialog-animationsettings effect="Fade" duration="400" delay="0"></e-dialog-animationsettings>
+            
+        </ejs-dialog>
+    </div>
+
+    <footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
+        <table>
+            <tr>
+                <td>
+                    <i class="fas fa-user-pen" style="background: #138496;padding:10px; margin-left:10px; color:white"></i> @Html.Raw(" = Edit ") 
+                </td>
+                <td>
+                    <i class="fas fa-list" style="background: #E0A800;padding:10px; margin-left:10px; "></i> @Html.Raw(" = Details ") 
+                </td>    
+                <td>
+                    <i class="fas fa-trash" style="background: #C82333;padding:10px; margin-left:10px;color:white "></i> @Html.Raw(" = Delete ")  
+                </td> 
+            </tr>
+    </table>  
+    </footer>
+
 </div>
 
 <partial name="_DeleteDialog" />
+
+<script>     
+    
+    function onOverlayClick() {
+            var dialog = document.getElementById("dialog").ej2_instances[0];              
+            dialog.hide();        
+    }; 
+
+</script>  
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

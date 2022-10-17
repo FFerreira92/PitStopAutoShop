@@ -8,6 +8,15 @@
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css"/>
 
+<style>
+    #addRole{
+        display:flex !important;
+        justify-content:center !important;
+        width:100% !important;
+    }
+
+</style>
+
 
 <div class="container-fluid" style="max-width:90%">
     <div>
@@ -43,8 +52,26 @@
         </table>
 
     </div>
+    <div style="width:100%;margin-top:20px">
+        <a asp-action="CreateRole" id="addRole" class="btn btn-primary btn-sm"><i class="fas fa-folder-plus" style="padding:5px"></i>Add Role</a>
+    </div>
+    
 
-    <a asp-action="CreateRole" class="btn btn-primary btn-sm"><i class="fas fa-folder-plus"></i>  Add Role</a>
+     <footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
+        <table>
+            <tr>
+                <td>
+                    <i class="fas fa-edit" style="background: #138496;padding:10px; margin-left:10px; color:white"></i> @Html.Raw(" = Edit ") 
+                </td>
+                <td>
+                    <i class="fas fa-list" style="background: #E0A800;padding:10px; margin-left:10px; "></i> @Html.Raw(" = Details ") 
+                </td>    
+                <td>
+                    <i class="fas fa-trash" style="background: #C82333;padding:10px; margin-left:10px;color:white "></i> @Html.Raw(" = Delete ")  
+                </td> 
+            </tr>
+    </table>  
+    </footer>
 
 </div>
 

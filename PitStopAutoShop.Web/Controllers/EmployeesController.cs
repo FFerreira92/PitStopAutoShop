@@ -512,24 +512,6 @@ namespace PitStopAutoShop.Web.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var employee = await _employeeRepository.GetEmployeeByIdAsync(id.Value);
-
-            if (employee == null)
-            {
-                return NotFound();
-            }
-
-            var model = _converterHelper.ToEmployeeViewModel(employee, false);
-
-            return View(model);
-        }
 
 
         public async Task<IActionResult> Delete(int? id)
@@ -553,7 +535,7 @@ namespace PitStopAutoShop.Web.Controllers
             }
             catch (Exception ex)
             {
-                _flashMessage.Danger("There was a problem deleting the employee. "+ ex.InnerException.Message);                
+                _flashMessage.Danger("There was a problem deleting the employee. Probably the employee you are trying to delete as already some sort of entry on a customer file. You would need to delete all customer files with the asked employee in them.");                
             }
 
             return RedirectToAction(nameof(Index));
@@ -567,6 +549,22 @@ namespace PitStopAutoShop.Web.Controllers
             var role = await _employeesRolesRepository.GetRoleWithSpecialtiesAsync(roleId);
             return Json(role.Specialties.OrderBy(s => s.Name));
         }
-        
+
+        [HttpPost]
+        [Route("Employees/EmployeeDetails")]
+        public async Task<JsonResult> EmployeeDetails(int Id)
+        {
+            if (Id == 0)
+            {
+                return null;
+            }
+
+            var employee = await _employeeRepository.GetEmployeeByIdAsync(Id);
+         
+            var json = Json(employee);
+            return json;
+        }
+
+
     }
 }

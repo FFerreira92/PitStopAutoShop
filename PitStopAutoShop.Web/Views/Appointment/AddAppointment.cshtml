@@ -4,6 +4,8 @@
     Layout = "~/Views/Shared/_LayoutDashboardPanel.cshtml";
     ViewData["Title"] = "Appointment";
     ViewData["BreadCrumb"] = "Add Appointment";
+    var minDate = new DateTime(DateTime.UtcNow.Year, DateTime.UtcNow.Month, DateTime.UtcNow.Day, 9, 0, 0);
+    var maxDate = DateTime.UtcNow.AddYears(1);
 }
 
  <script>
@@ -167,13 +169,16 @@
             
             <div class="form-group">
                 <label asp-for="AppointmentStartDate" class="control-label"></label>
-                <input asp-for="AppointmentStartDate" class="form-control" />
+                @*<input asp-for="AppointmentStartDate" class="form-control" />*@
+                <ejs-datetimepicker name="AppointmentStartDate" ejs-for="@Model.AppointmentStartDate" format="dd/MM/yyyy HH:mm" timeFormat="HH:mm" strictMode="true" min="@minDate" max="@maxDate" id="startDatetimePicker"></ejs-datetimepicker>
                 <span asp-validation-for="AppointmentStartDate" class="text-danger"></span>
-            </div>            
+            </div>        
+            
 
             <div class="form-group">
                 <label asp-for="AppointmentEndDate" class="control-label"></label>                             
-                <input asp-for="AppointmentEndDate" class="form-control" />
+                @*<input asp-for="AppointmentEndDate" class="form-control" />*@
+                <ejs-datetimepicker name="AppointmentEndDate" ejs-for="@Model.AppointmentEndDate" format="dd/MM/yyyy HH:mm" timeFormat="HH:mm"   strictMode="true" min="@minDate" max="@maxDate" id="endDatetimePicker"></ejs-datetimepicker>
                 <span asp-validation-for="AppointmentEndDate" class="text-danger"></span>
             </div>
 

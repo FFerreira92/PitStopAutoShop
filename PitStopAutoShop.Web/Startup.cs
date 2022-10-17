@@ -21,6 +21,8 @@ using Microsoft.Extensions.Azure;
 using Azure.Storage.Queues;
 using Azure.Storage.Blobs;
 using Azure.Core.Extensions;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 namespace PitStopAutoShop.Web
 {
@@ -127,6 +129,13 @@ namespace PitStopAutoShop.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseRequestLocalization(new RequestLocalizationOptions
+            {
+                DefaultRequestCulture = new RequestCulture(new CultureInfo("pt-PT")),
+                SupportedCultures = new List<CultureInfo> { new CultureInfo("pt-PT") },
+                SupportedUICultures = new List<CultureInfo> { new CultureInfo("pt-PT") }
+            });
 
             app.UseStatusCodePagesWithReExecute("/error/{0}");
 

@@ -46,8 +46,6 @@
 </script>
 
 
-
-
 <div class="container-fluid" style="max-width:90%">
     <div>
         <table class="hover stripe compact row-border testTable" style="display:inline-table" id="MyTable">
@@ -109,36 +107,41 @@
         </table>
 
     </div>
-</div>
 
-<div id='container' style="height:auto">
+
+
+    <div id='container' style="height:auto">
     
-    <ejs-dialog id='dialog' visible="false" isModal="true" width="400px" showCloseIcon="true" allowDragging="false" overlayClick="onOverlayClick" target="#container">
-        <e-dialog-animationsettings effect="Fade" duration="400" delay="0"></e-dialog-animationsettings>
-        
-    </ejs-dialog>
+        <ejs-dialog id='dialog' visible="false" isModal="true" width="400px" showCloseIcon="true" allowDragging="false" overlayClick="onOverlayClick" target="#container">
+            <e-dialog-animationsettings effect="Fade" duration="400" delay="0"></e-dialog-animationsettings>
+            
+        </ejs-dialog>
+    </div>
+
+    <footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
+        <table>
+            <tr>
+                <td>
+                    <i class="fas fa-edit" style="background: #31D2F2;padding:10px; margin-left:10px;color:white"></i> @Html.Raw(" = Edit ") 
+                </td> 
+                <td>
+                    <i class="fas fa-list" style="background: #E0A800;padding:10px; margin-left:10px; "></i> @Html.Raw(" = Details ") 
+                </td> 
+                @if(this.User.Identity.IsAuthenticated && this.User.IsInRole("Admin"))
+                {
+                     <td>
+                         <i class="fas fa-trash" style="background: #C82333;padding:10px; margin-left:10px;color:white "></i> @Html.Raw(" = Delete ") 
+                     </td> 
+                }
+            </tr>
+        </table>  
+    </footer>
+    
+    <partial name="_DeleteDialog" />
+
 </div>
 
-<footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
-    <table>
-        <tr>
-            <td>
-                <i class="fas fa-edit" style="background: #31D2F2;padding:10px; margin-left:10px;color:white"></i> @Html.Raw(" = Edit ") 
-            </td> 
-            <td>
-                <i class="fas fa-list" style="background: #E0A800;padding:10px; margin-left:10px; "></i> @Html.Raw(" = Details ") 
-            </td> 
-            @if(this.User.Identity.IsAuthenticated && this.User.IsInRole("Admin"))
-            {
-                 <td>
-                     <i class="fas fa-trash" style="background: #C82333;padding:10px; margin-left:10px;color:white "></i> @Html.Raw(" = Delete ") 
-                 </td> 
-            }
-        </tr>
-    </table>  
-</footer>
 
-<partial name="_DeleteDialog" />
 
 <script>     
     

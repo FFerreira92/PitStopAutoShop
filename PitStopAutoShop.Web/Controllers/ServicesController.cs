@@ -123,31 +123,7 @@ namespace PitStopAutoShop.Web.Controllers
 
             return View(model);
         }
-
-
-        public async Task<IActionResult> Details(int? id)
-        {
-            if(id == null)
-            {
-                return NotFound();
-            }
-
-            var service = await _serviceRepository.GetByIdAsync(id.Value);
-
-            if (service == null)
-            {
-                return NotFound();
-            }
-
-            var model = _converterHelper.ToServiceViewModel(service);
-
-            if(model == null)
-            {
-                return NotFound();
-            }
-
-            return View(model);
-        }
+                
 
         public async Task<IActionResult> Delete(int? id)
         {
@@ -170,11 +146,30 @@ namespace PitStopAutoShop.Web.Controllers
             }
             catch (Exception ex)
             {
-                _flashMessage.Danger("There was an error deleting the service. "+ ex.InnerException.Message);
+                _flashMessage.Danger("There was an error deleting the service. Probably it is being used in some sort of entry. Please make sure the service is not being used in any file before trying to delete it.");
             }
 
             return RedirectToAction(nameof(Index));
         }
+
+
+
+        [HttpPost]
+        [Route("Services/ServiceDetails")]
+        public async Task<JsonResult> ServiceDetails(int Id)
+        {
+            if (Id == 0)
+            {
+                return null;
+            }
+
+            var service = await _serviceRepository.GetByIdAsync(Id);            
+
+            var json = Json(service);
+
+            return json;
+        }
+
 
     }
 }

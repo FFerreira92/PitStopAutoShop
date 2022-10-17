@@ -55,9 +55,27 @@ else{
 <div class="container-fluid" style="max-width:90%"> 
     <a asp-action="AddModel" asp-route-id="@Model.Id" class="btn btn-info">Add Model</a> 
     <a asp-action="Index" class="btn btn-success">Back to brands List</a>
+
+
+   <footer class="footer" style="position:Absolute; bottom:65px;font-size:14px">
+    <table>
+        <tr>
+            <td>
+                   <i class="fas fa-edit" style="background: #138496;padding:10px; margin-left:10px; color:white"></i> @Html.Raw(" = Edit ") 
+            </td>    
+            <td>
+                <i class="fas fa-trash" style="background: #C82333;padding:10px; margin-left:10px;color:white "></i> @Html.Raw(" = Delete ")  
+            </td> 
+        </tr>
+    </table>  
+   </footer>
+
 </div>
 
 <partial name="_DeleteDialog" />
+
+
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
