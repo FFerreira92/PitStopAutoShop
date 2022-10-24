@@ -311,6 +311,14 @@ namespace PitStopAutoShop.Web.Data
                     Discount = 0m
                 });
 
+                _context.Services.Add(new Service
+                {
+                    Name = "A/C Recharge",
+                    Description = "A/C Gas Research",
+                    Price = 49.90m,
+                    Discount = 10m
+                });
+
                 await _context.SaveChangesAsync();
             }
         }
