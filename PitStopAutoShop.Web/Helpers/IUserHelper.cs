@@ -17,6 +17,7 @@ namespace PitStopAutoShop.Web.Helpers
         Task<IdentityResult> AddUserAsync(User user,string password);
 
         Task<IdentityResult> UpdateUserAsync(User user);
+        Task<APIUserViewModel> GetUserDetailsAsync(string email);
 
         Task<User> GetUserByIdAsync(string userId);
 
@@ -62,5 +63,6 @@ namespace PitStopAutoShop.Web.Helpers
         Task<IdentityResult> AddLoginAsync(User user, ExternalLoginInfo info);
         Task SignInAsync(User user, bool isPersistent);
         Task<bool> HasPasswordAsync(User user);
+
     }
 }

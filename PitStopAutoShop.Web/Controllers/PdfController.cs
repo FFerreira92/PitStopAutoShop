@@ -38,6 +38,8 @@ namespace PitStopAutoShop.Web.Controllers
             _estimateRepository = estimateRepository;
             _flashMessage = flashMessage;
             _workOrderRepository = workOrderRepository;
+            GlobalProperties.EnableRestrictedRenderingEngine = true;
+            GlobalProperties.EnableFallbackToRestrictedRenderingEngine = true;
         }
 
         public async Task<IActionResult> Invoice(int? id, bool sendEmail)
@@ -51,6 +53,7 @@ namespace PitStopAutoShop.Web.Controllers
 
             using(var stringWriter = new StringWriter())
             {
+               
                 var viewResult = _compositeViewEngine.FindView(ControllerContext, "_Invoice", false);
 
                 if(viewResult == null)
@@ -74,6 +77,7 @@ namespace PitStopAutoShop.Web.Controllers
 
                 var htmlToPdf = new HtmlToPdf(1000, 1414);
                 htmlToPdf.Options.DrawBackground = true;
+                
 
                 var pdf = htmlToPdf.ConvertHtmlString(stringWriter.ToString());                
                 var pdfBytes = pdf.Save();
@@ -106,6 +110,8 @@ namespace PitStopAutoShop.Web.Controllers
 
         public async Task<IActionResult> Estimate(int? id, bool sendEmail)
         {
+
+          
             if (id == null)
             {
                 return NotFound();
@@ -178,6 +184,7 @@ namespace PitStopAutoShop.Web.Controllers
 
         public async Task<IActionResult> WorkOrder(int? id)
         {
+       
             if (id == 0)
             {
                 return NotFound();

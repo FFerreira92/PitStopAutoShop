@@ -15,6 +15,10 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace PitStopAutoShop.Web.Controllers
 {
@@ -28,10 +32,11 @@ namespace PitStopAutoShop.Web.Controllers
         private readonly IInvoiceRepository _invoiceRepository;
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IEmployeeRepository _employeeRepository;
+        private readonly IConfiguration _configuration;
 
         public AccountController(IUserHelper userHelper,IMailHelper mailHelper,ICustomerRepository customerRepository,
             IFlashMessage flashMessage, IBlobHelper blobHelper, IInvoiceRepository invoiceRepository, IVehicleRepository vehicleRepository,
-            IEmployeeRepository employeeRepository)
+            IEmployeeRepository employeeRepository,IConfiguration configuration)
         {
             _userHelper = userHelper;
             _mailHelper = mailHelper;
@@ -41,6 +46,7 @@ namespace PitStopAutoShop.Web.Controllers
             _invoiceRepository = invoiceRepository;
             _vehicleRepository = vehicleRepository;
             _employeeRepository = employeeRepository;
+            _configuration = configuration;
         }
 
         public IActionResult Login()
@@ -504,8 +510,8 @@ namespace PitStopAutoShop.Web.Controllers
             });
 
         }
-        
 
+        [Authorize]
         public async Task<IActionResult> ViewUser()
         {
             var user = await _userHelper.GetUserByEmailAsync(User.Identity.Name);
@@ -763,6 +769,45 @@ namespace PitStopAutoShop.Web.Controllers
             }
            
             return Json(isValid);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateToken([FromBody] LoginViewModel model)
+        {
+            if (this.ModelState.IsValid)
+            {
+                var user = await _userHelper.GetUserByEmailAsync(model.UserName);
+
+                if(user != null)
+                {
+                    var result = await _userHelper.CheckPasswordAsync(user, model.Password);
+
+                    if (result.Succeeded)
+                    {
+                        var claims = new[]
+                        {
+                            new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                            new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+                        };
+
+                        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Tokens:Key"]));
+                        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                        var token = new JwtSecurityToken(_configuration["Tokens:Issuer"], _configuration["Tokens:Audience"], claims, expires: DateTime.UtcNow.AddDays(15), signingCredentials: credentials);
+                        var results = new
+                        {
+                            token = new JwtSecurityTokenHandler().WriteToken(token),
+                            expiration = token.ValidTo
+                        };
+
+                        return this.Created(string.Empty, results);
+                    }
+
+                }
+
+            }
+
+            return this.BadRequest();
         }
 
         public IActionResult NotAuthorized()

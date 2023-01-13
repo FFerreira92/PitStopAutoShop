@@ -29,9 +29,9 @@ namespace PitStopAutoShop.Web.Data.Entities
         [Display(Name ="Profile Picture")]
         public Guid ProfilePitcure { get; set; }
 
-        public string ProfilePictureAltPath => ProfilePitcure == Guid.Empty ? null : $"https://pitstoptpsi.blob.core.windows.net/profilepictures/{ProfilePitcure}";
+        public string ProfilePictureAltPath => ProfilePitcure == Guid.Empty ? $"https://pitstoptpsi.blob.core.windows.net/profilepictures/10000000-0000-0000-0000-A1000000000.png" : $"https://pitstoptpsi.blob.core.windows.net/profilepictures/{ProfilePitcure}";
 
-        public string ImageFullPath => ProfilePitcure == Guid.Empty ? null : 
+        public string ImageFullPath => ProfilePitcure == Guid.Empty ? $"https://pitstoptpsi.blob.core.windows.net/profilepictures/10000000-0000-0000-0000-A1000000000.png" : 
             $"https://pitstoptpsi.blob.core.windows.net/profilepictures/{ProfilePitcure}";         
 
         

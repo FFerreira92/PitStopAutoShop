@@ -151,6 +151,25 @@ namespace PitStopAutoShop.Web.Helpers
             return await _userManager.FindByIdAsync(userId);
         }
 
+        public async Task<APIUserViewModel> GetUserDetailsAsync(string email)
+        {
+            var user = await GetUserByEmailAsync(email);
+
+            if(user != null)
+            {
+                return new APIUserViewModel
+                {
+                    Address = user.Address,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    PhoneNumber = user.PhoneNumber,
+                    ProfilePitcure = user.ProfilePitcure
+                };                
+            }
+            
+            return null;           
+        }
+
         public async Task<List<UserDataChartModel>> GetUsersChartDataAsync()
         {
 
@@ -213,5 +232,7 @@ namespace PitStopAutoShop.Web.Helpers
         {
             return await _userManager.UpdateAsync(user);
         }
+
+    
     }
 }
